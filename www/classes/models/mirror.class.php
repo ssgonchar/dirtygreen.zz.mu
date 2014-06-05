@@ -92,7 +92,6 @@ class Mirror extends Model {
      * Сохранение одной строки mirror
      * @param mixed $id
      * @param mixed $position_id
-     * @param mixed $stockholder_id
      * @param mixed $location_id
      * @param mixed $deliverytime_id
      * @param mixed $price
@@ -100,9 +99,9 @@ class Mirror extends Model {
      * @version 20140605 
      * @author Uskov
      */
-    function Save($id, $position_id, $stockholder_id, $location_id, $deliverytime_id, $price)
+    function Save($id, $position_id, $location_id, $deliverytime_id, $price)
     {        
-        $result = $this->CallStoredProcedure('sp_mirror_save', array($this->user_id, $id, $position_id, $stockholder_id, $location_id, $deliverytime_id, $price));
+        $result = $this->CallStoredProcedure('sp_mirror_save', array($this->user_id, $id, $position_id, $location_id, $deliverytime_id, $price));
         $result = isset($result) && isset($result[0]) && isset($result[0][0]) ? $result[0][0] : null;
         
         if (empty($result) || array_key_exists('ErrorCode', $result)) return null;

@@ -108,20 +108,23 @@ $(function(){
         //console.log('blur val:'+id);
     });
     
-    //Сохраняет mirror при изменении в select
+    //Обработчик события изменения значения select в модальном окне mirror
+    //!!! доработать - должно срабатывать только при редактировании !!!
     $("#mirrors-edit select").live("change", function(event)
     {
         //получаем параметры для сохранения:
         //текущая строка-родитель:
         var stock_tr = $(this).parent().parent();
         //параметры для таблицы mirrors:
-        var stock_id = $(stock_tr).find('.select-stock option:selected').val();
+        var mirror_id = $(stock_tr).find('.mirror-id').text();
+        var position_id = $(stock_tr).find('.position-id').text();
         var stock_id = $(stock_tr).find('.select-stock option:selected').val();
         var location_id = $(stock_tr).find('.select-location option:selected').val();
         var deliverytime_id = $(stock_tr).find('.select-deliverytime option:selected').val();
         var price = $(stock_tr).find('input.mirror-price').val();
-
-        console.log(price);
+        
+        save_mirror(mirror_id, position_id, stock_id, location_id, deliverytime_id, price);
+        //console.log(stockholder_id);
     });
 });
 
@@ -990,18 +993,22 @@ var mirror_del_all = function()
 };
 
 /*
- * Авто сохранение mirror при изменении в любом поле формы
+ * Сохранение mirror при изменении в любом поле формы. Сохраняет 1 mirror, select которого изменен
  * Поле input price должно быть заполнено.
  * Вызывается при изменении в select и price
  * 
  * 
  */
-var save_mirror = function()
+var save_mirror = function(mirror_id, position_id, stock_id, location_id, deliverytime_id, price)
 {
     $.ajax ({
-        url: '/position/saveprice',
+        url: '/mirror/savemirror',
         data : {
-            position_id : id,
+            mirror_id : mirror_id,
+            position_id : position_id,
+            stock_id : stock_id,
+            location_id : location_id,
+            deliverytime_id : deliverytime_id,
             price: price
         },
         type: 'POST',               
