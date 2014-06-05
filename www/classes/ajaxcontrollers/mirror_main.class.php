@@ -108,11 +108,33 @@ class MainAjaxController extends ApplicationAjaxController
         ));  
     }
     
-    /*
-     * Для начала делаю для кнопки Save
+    /* Сохраняет строку в таблице mirrors
+     * 
+     * @param mirror_id
+     * @param position_id
+     * @param stock_id
+     * @param stockholder_id
+     * @param location_id
+     * @param deliverytime_id
+     * @param price
      */
-    function savemirrors()
+    function savemirror()
     {
+        //получаем данные
+        $mirror_id = Request::GetInteger('mirror_id', $_REQUEST);
+        $position_id = Request::GetInteger('position_id', $_REQUEST);
+        $stock_id = Request::GetInteger('stock_id', $_REQUEST);
+        $stockholder_id = Request::GetInteger('stockholder_id', $_REQUEST);
+        $location_id = Request::GetInteger('location_id', $_REQUEST);
+        $deliverytime_id = Request::GetInteger('deliverytime_id', $_REQUEST);
+        $price = Request::GetInteger('price', $_REQUEST);
         
+        $modelMirror = new Mirror();
+        $result = $modelMirror->Save($mirror_id, $position_id, $stockholder_id, $location_id, $deliverytime_id, $price);
+        //debug('1682', $result);
+        $this->_send_json(array(
+            'result'    => 'okay',
+            'content'   => $result
+        ));  
     }
 }
