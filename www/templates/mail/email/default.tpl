@@ -1,0 +1,1 @@
+{include file="templates/html/email/control_email_text.tpl" email=$mail}

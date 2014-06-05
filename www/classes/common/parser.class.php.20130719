@@ -1,0 +1,271 @@
+<?php
+class Parser
+{
+    /**
+     * Replace metatags with related content depending on modes specified:
+     * BIZxxxx.xx                                   -> <a href="/biz/{biz.id}/blog">{biz.doc_no}</a>
+     * <ref biz_id="{biz_id}">{text}</ref>          -> <a href="/biz/{biz.id}/blog">{biz.doc_no}</a>
+     * INPOxxxx                                     -> <a href="/order/{order.id}">INPO{order.id}</a>
+     * <ref message_id="{message_id}">{text}</ref>  -> <a href="javascript: void(0);" onclick="show_chat_message({message_id});">{text}</a>
+     * <ref email_id="{email_id}">{text}</ref>      -> <a href="javascript: void(0);" onclick="show_email_message({email_id});">{text}</a>
+     * <a ...>BIZxxxx.xx</a>                        -> leave as is
+     * 
+     * @param mixed $content
+     * @param mixed $bizmode:
+     * 1 - href="/biz/{biz.id}/blog", text={biz.doc_no}
+     * 2 - href="/biz/{biz.id}/blog", text={biz.doc_no_full}
+     * 3 - href="/biz/{biz.id}", text={biz.doc_no}
+     * 4 - href="/biz/{biz.id}", text={biz.doc_no_full}
+     * 5 - without <a>, text={biz.doc_no}
+     * 6 - without <a>, text={biz.doc_no_full}
+     * 
+     * @return string
+     */
+    static function Decode($content, $bizmode = 1)
+    {
+        $rowset = self::_parse($content);
+        
+        foreach ($rowset['replacements'] as $statement => $object)
+        {
+            
+        }
+        
+        return $content;
+    }
+    
+    /**
+     * Get objects specified in content
+     * 
+     * @param mixed $content
+     * 
+     * @return array
+     */
+    static function GetObjects($content)
+    {
+        $rowset     = self::_parse($content);
+        $objects    = array();
+        
+        $modelBiz   = new Biz();
+        foreach ($rowset['objects'] as $object)
+        {
+            $objects[$object['alias'] . '-' . $object['id']] = array(
+                'alias' => $object['alias'], 
+                'id'    => $object['id']
+            );
+            
+            if ($object['alias'] == 'biz')
+            {
+                // extended version $objects = self::_add_biz_objects($object['id'], $objects);
+                
+                $parent_id = $object['object']['parent_id'];
+                if ($parent_id > 0)
+                {
+                    $objects['biz-' . $parent_id] = array(
+                        'alias' => 'biz', 
+                        'id'    => $parent_id
+                    );                    
+                }
+            }
+            
+            if ($object['alias'] == 'order')            
+            {
+                // extended version $objects = self::_add_biz_objects($biz_id, $objects);
+                
+                $biz_id = $object['object']['biz_id'];                
+                if ($biz_id > 0)
+                {
+                    $objects['biz-' . $biz_id] = array(
+                        'alias' => 'biz', 
+                        'id'    => $biz_id
+                    );
+                    
+                    $biz = $modelBiz->GetById($biz_id);
+                    if (isset($biz))
+                    {
+                        $biz        = $biz['biz'];
+                        $parent_id  = $biz['parent_id'];
+                        
+                        if ($parent_id > 0)
+                        {
+                            $objects['biz-' . $parent_id] = array(
+                                'alias' => 'biz', 
+                                'id'    => $parent_id
+                            );                            
+                        }
+                    }
+                }    
+                
+                $company_id = $object['object']['company_id'];
+                if ($company_id > 0)
+                {
+                    $objects['company-' . $company_id] = array(
+                        'alias' => 'company', 
+                        'id'    => $company_id
+                    );
+                }                
+            }
+        }
+        
+        return $objects;
+    }
+    
+    /**
+     * Parse content 
+     * 
+     * @param mixed $content
+     * 
+     * @return array
+     */
+    private static function _parse($content)
+    {
+        $objects        = array();
+        $replacements   = array();
+        
+        // bizes
+        preg_match_all('#biz(\d{4}(\.\d{1,2})?)#i', $content, $matches);
+                
+        if (isset($matches) && isset($matches[0]))
+        {
+            $arr = array_unique($matches[0]);
+            $arr = array_values($arr);
+
+            usort($arr, function($a, $b){
+                return strlen($b) - strlen($a);
+            });
+            
+            $matches = array();
+            foreach ($arr as $value)
+            {
+                $matches[0][] = $value;
+                $matches[1][] = str_ireplace('biz', '', $value);
+            }
+        }
+        else
+        {
+            $matches = array();
+        }
+
+        if (!empty($matches))
+        {
+            $modelBiz = new Biz();            
+            foreach ($matches[1] as $key => $row)
+            {
+                $biz = explode('.', $row);
+                if (!empty($biz))
+                {
+                    $number = intval($biz[0]);
+                    $suffix = count($biz) > 1 ? intval($biz[1]) : 0;
+                    
+                    $biz = $modelBiz->GetByNumber($number, $suffix);
+                    if (isset($biz))
+                    {                        
+                        $biz_id = $biz['id'];
+                        $object = array(
+                            'alias'     => 'biz', 
+                            'id'        => $biz_id, 
+                            'object'    => $biz
+                        );
+                        
+                        $objects['biz' . $biz_id]           = $object;
+                        $replacements[$matches[0][$key]]    = $object;
+                    }                    
+                }
+            }
+        }
+        
+        // orders
+        $matches = array();
+        preg_match_all('#inpo(\d+)#i', $content, $matches);
+        
+        if (!empty($matches))
+        {
+            $modelOrder = new Order();            
+            foreach ($matches[1] as $key => $row)
+            {
+                $number = intval($row);
+                $order  = $modelOrder->GetByNumber($number);
+                
+                if (isset($order))
+                {
+                    $order_id   = $order['id'];
+                    $object     = array(
+                        'alias'     => 'order', 
+                        'id'        => $order_id, 
+                        'object'    => $order
+                    );
+                    
+                    $objects['order' . $order_id]       = $object;
+                    $replacements[$matches[0][$key]]    = $object;
+                }
+            }
+        }
+        
+        return array(
+            'objects'       => $objects,
+            'replacements'  => $replacements
+        );
+    }
+        
+    /**
+     * Add biz objects to objects array
+     * 
+     * @param mixed $biz_id
+     * @param mixed $objects
+     */
+    private static function deprecated_add_biz_objects($biz_id, $objects)
+    {        
+        $modelBiz   = new Biz();
+        $biz        = $modelBiz->GetById($biz_id);
+
+        if (isset($biz))
+        {
+            $biz        = $biz['biz'];
+            $product_id = $biz['product_id'];
+
+            if ($product_id > 0)
+            {
+                $objects['product-' . $product_id] = array(
+                    'alias' => 'product', 
+                    'id'    => $product_id
+                );
+            }
+
+            // link to each company in biz
+            $companies = $modelBiz->GetCompanies($biz['id']);
+            foreach ($companies as $company)
+            {
+                if (isset($company['company']) && $company['company']['id'] > 0)
+                {
+                    $company = $company['company'];
+
+                    $objects['company-' . $company['id']] = array(
+                        'alias' => 'company', 
+                        'id'    => $company['id']
+                    );
+                    
+                    // link to company country
+                    if ($company['country_id'] > 0)
+                    {
+                        $objects['country-' . $company['country_id']] = array(
+                            'alias' => 'country', 
+                            'id'    => $company['country_id']
+                        );                            
+                    }                    
+                }
+            }
+            
+            $parent_id = $biz['parent_id'];
+            if ($parent_id > 0)
+            {
+                $objects['biz-' . $parent_id] = array(
+                    'alias' => 'biz', 
+                    'id'    => $parent_id
+                );
+                
+                $objects = self::_add_biz_objects($parent_id, $objects);
+            }
+        }
+        
+        return $objects;
+    }    
+}

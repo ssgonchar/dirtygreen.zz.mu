@@ -1,0 +1,2177 @@
+ЕСЛИ БУДУТ ДОБАВЛЯТЬСЯ СТАТУСЫ АЙТЕМОВ ДОБАВЛЯТЬ ИХ В СКРИПТЫ ПО ИМПОРТУ
+
+ПРИ КОНВЕРТАЦИИ ОБНОВИТЬ ДЛЯ ПОЗИЦИЙ export_stock_id
+ПРИ КОНВЕРТАЦИИ ВЫПОЛНИТЬ ИНДЕКСАЦИЮ DELIVERYTIMES
+ПРИ КОНВЕРТАЦИИ ЗАПОЛНИТЬ АЛИАСЫ STEELGRADES
+
+При checkout обязательно делать indexer --rotate --all
+
+При изменении структуры таблицы items, positions не забыть поменять:
+- триггеры
+- хп по подготовке ревизий
+- move, twin, cut скрипты
+
+ПРИ КОНВЕРТАЦИИ ВОССТАНОВИТЬ ТЕКУЩИЕ location_id КОМПАНИЙ: 
+- select location_id, group_concat(id separator ',') from companies where location_id > 0 group by location_id order by location_id;
+
+20130901
+========
+- добавление заказов в списке компаний нужно сделать филлером
+- добавление заказов в списке бизнесов нужно сделать филлером
+
+20130830
+========
+- в позициях заказа показываются plate id для айтемов, которые is_deleted - не должны показываться
+- нельзя резать айтем, который в заказе
+- номальый лог сделать с информацией о порезках айтема, добавить флаг is_cutted, cut_from_id
+- при добавлении позиции в заказ добавился удаленный айтем!
+- историю позиции тоже нужно сделать детальнее
+- косяк с заказом: http://home.steelemotion.com/order/2037 показываются странные notes
+
+
+20130826
+========
++ в истории для листов на 20130101 хранится owner_id = 0, хотя сейчас owner_id уже задан. какой owner_id использовать?
+
+
+20130822
+========
+- отчет stock audit:
+	+ доблируются данные
+	- для айтемов есть статус "undefined" хотя реальный статус invoiced
+	- для айтемов в системе не добавляется outgoing ddt, хотя айтем есть в ra в котором эти данные внесены
+
+
+20130821
+========
++ ошибка при отправке писем, нужно искать в логе за 20 августа
+
+
+20130820
+========
+- фиксировать кто когда просмотрел документ
+- R & T - Responsibilities
+- в заказ добавить к позициям:
+	- UST
+	- UST Cost ($/ton)
+	- UST Comment
+	- Cutting Cost
+	- Cutting Comment
+	
+	- общий Cutting на заказ
+
+* при изменении веса в айтеме менять вес для айтема в RA, только если RA не RA_STATUS_CLOSED
+- добавить Weighed Weight в In DDT
+
+
+20130818
+========
++ удаление айтемов
++ проверка guid при порезке айтемов
++ /positions - в список steel grades попадают марки стали, которых нет в списке позиций
+
+
+20130814
+========
+- страница редактирования позиции из заказа, количество, вес и стоимость стоит 0, нужно вывести актуальное
+* move items: доделать постбэк, если не указал бизнес слетают все поля
+* move items: выпадающий список бизнесов со скролингом
+* в списке позиций показывали guid и для алиасов
+- platesahead: расставить разделители порядков в числовых данных
+
+
+20130810
+========
++ sp_steelitem_twin - заменить много подзапросов на один
+
+
+20130808
+========
++ перенос айтемов 
++ порезка
++ алиасы
++ резервирование
++ ws
++ заказ с ws
++ внутренний склад
++ редактирование айтемов
++ редактирование позиции
++ позиции в заказе
++ поискать weight_unit в хп, шаблонах и контроллерах, js
++ проверить добавление айтемов при редактировании позиции
++ stockoffers
++ пройтись по всем документам
++ отдельно проверить отчеты
+
+
+20130802
+========
++ CMR подпись под айтемами только для OSSILASER
++ DDT подпись под айтемами c in ddt только для OSSILASER
+- DDT подпись под айтемами для OSSILASER, должен быть предыдущий DDT (не тот, который сейчас задан в RA), если его нет IN DDT
+- при обновлении веса в листе, нужно обновлять в ra_items
+- из одного релиза нужно иметь возмоность делать несколько документов, релиз на 5 листов, один ддт = 3 листа, второй ддт = 2 листа
+* в заказе сортировка листов по марке стали (алиас), толщине, ширине, длине
+
+
+20130801
+========
++ письма из вебсток с заказами не фильтруются в еудоре
++ заменить отправку писем от robot@steelemotion.com на адрес покупателя, а если его нет на customer@steelemotion.com
+
+
+20130729
+========
+- Revision Bulletin
+
+
+20130728
+========
++ TL Search - Would it have been asking too much to have the initiative to allow for search also by 
+	-  >1 of these words in addition to the 
+	-  exact phrase 
+
++ CC and BCC do not work and emails from ROBOT  (robot ?   we are HumanTouch sales company, no robots here !) do not filter because they are contaminated, as per attached.   FIX IT.
+http://a.steelemotion.com/file/pfwc6lqnizvvtj2n79150/must_have_FILTERS_.png
+
++ So now we finally we have EXACT PHRASE for SEARCH in TL   ...but :
+	-  in the old system this was the DEFAULT and "any one word/symbol/digit" was at user's discretion ;  fix it !
+	-  the same functionaity is required in almost all searches, eg. company, BIZ, etc... ;  fix it !
+	
++ на странице редактирования компании элемент управления добавления в список непонятен, нужно сделать проще, последняя запись в списке не сохраняется, если не нажать плюс
++ добавление персоны со страницы редактирования компании
+
+
+20130726
+========
++ в supplier invoice в список айтемов нужно добавить колонку "Weight Invoiced to Us, Ton" в которую пользователь сам будет вносить данные, на основании их будет расчитываться сумма инвойса
++ консоль администратора - google apps - настройка gmail - расширенные настройки (ip сервера в белый список)
++ на странице резервации при однотипных типах даных выводить их в хедер таблицы
+- удаление компаний, людей, проверить перед удалением чтобы нигде не использовались
+	- система пермишенов
+	- Recycle Bin для удаленных: object_alias, object_id, deleted_at, deleted_by, expire_at
+
+
+20130721
+========
+- для чата нужно сделать форматирование как в письмах в tinymce
+
+
+20130719
+========
++ конвертация старых сообщений:
+	- получение текста из старых блогов
+	- замена метатегов
+	- перепривязка атачментов
+
++ конвертация старых атачментов
+
++ парсер текстов
+	- biz
+	- emails
+	- message
+
+- добавить ID (именно большими буквами) ко всем объектам системы
+- переработать ProductRegister
++ favourite biz нужно иметь возможность добавлять не только для навигатора и драйвера
++ при редактировании бизнеса убрать из полей |escape:'html'
++ в регионах United Kingdom два региона Derbyshire
++ при редактировании компании в activity две "&" для "Steelmaking Equipment & Instruments Distribution &"
++ добавление контактов в компании сделать проще и понятнее, не понимают что нужно нажимать плюсик, сделать ссылку "add more contacts" добавлять сразу три
+
++  Undefined input windows for T, W, L & Weight are stupid.    Provide for MIN and MAX in inches and lbs.
++  Notes, Revision Date and Time are stupid parameters.  Just WHO requested/specified them ?
++  Allow for ALL selection on Location & Delivery Time (not "times")
++  Allow for Steel Grade selection  ( When the product of what I am told are many hours of you & AA working on the system, omits the steel grade in search criteria, all I can say is you very much wasted your time and my money ! )
+-  Change Id to ID  ;  in to In
++  Change prices to $ / cwt  so  $ 0.44/lb becomes $ 44/cwt   ( cwt = 100 lbs  ;  change accordingly elsewhere in the system )
+
+
+20130717
+========
+- EmailManager:
+	+ bcc и другие проблемы
+	* Yesterday, I sent OUT "jm0036" from our system.   It is in the system but in the IN box - very stupid for an email gone OUT.
+	* It is extremely dangerous EVERY DAY you continue to ignore the fact that SENT emails are NOT in the BIZblogs.
+	+ Sent emails have the SEND AGAIN function but missing is the EDIT function before sending again.  Fix it.
+	* Attached shows the same email after my SAVE (in stupid absence of SEND) in the stupid INBOX and in the DFAs as a stupid subsection of the INBOX.   Zharkov, really ?
+	* (?) The DFA must remain in the system in its original ;   the EDIT & SEND must be a separate record.
+	- (? нужно перенести в редактор) We MUST have the ability to copy the RECEIVED message we are responding to, below the text of the email we are writing, as per our 20-years standard practice ! I have written this in the past, to no avail - not a word of response from you.  I know of no other service provider who treats the contractor as awfully as you do.
+	+ Edit Email:
+		+ Writing emails is a pain with inability to get what you see on the page, especially ALIGNMENT.   It changes after SAVING.
+		+ Colour disappear regularly while writing.
+		+ On SAVE, one is taken back to the BIZblog and must navigate back into the email to continue editing or to send.		
+	- Omission of outgoing emails from BIZblogs is in breach of my specification, illogical and dangerous.
+	- (?) I'm using the system MAIL MODULE and compose e-mail from the BIZs blog. DJ : After approval in msgs disappear the Co name. Please explain that I'm doing incorrect !
+	- (?!) DJ, this email  is missing the SC that was attached in it by the sender - our customer.
+	- (?) http://a.steelemotion.com/file/bnioeawmp2m5ef8k75518/MISSING_EMAILS.png
+	- (?) CHOOSE BIZref has DDown menus with >20 records.   Delete it as DDown menus with >20 records are useless.  Those such as STEEL with >1000 records are impossible to use.
+	+ I changed SC , ie removed old one and attached my version. But system did not let me delete ATT added by JM, I deleted it, but after clicking "save" it appeared again.
+
+	*  I must go in the IN BOX to check what are OUT-going DFAs.   Just that is enough to make you wonder on the sanity of the programmer.   Not fixing this problem many months ago, when I raised it, is arrogant and counterproductive.
+	*  Upon editing a DFA, when I SAVE, I am taken to the BIZblog from where I must navigate with a dozen clicks back to the IN box, back to the DFA, before I can SEND it.    You see Zharkov, when faced with such a product, the only thing the customer can do is flush it down the toilet, together with the hands which made it.	
+	
+	+ http://a.steelemotion.com/file/mbgl81lyx7o7kwuu74344/DUALITY.png
+	* http://a.steelemotion.com/file/1j1oixtc5knfz5sk74345/OUT_is_not_IN.png
+	
+	- We must have the ability to PASTE texts to which we are replying, when writing emails.
+	
+- BizBlogs:
+	- MustDOs must be selected within a BIZblog, ie. a selection only of messages which have a still valid (not clicked away) MustDO ;
+	- MustDOs must be deleted as a MustDO only from the BIZblog wtihin which it clicked as "DONE" but not from other BIZblogs in which the same message may have been posted, unless a DeleteFromAllBIZblogs button is clicked.
+	+ Incoming LHS email is not filtered to the BIZblog.
+	- http://a.steelemotion.com/file/qwabescpga6of0f576419/arrrgh_what_a_mess.png	
+	- Why these messages are not displayed in their BIZblogs :
+		- Ref. your 24/06/2013 04:17:46 : 
+		- Ref. your 23/06/2013 14:56:02 : 
+		- Ref. your 23/06/2013 07:28:29 : 
+		- Ref. your 23/06/2013 07:18:44 :  ???	
+	
+- BizReg:
+	* When the search function has no result to give, it just gives no answer - no result - no alert - just nothing.
+	* The BIZ search page is 95 % empty and yet you HIDE by default key search criteria.  This is awful page design, not a bug which can only be discovered by the user.  Fix it !
+	* I wrote a long time ago my criticism of the BIZblog page and you ignored me.    Try the attached.   Maybe you will correct the mistakes now ?
+		http://a.steelemotion.com/file/debhiaui4vlc7s2f74420/BIZblog_layout.png
+
+- Stock:
+	- In the EDIT mode, one cannot see LOCATION of stock plates.   This is dangerous and makes EDIT impossible to use
+	- WE HAVE COMPLAINED SEVERAL TIMES BUT THE PLATE WEIGHTS REMAIN VERY WORNG IN THIS VERY BROKEN SYSTEM.
+
+	A few days ago I cleaned up the steel grades register chaos.   Now, I see (attached) it is still here.  WHY SO ?
+	We also must have the ability to enter more than one steel grade per search.    Such functionality must be standard on all DDMenus throughout the system.
+	Input fields for dimensions must be clear on MIN-MAX-EXACT dimensions, throughout the system.
+
+	- STILL, despite all my protests, we cannot do even the most basic searches, eg. by STEEL GRADE in http://home.steelemotion.com/positions  -  functionality which was in the old system and dropped from the new without any purpose, logic or consultation.
+	
+- TL:
+	- http://a.steelemotion.com/file/hqnk3vsvtuhv4ovh76425/inactive_POST.png
+	- http://a.steelemotion.com/file/uvxx62m4mn1vh00276423/dead_end.png
+	- when selecting BIZ, the TEAM is secondary - must come below the search, for reasons I have written many times and you ignored ;
+	- after selecting a BIZ, the "select biz" is nonsense ;  just a return should suffice to post the ref (selection having already done)
+	- WRITE MESSAGE is redundant if you make the more intuitive selection by clicking on the receiver icons.
+	
+	Ref. your 30/05/2013 12:05:01 : where there was no need / instruction to cannibalize features of the old system, it was harmful and criminal of you to do so.
+	Yes, we needed and need to differentiate between the MAIN RECIPIENT  and  MAIN & CC RECIPIENT.
+	The problem of old system destruction is a serious one and must be fixed as part of your past work, not any new work to be invoiced.
+	I was perfectly clear in Ref. 02/05/2013 22:55:34 to which you had no objections.	
+
+- Интерфейс
+
+- Сервер для бэкапов
+
+- http://a.steelemotion.com/file/o1ltc3lr6bku7hc575756/Morocco.png
+
+- DJ : As you have "incl. subBIZ" option on the main BIZblog, it is only logical to have in subBIZblogs the options to 
+	- include mainBIZ
+	- include other subBIZs .
+	+ The current route from a subBIZ to mainBIZ is a tortuous route via a new search.  Awful design !
+	And when you finally get there, selecting BIZ2650 only, gives you also messages for subBIZ 2650.06.  Awful code !
+	See attached.
+
+	+ WHY did all the old DFAs in the email "inbox" disappear ?
+	+ WHY did the vital UNIQUE ID numbers for TL messages disappear ?   
+	WHY cannibalize a customer's existing system ?
+	HOW do I find my message #1625 in BIZ2385 ?    BRING BACK THE IDs !
+	
+- DJ: Is it possible to do in "Create order" menu the choice - Order at €/ton or €/piece, and consequently when create SC?
+
+- http://home.steelemotion.com/person/11680  colour selection must be a DDmenu rather than free text with no user understanding what the options are.
+
+- We need and must have all of http://mamtrix.steelemotion.com/Map/map.aspx in the new system.
+
+
+- COUNTRIES REGISTER:
+	In http://home.steelemotion.com/companies I could not find Morocco until I had to guess just how YOU would spell it and found Marocco.   
+	You see Zharkov, this is not an issue for your customer to debug.   This is utter incompetence and shoddy Kvadrosoft workmanship on even the most basic of issues such as the countries register.
+	To make it worse, you blocked access to the old system - http://mamvillage.steelemotion.com/CompanyRegister/ .   WHY SO ?
+	Your KVADRO logo in the URL field on what is supposed to be a STEELemotion system is a symbolic insult to the injury you are causing every day.  You killed our productivity !
+	I curse you and AA+JK who believed in you and accepted the mve to the new system !  YOU ARE A CROOK !
+
+
+20130712
+========
++ номера транспортных документов
++ проблемы с заказами
+- добавить фильтрацию при просмотре списка cmr / ddt как на инвойсах, при этом если выбрано all, то сортировка по дате, если owner, то по номеру
++ поменять подпись у purchase price вес
+
+
+20130618
+========
++ не парсятся тайтлы некоторые "Азот для клеймителя RH-20/4/F"
++ не отсылается bcc на @steelemotion.com
+
+- доделать декодер парсера
+- исправить service_main.class.php::updatemessages чтобы не было ссылок на бизнесы и ссылки на открытие сообщений, все это будет делать декодер парсера
+
+
+20130531
+========
+MORE PARAMS is simply stupid on a very empty page - http://home.steelemotion.com/positions .
+
+Make choices visible and logical.
+
+1.-  Undefined input windows for T, W, L & Weight are stupid.    Provide for MIN and MAX in inches and lbs.
+
+2.-  Notes, Revision Date and Time are stupid parameters.  Just WHO requested/specified them ?
+
+3.-  Allow for ALL selection on Location & Delivery Time (not "times")
+
+4.-  Allow for Steel Grade selection  ( When the product of what I am told are many hours of you & AA working on the system, omits the steel grade in search criteria, all I can say is you very much wasted your time and my money ! )
+
+5.-  Change Id to ID  ;  in to In
+
+6.-  Change prices to $ / cwt  so  $ 0.44/lb becomes $ 44/cwt   ( cwt = 100 lbs  ;  change accordingly elsewhere in the system )
+
+
+20130530
+========
+- изменить сообщения Item History
+
+
+20130529
+========
+- не ищется точное совпадение по весу на WS
+- lbs заменить на lb везде в системе!
+
+
+20130528
+========
+- при изменении состава компаний бизнеса, нужно перелинковать сообщения, письма и все остальное что связано через бизнесы
+- при изменении страны у компании нужно у связанных объектов изменить связь со старой страны на новую
+- отвязка объекта от тегов и привязка новых
+- привязывать сообщение к person через user "от" и "к"
+
+
+20130527
+========
+- /chat/search не парсятся <ref message_id=537847>Ref. your 20/05/2013 04:59:02</ref>
++ протестировать бицреф с внешних сайтов
+- написать план на июнь
+- ответить на вопросы мики
+- написать задание по поводу парсинга сообщений <biz id=2766>, не забыть внешние сайты
+- не приходят письма
+- не парсятся тайтлы у писем
+- проверить bcc
+- slowlog!
+- pending заменить на mustdo
+
+
+20130524
+========
+- при созранении qc и переходе на страницу просмотра увеличивается количество приаттаченных файлов, должен быть всего 1
+- импорт курсов валют с блюмберга
+- item history подтянуть, выдает ошибки
+- некоторые сообщения были только в bizblog и не попали в tl их тоже надо подтянуть
+- QC edit : нужно убрать запрос подтверждения после нажатия крестик
+- Дим, сделайте плиз ячейку heat/lot шире, так как сейчас неудобно не видно полный номер, в то время как другие ячейки с кучей пустого места
+
+
+20130523
+========
+- ответ на сообщение:
+	- (arrow-curve-180-left.png) reply (пунктиром) перед пендингом
+	- открывает окно подготовки сообщения
+	- должны быть заполнены:
+		TO - отправитель исходного сообщения,
+		СС - СС исходного сообщения
+		Title - Title исходного сообщения
+		Description - <ref message_id=538183>Ref. your 23/05/2013 08:40:39</ref> : 
+			538183 - id исходного, 23/05/2013 08:40:39 - дата время исходного
+
+- Cдлать переключатель "я онлайн", "меня нет на месте"
+- При парсенге писем пропадает title "(квадрософт) счета за январь - март 2013"
+- Перевести cбор почты на сервр google
+- При переключении статуса пользователя не прячутся мэйлбоксы 
+- Нот спам долго работает!
+- на страницу item/details добавить кнопку удалить
+- на странице создания письма автозаполнение нужно как у бизнеса со скроллером
+- из сообщений удалять повторяющиеся <br> больше 2х оставлять 2
+			
+
+20130521
+========
+- при формировании письма о заказе нужно указывать бизнес покупателя - тот бизнес в котором покупатель указан как buyer.
+I have complained in the past that these email confirmations
+           a)  must contain BIZref, ie. BIZ3675 for STC orders
+           b)  must be filtered properly on receipt.
+- на страницу редактирования айтема добавить ссылку на страницу редактирования позиции, после System Id
+
+
+20130520
+========
++ при смене роли пользователя с MaM Staff он должен пропасть из списка /persons/staff
+- TL used to and must run on GMT - I should not be able to enter the 14th as the deadline on this message when for you it is already the 15th. 
+
+- When I select my PENDINGS, I have nothing after May 9th. When I go to ARCHIVE, I have plenty of PENDINGS after that date.
+Such omissions are a huge step backwards compared to what we had and an extremely dangerous unreliability of the system. 
+Is there anyone else who agrees with me KVADROSOFT is a fleecing gang, not a professional team ?
+Is there anyone who, like me, wants to go back to the old system ?
+ps.   In "STEELemotion Village rev8.docx", the "PENDING" term was changed to  MustDO but KVADROSOFT cares nt to read the contractor's specification.
+
+- The CHOOSE BIZref changed name but not the NATURE - the illogical sequence !   Do you ever READ what I write ???
+
+- галочку для отправки подтверждения о прочтении
+
+- DJ :  message LINKS do not work ;  the text input window needs resizing (opens too small) ; ... dozens of other problems I worte, incl. buttons standard appearance and location, remain not fixed, week after week after week.
+
+- There is a new message in TouchLine, not "chat" !    Our trade name is STEELemotion.  How many times must I repeat for you to listen and correct mistakes which should not have been made to begin with ?
+
+- We must distinguish INTERNAL LOCATION (eg. Massanzago, OTS, EPeB, OSSI, Midolini) from the EXTERNAL LOCATION (Vicenza, Udine).
+This is an old requirement.  WHEN will it be implemented ? WHY is there not a single banner loaded ?
+
+
+20130519
+========
++ ссылка на список бизнесов со страницы просмотра компании (/company/13297) "List of all 165 bizes"
+
+
+20130518
+========
+- Проверить чтобы все стилайтемы имели запись в steelitem_timeline
+
+
+20130517
+========
++ при редактировании позиции запретить переопределять значения у айтемов значениями позиции (1h.)
+
+
+20130516
+========
+- При парсинге татйтла сообщения чата если первым идет бизнес, добавлять Team перед ним
++ Для толщины болжен быть формат x.xx
+- Добавить bcc
++ (? what company) When searching by specific company it gives a list of ALL orders. (1h.)
++ Trade->Stock Orders Search by thickness 4 in PA orders (1h.)
++ Stock IN/OUT report (please change the name to this one)
++ BIZ search : we need search by multiple paraments.
++ TL : I cannot search messages sent by J, the system does not give me a list of users to select myself and gives all possible results.
+- (?) When TL search is done it is currently impossible to make a new search by changing parameters and pressing search button. Please correct.
++ When in BIZ Blog top left corner shows BIZ number. Must be BIZ Number and Name to know where you are.
+
+
+20130515
+========
+- сообщения для TG только от нее и для нее
++ выводить ссылку на in_ddt только если компания совпадает с stockholder_id (1h.)
+- на странице переноса айтемов при выборе чекбоксов изменять количество в позиции
+
+
+20130514
+========
++ не сохраняет qc из заказа, перененосит guid на другую строку (2h.)
+- перемещение айтемов (7h.):
+	- разрешить переносить любые айтемы
+	- сделать выбор склада + позиции, отдельно поменять location
+	- записывать манипуляции в sp_steelitem_timeline_save
+	- проверки в хп для твин - чтобы был parent_id = 0 для move чтобы не был released
+
+
+20130513
+========
+- вынести изображения печатей и подписей за пределы проекта
++ при обновлении соообщений в ленте слетает тултип
++ удаление айтемов при создании QC
++ изменения в QC (3h.)
+
+
+20130511
+========
++ удаление QC (1h.)
+- TL: ищу по "H2-01525" ничего не находит? если уберу "H2-" находит
+
+
+20130507
+========
++ проверить newmessage.js::_modal_message_add_to_list
+- проверить есть ли в базе айтемы с пустыми dimension_unit, weight_unit, currency
++ добавить steelitems.is_mec_prop_not_required, steelitems.is_ce_mark (2h.)
++ парсинг сообщений чата (10h.)
+- в блоге убрать escape:'html'
+- в блоге не показывается тултип бизнесов
+- парсинг атачментов
+
+
+20130506
+========
++ не забыть обновить контролы добавления айтемов к позиции (2h.)
+
+
+20130504
+========
++ !!! КОСЯК С СООБЩЕНИЕМ 529795 неправиьно заменилось!!!!
++ при просмотре сообщения выводить новый пендинг
+
+
+20130503
+========
++ дать возможность редактировать номинаольные размеры в mm на странице редактирования айтема и позиции	(8h.)
++ в qc дать выбор в каких единицах показывать не только для qc из заказа (4h.)
+- (?) архив в тл http://home.steelemotion.com/chat/archive/2013-04-02 не сохраняет дату
+
+
+20130502
+========
++ "Create QC" со страницы склада (1h.)
+
+
+20130430
+========
+- при нажатии share на форме загрузки файлов дисейблить кнопку и писать на ней loading...
+- "Missing QC Data" - список айтемов у которых заполнен guid, но не заполнены tensile и не установлен флаг is_mec_prop_nrequired
+- добавить permission когда можно редактировать айтемы из закрытых заказов
+- нужно сделать гибридное окно поиска бизнеса при подготовке сообщения
+- сделать расширенную форму поиска бизнеса
+- перенос айтемов:
+	- на ws показывать только позиции из привязанных к складу стокхолдеров
+	- на форме переноса выбирать склад - стилгрэйд - деливеритайм
+
+
+20130429
+========
+- in each BIZ there must be a mustDOs list for that BIZ, covering all tasks not yet done, by any/all members.
+- если сообщение длинное, показать часть и ссылку "показать все"
+- бывает так, что нужно выпусть RA на металл, который еще не имеет owner_id. нужно проверить возможность выпуска ddt/cmr под одним owner_id с последующим изменением owner_id в in ddt/supplier invoice на другой
++ ra pdf: ddt nr & date колонку убрать для PlatesAhead
+- ra pdf: kloeckner (primay sfs) po box залезло под факс сплошным текстом
+- переделать поиск по бизнесам, добавить more params - все параметры бизнеса + несколько связей company+relation
++ окно сообщения не устраивает, нужно сделать в отдельном окне (как в гугле)
+- при подготовке сообщения нужно сделать гибрид, чтобы при выборе team заполнялись бизнесы, но можно было сделать поиск и найти подходящий
+
+
+20130426
+========
+- печать и ce-mark на сертификате качества в привью появляются артефакты, попробовать уменьшить размер
+- http://home.steelemotion.com/order/1945/position/edit/8179 количество "0"
++ на страницах редактирования айтемов добавить значения по-умолчанию Tensile Sample Direction "T", Impact Sample Direction "L"
++ добавить иконки для ссылок в результатах поиска бизнеса
+- при добавлении фоток к айтемам не сбрасывается ключ кэша для позиции и айтема
+- DJ : When going to POST MESSAGE from a DFA, the BIZ must be the BIZ of the DFA by default, not user's time-drain search & click !
+- tg пропадает из айконпарка когда выходит
++ на странице списка позиций добавить кнопку "Create QC"
+
+
+20130419
+========
+- сделать автоматическую отмену резервации по крону
+- при принятии или отмене заказа удалять позиции из резерва
+- (!) сконвертировать сообщения из блога и заменить ссылки в чате на правильные
++ (!) создание SubBIZ
+
+
+20130418
+========
++ в регистре городов заменить Title на City Name, то же самое с Regions
++ не удаляется позиция при порезке листов
+- drug-drop в сообщении
++ при входе нового человека слетают выбранные получатели, думаю проблема пропадет, когда сделаем единое окно нового сообщения
+- CHAT search gives many more messages than BIZ BLOG ! Please check what the problem is.
+- clicking on an old message takes us to the old system to write a new message.  Are you incapable of integrating old BIZblogs in the new system ?
+- Seeing in which part of the system and monitoring their clicks would be WOW!.
+- Удалить одного из Mr. Qinghua Meng
+- (?) удаление позиции из заказа если нет айтемов	// НУЖНО ИЗУЧИТЬ СИТУАЦИЮ НА ПРИМЕРЕ
++ (!) проверить почему долго грузятся компании в автозаполнении "Val" (cmr/edit)
+
+
+20130417
+========
+- шрифт в блоке атачментов в сообщении сделать line-height: 14-16 px
+- (!) SubBIZ
+
+
+20130416
+========
+- при алерте о DFA не парсится сообщение и не заменяются ссылки бизнесами
+- при добавлении айтемов в инвойс сразу менять статус на инвойсд, добавлять в таймлайн и закрывать заказ
+- pa, se: отменять заказы пока не ip
+- нужно обсудить движение металла от МаМ к PlatesAhead и продажи
+	- проблемы с переназначением статусов айтемов
+	- как перенести айтем из MaM в PlatesAhead
+	- как продать айтем в PlatesAhead, который находится на складе в европе
+
+
+20130415
+========
++ page name сначала суть потом M-a-M
++ (!) переделать на webstock чтобы айтемы получались не в цикле для списка позиций а одним запросом
+
+
+20130413
+========
++ когда не выбрана роль и статус пользователя, нужно убирать из TL Icon Park
++ ссылки на сообщения и письма в блоге
++ формат даты на platesahead
++ expeting the customer to write the date is so outdated I cannot believe you did not insert the calendar option as in other parts of the system.   Such inconsistency testifies to the careless rushed half-ass approach to the product.
++ again endless scroll  without a fixed header frame for which I asked repeatedly.
++ surely where we have only one position, the default quantity must be "1", with just one click in the box ;  where we have >1 item, there must be a popup menu of number of items to select.
+
+
+20130412
+========
++ сообщения со звуком прихоят всем, а должны только получателям
++ при загрузке атачментов в сообщение блога добавляется object_alias = 'blog-newmessage', его нужно заменять на нормальный 'message' или 'blog-message'
+- при просмотре письма список атачментов выглядят не так как в блоге или чате
++ urbanzaze logged OUT MaM Village
++ (!) перенос айтемов между позициями
++ письмо уходит не туда куда надо при отмене заказа: "US Stock : Order No 1967 was cancelled" пришло мне // ЭТО КОПИЯ ПРИШЛА
+- "went to cancel on the website & realized that I couldn't"
+- нужно рассмотреть вариант раздельного хранения записей в ActiveUsers для каждого домена (home, se, pa)
++ в чате подписыать не staff по имени и фамилии в отправителях-получателях
+
+
+20130409
+========
+- добавить задачу в крон: раз в день /email/delete/spam/a23ef5kf9
++ атачменты картинки в сообщении или письме должны отображаться в лайтруме сразу
++ (!) запоминать фильтры выбираемые клиентами на складе
++ (!) сконвертировать сообщения из блога и заменить ссылки в чате на правильные
+
+
+20130407
+========
+- изменения чата:
+	+ при просмотре сообщения ref. your... окно селать шире, в сообщение вставить блок с прокруткой
+	+ сконвертировать please "see my comment # 33" с аттачментами
+	+ на странице просмотра архива не работает функциональность по снятию пендинга
+	- со страницы пользователя написать ему сообщение даже если он в офлайне
+	- отправить уведомление о новых сообщениях на почту
+	
+- внешние сайты:
+	+ сделать нормальное окно с прокруткой листов на складе
+	- регистрация
+	- напомнить пароль
+	
++ инвойс:
+	+ проверить функциональность
+	+ закрывать инвойсы
+	+ переводить заказы в завершенные
+	
+- план разработки:
+	- In/Out orders
+	- Фиксировать изменения цен на Load / Holding для компаний
+	- Service Order
+	- PL листа
+	- PL
+
+- изменение owner с mam на platesahead при заказе?	
+
+
+20130405
+========
+- co reg: на просмотре не показывается регион
+- co reg: убрать escape:html с регионов
++ в архиве не показываются сообщения "ref" и не убираются deadline
+- move items постбэк не работает
+
+20130404
+========
++ сбрасывать кэш при редактировании склада
++ сбрасывать кэш при редактировании локейшенов
+- запретить удаление локейшенов в которых есть айтемы
+- при выходе с сайта писать в чат что вышел с сайта
+
+20130404
+========
+- In Out Report
+	- название In / Out Report
+	- выбор по оунеру MaM, MaM IT, MaM UK, PlatesAhead до Stockholder
+	- stockholder заполняется по owner
+	- не показываются все позиции, не может быть за всю историю 2000 тон: http://home.steelemotion.com/report/stockinout/data/type:2;stockholder:16449;
+	- Report Types: Stock In, Stock Out, Sold From Stock. In-Out должны учитывать перемещения металла со склада на склад
+	- в тотал добавить Avarage Price, Total Value	
+	- http://home.steelemotion.com/report/stockinout/data/type:2;stockholder:12712;
+		- вес в заголовке lb, а показывается MT
+		- Stock Price в заголовке $ / lb
+		- тотал должен быть в lb + тотал в mt
+		- 4.5000 нужно убрать незначимые нули
+
+
+20130403
+========
++ перестроить ссылки в TL "please see my comment..." на новый лад
+- добавить companies.name_for_stock_location будет показываться на складе
+- при редактировании location проверять изменился ли заголовок и только для изменивщихся производить действия, не сбрасывает кэш
+- удалять loactions для которых есть steelitems нельзя
++ autocomplete с скролбаром
+- Report In Out
++ разные списки для клиентов и мамовцев в чате, для клиентов писать из какой компании
++ сообщения в чате "пришел" - "ушел" как предложил мики, придумать как сообщить об автологине
+- сообщение о приходе клиента со звуком
+
+
+20130402
+========
++ в чат попадают сообшения с sender_id = 0, чего быть не должно!
++ ссылка на сообщение вставляется с неправильным форматом даты
+
+
+20130401
+========
++ для сайтов сделать limited user
++ в меню для limited user прятать ссылки
+- сделать страницу с permission denied
++ сделать /token/{guid}/{login} и спрятать его от поисковиков
+- нужно информировать о том что клиенты зашли на сайт, звук
+
+- изменить роли в контроллерах
+- изменить редирект с логина
+- изменить методы модели _fill_entity_array_info, _get_entities_array_by_ids
+- в навигации убрать доступ с пунктов меню
+
+- не загружаются картинки к айтемам и потом не показываются в home и внешних сайтах
+- сделать по-проще редактор в чате для внешних сайтов
+- размер шрифта в редакторе увеличить
+- убрать ссылку на /myroom из левой колонки на platesahead
+
+
+list v butt pokazivaetsja v spiske filter for udine:
+http://home.steelemotion.com/position/7446/edit
+- выбираются айтемы, которые находятся в заказе, а не должны, должны только is_available = 1
+
+ordered, should be on stcok:
+[16:04:36] (M-a-M) AA: http://home.steelemotion.com/position/8068/edit
+
+should be on stock:
+[16:06:01] (M-a-M) AA: http://home.steelemotion.com/position/8111/edit
+[16:07:40] (M-a-M) AA: http://home.steelemotion.com/position/8109/edit
+
+must be closed сделали все документы, а заказ не закрылся:
+[16:43:00] (M-a-M) AA: http://home.steelemotion.com/order/1933
+
+old order must be closed:
+[16:43:16] (M-a-M) AA: http://home.steelemotion.com/order/1555
+
+
+
+
+20130331
+========
+- фиксировать изменения цен компании
+- сделать steelitem_log
+- Steelitem View
+	+ Related Documents, 
+	- TimeLine, 
+	- P/L, 
+	- Log
+- нужно сделать отдельный лог для фиксации кто и когда добавлял айтемы в заказ и инвойс
+
+
+20130329
+========
++ нужно вернуть саббизнесы
+- таймлайн айтема
++ у RA много атачментов, которых быть не должно 
+- при нот спам, нужно запоминать не адрес, а домен
+- при нот спам, не перекручиваются индексы и письмо не ищется в системе
+
+
+20130327
+========
+- не фильтруются в еудоре письма, отправленные из системы
+
+20130324
+========
+- таймлайн айтема
+- не приходят письма начиная с 15.03.2013 на gang@steelemotion.com
+
+20130322
+========
++ Сообщение в чат
++ Страницу просмотра айтема
++ Для дельт блога сделать интервал полминуты
++ Не удаляются InDDT закрытые, а открыть не получается
+
+
+20130320
+========
++ добавил кнопочку, которая убирает форматирование
+
+
+20130319
+========
++ в списке позиций заказа не показывается Location, хотя в айтемах заказа он установлен http://home.steelemotion.com/order/1941
+
+
+20130318
+========
++ в tiny mce добавить кнопку для сброса форматирования и убрать ненужные кнопки в редакторе писем
+- нет письма в gang@steelemotion.com
+
+
+20130317
+========
++ при создании письма из документа, после сохранения или отправки перекидывать в блог документа
+- у RA много атачментов, которых быть не должно 
+
+
+20130315
+========
++ после поиска айтема по plate id без указания склада его не возможно добавить в документ пока не будет выбран склад
+- не пересчитывается balance to deliver в заказе при изменении статуса айтема на delivered
++ In DDT ссылкой и объединить колонки http://mam/ra/4
++ при удалении айтема из RA у него не сбрасывается статус
++ сделать возможность создания RA со страницы /items
+
+
+20130314
+========
++ Please change date format to March 14th '13 for the e-mail we are sending from buy@platesahead.com address.
++ There is need to control the font. Please add if possible. Here is example of recent e-mail : http://home.steelemotion.com/email/138383~tid8333f18bba2a2afffef2ab8829ff2366 
+
+
+20130312
+========
+- при нот спам, нужно запоминать не адрес, а домен
+- при нот спам, не перекручиваются индексы и письмо не ищется в системе
++ нужно вернуть саббизнесы
++ для автозаполнения нужно сделать блок с прокруткой и выводить туда все саббизнесы
++ создала заказ для PlatesAhead, создала в нем позиции, не считается вес. сохранила заказ, добавила еще одну позицию, вес посчитался
+
+
+20130311
+========
++ изменить функциональность писем, подпись человека
+	+ редактирование
+	+ просмотр
+	+ отправка	
++ в загрузчике файлов блок для отображения картинок с полосой прокрутки при отсутствии файлов
+	- нужно сделать див на всю высоту с вертикальной прокруткой
++ в профиле сделать поле для ввода текущего значения количества отправленных писем
++ сделать страницу просмотра stock offer
+- написать план на март
+- подготовить счет за январь-февраль
+- добавление тегов - окно для поиска сделать на стандартном модальном окне
+
+
+20130310
+========
++ проверить все PDF-версии документов на правильность отрисовки таблиц
+
+
+20130304
+========
+- переделать TL Alert при загрузке файлов
+
+
+20130303
+========
+- select location_id, group_concat(id separator ',') from companies where location_id > 0 group by location_id order by location_id;
+
+
+20130228
+========
+- Service Order
+	- айтемы из документа + докинуть со склада
+	- структура:
+		- title
+		- description
+		- service provider
+		- amount
+		- amount type {per ton, total}
+		- currency
+		- weight_type
+- (?) нужно где-то фиксировать сколько металл пролежал на каждом складе
+
+
+20130227
+========
++ для айтемов у которых нет supplier invoice или in ddt можно менять location при редактировании айтемов
+	+ убрать Id из каждой строки, заменить на Plate Id, добавить System Id
+	+ для виртуальных позиций в Plate Id вывести ссылку
+	
++ изменить порядок полей при выборе айтемов в заказе, причесать табличку
++ письма не отправляются на bestpack возвращаются назад
+
++ дедлайн в сообщении чата дату в англ. формат
+
++ редактирование позиции:
+	+ id убрать
+	+ plate id в каждую строку
+	+ delete item прятать если нет удаляемых, при добавлении нового айтема показать, при удалении новго прятать, если нет
+	+ в химии заполнить 0.000 если пусто
+	+ purchase price в строке редактировани тоже сделать undef если пустое
+
++ создание алиасов:
+	+ в списке позиций выбрана позиция (2 шт.) и один ее айтем (1 щт.) на странице алиасов призодит 2 айтема, а должен быть 1
+	+ find suitable positions
+	+ комментарий к auto assign: - Avtosearch of appropriate positions or creation of new ones
+	+ перед табличкой айтемов сделать комментарий: Please change specification according to your needs (how you want alias(es) to be created)
+
++ при изменении /directories/steel grade сбрасывать ключи списка позиций, чтобы отсортировались в соответствии
+
++ в чате не ищется бизнес
+
+
+20130226
+========
+- сделать 15 строк при добавлении позиций на склад
++ (!) локейшены исключить из обновлений
+- после поиска айтема по plate id без указания склада его не возможно добавить в документ пока не будет выбран склад
++ для айтемов у которых нет supplier invoice или in ddt можно менять location
+- при поиске айтема по plate id учитывать склад если задан
++ ajaxcontrollers/attachment_main.class.php::getmodalbox убрать проверки документов
++ (!) запретить удаление айтемов со страницы списка позиций и со страницы редактирования позиций если это реальный айтем с plateid, supplier invoice, in ddt
+- прятать контекст позиции на странице позиции если кликается в какое-нибудь место страницы
++ "Create Alias" в списке позиций Alias с маленькой
++ "Alias of : " убрать ":"
++ "Alias of" перенести в Plate Id
++ с ячейки где есть ссылки убрать контекст айтема
++ Item/edit/18323 - In DDT Company отображается "E"
++ прислать настройки steelemotion
+
+
+20130224
+========
++ Emotion.BIZ3262.NewSystem.Status: Please advise what is the status of the new system - key features we agreed were necessary to move.
+- при клике на ссылку бизнеса в письме нужно переходить на блог, на #email-{id}
+- для всех страниц со списком устанавливать $filter = true при задании фильтра
+
+
+20130223
+========
+- проверить регистрацию с сайтов
+- проверить возможность редактирования пользователя, заменить пользователя у человека
+- Carrying in stock FOR SALE positions which are invoiced is pointless. What has much purpose however, is to be able to see history of sales of such items of identical or similar steel grades and dimensions, as pop-ups when viewing/editing the stock list !
+- Stock access by customers must be recorded in the relevant BIZblogs.
+- SOLD posгоitions should not be in FOR SALE stock: Carrying in stock FOR SALE positions which are invoiced is pointless.  What has much purpose however, is to be able to see history of sales of such items of identical or similar steel grades and dimensions, as pop-ups when viewing/editing the stock list !
++ DJ : The new system must not allow whimsical DELETION of positions and items ! The system must be as immune as possible to human idiocy.
+- I wonder if DJ or any other programmer can make a system which successfully combats absence of human responsibility with P/O CONFIRMATION ALERTS and the like.
+- Our European stock plates must be clearly tagged as CE Mark  :  YES or NO.
+- In the "NEW" system, the customer must be able to explore online the technical data of each ITEM within a POSITION !
+
+
+20130222
+========
+- у родительского айтема показать его алиасы
++ в драфте письма подпись не менять, оставлять автора
+- supplier invoice фильтры: компания, дата с - по, статус, оунер
+- supplier invoice добавить тотал по амаунту, приаттаченные файлы
+- добавить в систему курсы валют автоматический сбор
+- orig cert фильтры: дата с - по, компания, кинд, 
+- orig cert Standart -> Standard
+- orig cert добавить state of supply: normalizing rolling
+- orig cert уникальность по number, date, company, kind, state of supply
+- удаление только для админов
+- в футере заменить ocs на Original QCs
+- orig cert сортировать по date desc
+- production possibilities за основу берем /production/peb.aspx
+- виджет: мои пендинги
+- DJ : Splitting messages in parts is a bad solution. Much better would be to limit the front page display to say 10 lines and have the rest within the BLOG, regardless of where the message is written. This would also keep the chat front page clean of verbal pollution - unduly long messages which occupy the whole screen, reducing visibility of communications.
+- DJ : Ever more business is conducted in Skype group chats and their integration in our BLOG in real time is essential so that history remains in the host system and not just on individual client computers.
+- I salute your initiative to write IQs related to a DFA outside the DFA. I asked DJ to allow for IQs and P/Ls to be seamlessly linked to the DFAs in the new system
+- Stock Offers
+- номера писем
+- в ярлычке браузера должна идти сначала важная информация, если просматриваешь бизнес или любую страниц по бизнесу то должен быть номер
+- DJ : In the old system, code is chronically careless and inconsistent. For example, many pages need CREATED and MODIFIED date/person data. To have just MODIFIED w/out CREATED ( see attached ) is simply careless code - a matter of coder's pride in work done well, not something the user must specify for every page, unless you expect the user to specify that the sun must rise each morning. Such carelessness in the new system is unacceptable.
+- In fact the attachment was not included because it contained the question mark "?" in the title - yet another sign of weak code in the system. Here the attachment again, without the "?".
+- DJ : Making customized offers from stock is essential but only with cross-referencing to the BIZ, incl. the blog  AND  having the ability to add new positions in the offer - positions not on the stock list.
+
+
+20130217
+========
++ изменить триггеры в экспортных файлах
++ при добавлении айтемов в RA фильтровать /items только по тому стокхолдеру, в котором создан RA
+
+
+20130213
+========
++ складские отчеты с ошибками
+- при сохранении письма при удалении объектов из него, нужно не просто удалять из базы, а получать объекты и очищать тег: Cache::ClearTag($object_alias . '-' . $object_id . '-blog'); в SaveEmailObjects($email_id, $objects_list)
+- [13:29:02] (M-a-M) AA: bщщу по rajesh@petrofac-qatar.com не находятся письма в e-mails
+- нужно сделать steelitem_log (id, steelitem_id, object_alias, object_id, action, created_at, created_by)
++ проверить готовность emailmanager по 20130117.plan.txt
+
+
+20130212
+========
++ при постбэк in ddt не возвращается введеная ранее дата
+- фильтр блога по получателям и отправителям сообщений
+
+
+20130211
+========
++ проверяется запрет изменения owner_id если айтем уже есть в ra
+
+
+20130210
+========
+- изменить тип таблиц на MyISAM
+
+20130208
+========
+- поиск айтемов без выбора склада
++ не ищет айтемы по h2-030
++ myroom.steelemotion.com/myroom/orders - ошибка
++ myroom.steelemotion.com ошибка на странице 404 page was not foud
++ список заказов не обновляется на странице /items не обновляется при изменении статуса заказа
++ при добавлении позиций на склад выводится ошибка, но позиции создаются, нужно изменить процесс создания сначала надо все проверять, и только потом создавать
+
+
+20130204
+========
+с 20130125.1553.zharkov.misc.sql
++ проблемы с письмами
++ проверить supplier invoices / in ddt
++ задание на февраль
+
+
+20130202
+========
++ убрать статус из In DDT, 
++ In DDT при добаволении, сохранении и удалении проставляем owner_id, owner_id - обязательное поле, показать supplier invoice
++ убрать из редактирования айтемов supplier invoice, проверить
++ на страницу просмотра айтема добавить сылку supplier_invoice_id, in_ddt_id, invoice_id
+
+
+20130201
+========
++ в Item Context вывести: 
+- виджет: "Supplier Invoices Owerdue" - список инвойсов у которых подходит срок оплаты
+- в алерте системы не очищается стек, пишет: у вас новое сообщение в чате 1, новое сообщение в чате 2, новое сообщение в чате 3
+
+
+20130131
+========
++ проверить процедуры, тригеры, импорт для айтемов
++ не видно DFA от эсмиральды на мики
++ создание supplier invoice из списка in ddt
++ редактирование supplier invoice, новые поля
++ in ddt, убрать статус "закрытый", запретить изменять owner_id для тех у кого статус DELIVERED
++ описать в документе эти все манипуляции с айтемами и оунер_айди
++ при добавлении айтема в саплаер инвойс добавлять purchase price, purchase value, purchase currency
++ при удалении айтема из supplier invoice очищать purchase price, purchase value, purchase currency
++ проверить добавление картинок в дропбокс supplier invoice, при добавлении должны добавляться к айтемам
++ TG нет в айконпарк
+
+
+20130130
+========
++ синхронизировать основной и тестовый сервер
++ изменить форму редактирования айтема и позиции, убрать supplier invoice ..., вместо полей сделать ссылку
++ сделать страницу просмотра айтема, со всей информацией вместо существующей timeline сделать details
++ для айтемов с установленным supplier_invoice_id нельзя менять owner_id
++ при добавлении айтемов в саплаеринвойс обновлять owner_id
++ добавлять айтемы, у которых owner_id = 0 или такой же как в supplier invoice
++ в списке айтемов при добавлении в документ писать заголовок "Items for Suplier Invoice", кнопки внизу "Go Back", "Add"
++ in ddt: нельзя менять owner_id для тех, у которых уже установлен supplier_invoice_id
++ из списка in ddt делать supplier invoice
+	
+- sp_order_update_steelitems
+- sp_ra_item_save_timeline
+- sp_steelitem_cut
+- sp_steelitem_twin	
+- sp_steelitem_update_from_timeline
+- sp_supplier_invoice_save_item
+
+
+* при получении ddt в ra, фактически закрытии ra, фиксируем owner_id для айтемов входящих в него, чтобы потом использовать его
+даже если supplier invoice содан после этого, мы для отправленных по ra айтемов не можем поменять owner_id
+
+
+20130129
+========
++ company edit: handling cost, ... отображать для Service Provider, Stock Agent и Supplier
++ в supplier invoice тоже сделать возможность добавлять айтемы в несколько инвойсов, например был в одном, потом клэйм, потом в другом
+
+
+20130125
+========
+- фильтры
+- список бизнесов
+- виджет: мои любимые бизнесы
+- виджет: открытые заказы по дедлайну
+- виджет: письма за сегодня
+- переписать sp_email_get_last_bizes, под biz_users
+
+
+20130124
+========
++ где-то задать номер последнего письма
++ на всех страницах документов добавить когда и кем сделан, когда и кем изменен
+- при загрузке файлов заменять все неправильные символы
+- MS:
+myDASHBOARD
+
+Every user must operate a customized dashboard as the hub of all work in the system. The dashboard is a screen (de facto replacing the desktop) which 
+a)	displays key information of relevance to the user ;
+b)	serves as the hub from which the user navigates directly to the most frequently used houses in the village.
+
+Each user must specify the required contents of the desired dashboard so that programmers can provide for the appropriate links of display and navigation. 
+
+Here is my list :
+-	CASH position : bank accounts balances ; date / amount / $equivalent
+-	RECEIVABLES : all/by month/value/$equivalent
+-	PAYABLES : all/by month/value/$equivalent
+-	STOCK position : date/location/tonnage/value
+-	SALES : value by month & live / product / customers / country / member
+-	PURCHASES : value by month & live / product / supplier / country / member
+-	ENQUIRIES : by month & live enquiries by customer / product / country / member / est. value
+-	OFFERS : by month & live offers by customer / product / country / member / est. value
+-	TRANSPORT : by month & live by mode (vsl/truck/rail) / cgo value / shipper / consignee / cargo value +$equivalent
+-	MEMBERS : by member / current location / WIP / weekly objectives & achievements
+-	R&T : by person/position/status (intro/negotiation/reserve/ filed/rejected )
+-	eMAILS
+-	TIMELINE
+-	TOUCHLINE
+-	CUSTOMER HOUSES 
+
+
+20130122
+========
+- Column widths were defined by a careless designer, eg.  THICKNESS with few digits is wider than LENGTH with many more digits ;  PICTURES is a matter of a click on a single symbol and it's given all too much width ;
+- разрешение экрана: Visiting the stock page I noticed: there is an orange button at the very bottom but it is not completely seen. I don’t know what exactly it is for. See the attached image.
+- Model BIZ Train, Vocabulary, Library, FAQs
+- При поиске BIZ2332 в Biz Reg находится BIZ1923.32
+- Specific Enquiry: add “Required delivery time”
+- У бизнеса показывать все связанные с ним документы
+- При просмотре большой таблицы фиксировать хедер: When I am searching a stock position that is far from the main row, I cannot be able to see this main row(which contains the most important info, such as: steel grade, weight, among other data) Is it possible to fix it? 
+- the eMail with password was sent by our system as confirmation of her request, not via Eudora. We should have a copy of this eMail to direction@
+- BIZ Blog: The need to have all communications related to a specific BIZ within that BIZblog is our starting point. Default display is chronological order (as we have in the old system) with the options to view a sub selection or a combination of subs.
+- общий поиск по системе: поиск по файлам в том числе
+- Biz Blog: There are some BIZ that they are not being used since a long time ago. I think must be useful to add in the BIZ screen: “BIZ last used” connected to the last time there was a comment added to the BLOG.
+- Biz Blog: I think also must be useful to add in the BIZ screen if there are some comments on the BLOG, just to be showed as the emails are showed, eg: emails (23), so could be like this: BLOG (23). We can save time when investigating the BLOGS.
+- Email DFA: Will he have an option that he just has to “click” so I will receive the notification of the approval and I will proceed with this DFA in order to make the operation real?
+- Email: When I make search by email address, eg. v.startsev@uralsteel.com, I see only sent emails and their number is far less than actually sent. 
+- Email: Email BIZ1813.14.Numtec.ik0838.Spares4EMZ.DeliveryStatus ( http://home.steelemotion.com/email/100732~tidcb76a2b7292b90c753ef08c85486ddea )
+	when I press SEND AGAIN the header text is displayed in the email text ( http://home.steelemotion.com/email/100732/sendagain ). 
+	Can it be fixed so that header text stayed in the header and was not copied to email text ? 
+- I opened email FW:BIZ3498.11.Uralsteel.ik1206.Spares.OriginalsTrackingNr ( http://home.steelemotion.com/email/117831~tid229bcb86916e3af124acda5a5753fe42 ) 
+	then pressed NOT SPAM and was thrown to page INBOX. I thought this email was moved to INBOX and searched by subject in INBOX but the result was “Nothing was found on my request”. 
+	After search in SPAM I found it there. 
+	Why after pressing “NOT SPAM” an email stays in SPAM? 
+- Email Display in EMAIL module: Is it possible to add beginning of the email text after subject in email display ? I think it would help us to find required incoming emails of our partners faster as they not always properly name the email subject. 	
++ In my email BIZ3862.SM.ik1227.DocsReceived –TEST ( http://home.steelemotion.com/email/121416~tid8a690760612262361be5fd6d9dc45a2e ) I see that fonts in the header and main text differ. I counted three different fonts in total and I don't think this looks good. Can it be fixed so that an email (header, main text, signature) had one font?
+- After I made search in PERSON by Voronin, I didn't get required Mr Igor Voronin among results : http://home.steelemotion.com/persons/filter/keyword:Voronin although he is displayed in EMPLOYEES box in Trubodetal : http://home.steelemotion.com/company/16967
+	
+
+20130121
+========
+- Skype Integration: Ever more business is conducted in Skype group chats and their integration in our BLOG in real time is essential so that history remains in the host system and not just on individual client computers.
+- TL: Ошибки даты при Search / Archive 
++ In DDT: при изменении owner_id не сбрасывается ключ кэша для айтемов
+- TL: Отправка сообщения человеку с его страницы. даже если он офлайн и не виден в айконпарке
+- Если атачмент - картинка, она должна открываться сразу, без скачивания
++ Drafts заменить на DFA
++ BIZ Module : Why scrolling list of objectives in OBJECTIVE box is not displayed ? If objective is not specified I can not register a new BIZ or SUB BIZ.
+- какой формат даты использовать? 
+	http://en.wikipedia.org/wiki/Date_format_by_country
+	United Kingdom DMY [162] dd/mm/yyyy. Sometimes written dd Month yyyy. Date in numerical format never omits the year. e.g. 10th September is OK, 10/09 is not. One exception is The 7/7 bombings - named as such by popular media, likely so that it would be associated with US 9/11 attacks. (Officially this is called the 7th July 2005 London bombings) BS ISO 8601:2004
+- письма без атачментов, ждем от АА хедеры
+
+
+20130117 JK
+===========
+1. Отчет о проделанной работе:
+	- Что готово, что осталось сделать.
+	- Что нужно для перехода на новую систему.
+	- Продолжаем работать или нет.
+
+2. Демонстрация системы:
+	- Приемущества открытого кода перед скомпилированным, показать на сервере.
+	- Внешние сайты.
+	- Внутренний сайт.
+	- Складские отчеты.
+
+3. Порядок дальнейшего сотрудничества:
+	- Планирование работы на следующий месяц: дата, сколько времени на утверждение, кто утверждает.
+	- Отчетность по проделанной работе: в каком виде, дата.
+	- Выставление счетов: дата.
+
+4. Текущие вопросы по разработке:
+	- Оставшиеся модули.
+	- Модули старой системы.
+	- Виджеты главного окна.
+	- Дизайн.
+	- CLAIM - нужны для возврата позиций на склад.
+	- WebStock / PlateMate.
+	- Выделенный почтовый ящик для работы с ним.
+
+
+
+	
+ЗАГРУЗКА
+========
+архитекторы: 40-80
+программисты: 150-300
+дизайнеры: 40-80
+менеджеры: 40-80
+тестировщики: 40-80
++вёрстка, яваскрипт можно отдельно
+итого 465 часов в среднем в месяц	
+
+20130116
+========
++ задание денису: в заказе выводить связанные докумены на основании айтемов
++ при просмотре заказа неправильно показывается balance to deliver
++ "Sample Direction N/mm2" -> "Sample Direction"
+- остальные задачи крона переписать по аналогии с грабингом
+- длинные запросы в логе приложения образать и выводить в отдельный лог detailed
+
+
+20130115
+========
++ крон
++ тэг "мессадж"
+- ответить на сообщения
++ qc
+
+
+20130114
+========
++ список писем вперемешку чтобы была нагляданая история
+- проврить при сохранении писем чтобы не менялась дата
++ нельзя сохранить инвойс без айтемов (скриншот)
++ QC при создании подхватывает старый только что открытый QC
+
+
+20130112
+========
++ не сбрасыватся тэг 'orders' закрытии инвойса
+
+
+20130110
+========
++ если в RA ограничение по owner то не давать создавать
++ для PA RA должно быть lbs
++ не ищутся сообщения в чате
+- найти потенциальные места где есть возможность удаления айтемов из базы, недопустить этого
+- листы не попали в новую систему, см скриншот
+
++ Димас, пытаюсь сделать сертификат из заказа 1926, после нажатия кнопки create QC получаю форму серта для заказа 1925  :( 
+жму don't save иду опять делать заново для 1926, и опять получается форма заказа 1925
+[11:16:47] (M-a-M) AA: с заказом 1922 тоже самое
+http://home.steelemotion.com/qc/add/order:1922
+
++ При создании RA из айтемов учитывать условия, эти же условия учитывать на странице списка айтемов:
+		IF var_steelitem_stockholder_id != var_ra_stockholder_id 
+            OR var_steelitem_owner_id = 0 
+            OR var_steelitem_status_id >= ITEM_STATUS_RELEASED
+			
++ Добавление айтемов в RA со страницы айтемов
+
++ Обновить данные по почте от ЗДС
+
+
+20130105
+========
+- Specific enquiry. In my opinion must be useful if we add “Required delivery time”, so we could be able to see if we can manage the order on time.
+1.	When writting a message:
+-	On the title of the message there is no option to see all the BIZ available to choose.
+-	Is it possible to put an option that when you want to refer to some comment, just to search it in the same screen which you are sending the message? (so it will speed it up)
+-	When you send a message, just to be limited to send it to 1 person (so this person will feel that is responsible for that message)
+2.	Agenda
+-	When you add a task into your agenda, to set up an alarm ( the same system as Outlook system).
+3.	Spelling errors
+-	Contract Admin / SC . There is showed: “Sale Confirmatins” instead of “Sale Confirmations”.
+4.	Registers /Biz/List. When I search a BIZ number, it does not recognize dots, because I was searching for: BIZ2332 and I found out the following:
+BIZ1923.32, BIZ2332 & BIZ3123.32
+5.	Registers / Markets. Worldwide: If it is supposed to be the sum up of all the other markets, it does not show it right.
+6.	Stock
+-	http://home.steelemotion.com/stock/1/edit
+TITLE: I think is better to show 2 options disposal: US stock & European stock.
+
+
+20130104
+========
++ Проверить доступ обычных пользователей к письмам в бизнесе, скорее всего не заданы мэйлбоксы (Asema)
++ На маленьком разрешении улетают кнопки в футере за пределы экрана
++ Добавить архив за день в чат
++ Исправить ширину колонок в webstock
++ Исправить STEELemotion вместо MaM Ltd
++ На webstock platesahead сместить ярлычки “Order requirement” & “Order confirmation” 
+	под фильтр склада и показывать страницы, с рекомендациями о том что нужно сначала добавить материал.
+- Расширить функциональность логирования запросов, чтобы в лог приложения не попадали длинные запросы их нужно обрезать
++ При просмотре писем без темы нужно выводить в pagename "(No subject)"
++ Unknown Error в логе приложения
+
+
+20130103
+========
+- Лог работы парсера и граббера вынести в отдельный файл
+
+
+20130102
+========
++ Добавить ключ кэша, при добавлении в тарнспортные документы и инвойсы и в волучение заказа, чтобы статус подтягивался
++ Залить из репо
++ Проверить фотки чтобы отображались
+
+
+20121221
+========
+- добавить в timeline ddt и cmr из ra
++ при изменении статуса айтема из update_from_timeline изменять статус заказа
++ подсвечивать статусы айтемов в таблицах по статусу заказа
+- при экспорте не устанавливается статус ORDERED для айтемов из заказа, например: 40Z.547.01E, 40Z.562.02C, 40Z.562.02C, 40K.73.01
++ список заказов в списке айтемов нужно выбирать не на основании склада, а на основании MaM и PlatesAhead
+
+
+20121220
+========
++ добавить отображение картинок в контекстном блоке позиции на складе
+- заводы нужно занести в список стокхолдеров
+
+
+20121219
+========
++ добавить в списки айтемов контекстное меню
++ добавить в импорт данных добавление в timeline для in_ddt, order, всех документов по дате создания документа
++ item_remove должна обрабатываться везде
++ убрать system, обратить внимание что при добавлении айтемов в позицию используются другие контроллы
+
+
+20121217
+========
++ проверить чтобы на страницах, где показывается item context нормально обрабатывалось item_remove(steelitem_id, steelposition_id);
+- добавить steelitems.ra_id обнвлять из steelitem_timeline
++ запретить перемещать и удалять айтемы с in_ddt_id > 0 AND guid != ''
+
+
+20121216
+========
++ фильтр по zoppeleto показывает позиции midolini и айтемы без стокхолдера: http://mam/items/filter/stock:1;location:13898;
+
+
+20121214
+========
++ испроавить все вызовы _fill_entity_array_info под новые требования
+
+
+20121213
+========
++ при импорте данных нужно заполнять steelitem_timeline
+	+ создание записи
+	+ in_ddt
+	+ order
+	
++ при импорте данных проверять статус steelitem, если status_id = 0 and order_id > 0 
+статус должен быть ORDERED
+
+
+20121211
+========
++ проверить чтобы при закрытии RA изменялся статус для айтемов при dest_stockholder_id > 0
++ на странице выбора айтемов для RA нельзя иметь возможность выбрать айтемы у которых статус >= RELEASED
+
+
+20121210
+========
++ добавить steelitems.in_ddt_id, steelitem.invoice_id, и в триггеры тоже
++ изменить скрипты по импорту: добавить статус айтема
++ изменить скрипты по импорту: добавить заполнение in_ddt_id
++ изменить скрипты по импорту: записать в history
++ запретить редактирование in_ddt, ddt, stockholder
+- при обновлении steelitem не зыбыть обновлять purchase_value
+- в список айтемов добавить фильтр по заказу
+- (?) нужно ли закрывать возможность создания DDT / CMR если уже какой-нибудь документ создан
+
+
+20121209
+========
++ зачем проверка owner_id NOT IN (PLATESAHEAD_OWNER_ID) в sp_ra_update_related_docs по идее в RA такие айтемы вообще не должны попасть
++ все манипуляции с БД делать в ХП, нативно только если в ХП нет возможности реализовать задуманное
++ DDT::FillDDTInfo() зачем нужна "Итеграция с данными Заказа"
++ не нужно размазывать функциональность по слоям, если уже есть в ХП нужно использовать, а не делать дубликаты нативно
++ закидон клиентов: все сообщения системы должы как-бы идти от сомого пользователя, т.е. вместо: "Are you sure" должно быть "Am I sure" :)
+
+
+20121205
+========
++ для годового отчета нужно выбрать все айтемы, которые на дату расчета были: transfer, on stock, ordered, released
++ запретить редактирование stockholder_id, in_ddt, ddt для steelitem
++ переносить между складами можно только виртуальные айтемы
++ удалять можно только виртуальные айтемы
++ при конвертации завести реестр in_ddt, добавлять туда данные из айтемов и привязывать к steelitems.in_ddt_id
++ добавить поле steelitems.invoice_id
++ добавить steelitem_timeline, добавить флаг is_primary для фиксации важных событий
+
+20121205
+========
++ не выставляется статус RELEASED при добавлении айтема в RA
+
+20121204
+========
+- (?) один и тот же айтем в разные RA, в разные cmr/ddt 												// ЗАПРЕЩЕНО
+- (?) уточнить как будут создаваться ddt и cmr если в грузовик что-то догрузят не отправляемое клиенту	// НОУ ПРОБЛЕМ
+- (?) в CMR / DDT надо выбирать на каком основании расчитывать вес (взвешенный / теоритический)?		// ДА, НУЖНО
+- (?) как идеально было бы работать с flame cut steel parts
+
+- Проверить заказ Twin и Cut
+
++ Сделать историю изменения stockholder_id для айтема
+
+- При создании айтема нужно добавлять запись в таблицу steelitem_ddts:
+    steelitem_id 	= param_id
+    ddt_number  	= ''
+    ddt_date 		= null
+    ddt_company_id 	= param_stockholder_id
+    source_alias 	= ''
+    source_id		= 0
+
+- Один и тот же айтем не может находиться в двух открытых RA
+
+- Cписок DDT в контекстное меню айтема
+
+- Добавляются чекбоксики к основным айтемам RA "Theoretical Weight"
+
+- Если в CMR есть листы и weighbridge и theoretical тогда используем подпись TOTAL WEIGHT внизу
+
+- В DDT Weighed Weight будет добавляться только вес взвешиваемых листов
+	айтемы с теоритическим весом в расчете взвешенного веса участия не берут
+
+- Добавить поле ra.dest_stockholder_id
+
+- На страницу редактирования RA в Destination первой строкой добавляем <select name="form[dest_stockholder_id]"> со списком стокхолдеров,
+	в список не должен попасть текущий склад RA. Второй строкой остается текущее поле. Если выбран стокхолдер из списка, то поле должно очиститься
+	если что-то вводится в поле в селекте должен выбраться первый вариант <option value="0">
+
+- На странице просмотра RA если выбран dest_stockholder_id должно выводиться {ra.dest_stockholder.title}, {ra.dest_stockholder.city.title}
+
+- Если установлен ra.dest_stockholder_id, то при создании ddt в поле Delivery Point (DESTINAZIONE MERCE) 
+	должны добавляться данные:
+	M-a-M Ltd, c/o {ra.dest_stockholder.title}
+	{ra.dest_stockholder.address}
+	{ra.dest_stockholder.zip} {ra.dest_stockholder.city.title}
+
+
+
+20121203
+========
+- В PDF посмотреть как получить высоту блока по контенту
+- В PDF проверить чтобы переносилась таблица на другую страницу
+- при вызове контестного меню айтема, перед показом показывать спиннер
+- из айтемов system надо убрать
+- в заказах запретить добавление отрицательного количества
+- (?) One CMR is issued for each point of loading/destination (I.e. if there is one truck, 						// НЕ ПРОТИВОРЕЧИТ
+one customer but two points of loading than two CMRs to be issued, one per each point of loading. 
+If there is one truck, one point of loading but two customers than two CMRs to be issued, one per 
+customer. If there are two points of loading and each loaded for two customers than 4 CMRs to be issued) ;
+- (?) In case the material is sold on theoretical weight, theoretical weight total should be stated on the CMR. 
+In case the material is sold on actual weight than weighbridge weight total must be stated on the CMR.			// ОПИСАНО В 20121204
+
+20121130
+========
+- В списках location показывать город
+- На странице просмотра компании сделать блоки
++ В Email Tag добавить заказы
++ В Email сделать больше шрифт в Tiny MCE
++ В Email после сохранения слетает форматирование: цвет текста, цвет заливки текста, смайлики
++ В Email при сохранении письма с дедлайном, дедлайн не переходит в чат
++ В Email Edit при Enter постится форма
+- на странице ordered items старый формат таблицы с айтемами
+
+
+20121129
+========
+- со страницы редактирования ra перешел на страницу склада для добавления айтема, там перешел на страницу редактирования
+	вернулся назад и уже нет возможности вернуться в ra
+- когда айтем добавляется в RA у него должен меняться статус на released
+
+20121128
+========
+- Для расчета нужно задавать любую дату, из прошлого, здесь нужно использовать history.
+- Иметь возможность экспорта отчета в PDF для хранения
+- В отчет выводить только металл на европейских складах
+
+20121126
+========
++ Привести в порядок страницу со списком айтемов
+- При порезке брать все входящие данные родителя и распространять на обрезки
+- Проверить правильность конвертации данных steelitem, steelposition
+
+20121125
+========
+- Convert To Real перенести в контекстное меню айтема
+- при редактировании айтемов, подсвечивать айтемы которые CONFLICTED, добавить в контекстное меню
++ (?) может ли быть два подряд DDT выпущенного одной компанией	/ НЕ МОЖЕТ
+- в списке локэйшен нужно выводить название компании, город, локэйшен
+
+20121123
+========
++ groupedit - перенести в edit
++ при редактировании айтема, для которого не указан склад, нужно в location выводить все имеющиейся location со всех складов
++ при редактировании айтема, если задано значение in_ddt_number нужно блокировать изменение owner_id
++ при редактировании айтема, записывать изменения в item_ddts
+
+20121122
+========
+- в список айтемов добавить фильтр по owner
+- проверить листы в :
+	- Bayou Processing & Storage, LP, Houston
+	- Friultrans S.p.A, Cervignano
+	- Officine Meccaniche ZOPPELLETTO S.p.A., Vicenza
+	- Utva-Industrial business zone d.o.o., Smederevo
+- при импорте не устанавливаются steelitem.status_id, steelitem.ddt_number, steelitem.ddt_date
+- преобразовывать статусы из старой системы в новую
+- взвешенный вес не гонять по ra-ddt-cmr использовать только ra
+
+20121121
+========
+- при обновлении steelitem не зыбыть обновлять purchase_value
+
+20121119
+========
++ chat не ищет от пользователя к пользователю
++ прокрутить индексы
++ добавить в экспортные скрипты обновления для steelitems, steelitems_history, триггеры
++ Добавится статус позиции TRANSIT
+
+20121118
+========
++ (?) Как помочь заполнить большой объем данных	/ НИКАК
++ (?) DDT / CMR как быть с владельцем PlatesAhead	/ ТАКОГО НЕ МОЖЕТ БЫТЬ
++ (?) можно ли как-то определить автоматически какой документ нужно создавать DDT или CMR	/ НЕ ПОЛУЧИТСЯ
++ (?) в CMR может меняться надпись Hot Rolled Steel Plate	/ ДА, НУЖНО ДОБАВИТЬ ПОЛЕ
++ (?) в CMR может меняться единица измерения веса (Ton)	/ НЕТ
++ (?) CMR блок 16 / НАЗВАНИЕ КОМПАНИИ КАК В БЛОКЕ 1, в блоке 23 ТОЛЬКО НАЗВАНИЕ КОМПАНИИ
+
+20121116
+========
++ (?) Нужно ли зеркально изменять айтемы в DDT при изменении айтемов в RA	/ ДА, НУЖНО
++ (?) Может быть вариант, когда покупали euro/mt, а продаем usd/lb как быть с определением цены покупки для отчета
+	стоимость $/lb = $/lb * 2204.6226 = $/mt, а потом по курсу
++ (?) Может нужно добавить цену покупки за единицу измерения веса? / ПОКА НЕ НУЖНО, пока все покупается за MT
+- проверить чтобы при установке rurchase_price расчитывался и purchase_value 
+
+20121115
+========
++ При автологине не присандаливается person.
++ В позициях при просмотре картинок не показывается lightroom.
++ Away из меню пользователя не работает, пользователь остается зеленым.
++ Cсылки в subject чата сделать черными.
++ В списке заказов чекбоксы групповой и заказные не выровнены.
++ При создании заказа со склада дабавляется калечный alert date.
++ На страницу редактирования компании добавить поля VAT и ALBO.
+
+20121114
+========
++ Добавить валюту цены покупки
++ На странице списка позиций выводить purchase currency для айтемов
++ (?) При порезке айтемов должны ли в обрезки переходить DDT Nr & Date / ДА, ДОЛЖНА
++ Редактирование позиции сделать как редактирование айтема
++ Групповое редактирование айтемов сделать как редактирование айтема
+
+20121113
+========
++ В списке айтемов спрятать additional params
+- В блоке позиции показывать фотографии айтемов
+
+20121112
+========
++ автологин работает некорректно, не подхватываются данные пользователя (фотка отсутствует, роль не та)
++ нужно добавить I'm away в меню пользователя
+- в RA для америкосов должен быть хедер PlatesAhead
+- нужно заполнять поля и приаттачивать файл при формировании письма из RA, по примеру SC
+- в RA PDF спецсимволы преобразовываются в &-последовательности, см.: http://home.steelemotion.com/ra/3/edit
+- нужно добавить поля ra.consignee TEXT, ra.consignee_ref VARCHAR(200) для них создать TEXTAREA на странице редактирования RA
+- в RA PDF для америкосов прятать строку "Please send us DDT...", но добавить две строчки:
+"Please be so kind to state actual dimensions in your bill of lading as well as plate ID."
+"For sending / faxing us a copy of BOL, we thank you in advance."
+- сделать возможность создания RA со склада без заказа
+- добавить поле ra.mm_dimensions, чекбокс на форму редактирования RA
+- проверить, чтобы в варианты попадали только айтемы доступные на складе
+- добавить поле ddt.ra_id INT
+- myroom.steelemotion.com последний чекбокс S355J2 не выбирается
++ pdf ddt по-меньше поля
++ список заказов фильтр по компании работает очень долго
++ список писем нужно добавить время для старых писем
+- перезалить письма
+- сделать удаление писем для пользователя
+- в теги добавить "Заказ"
+- увеличить ширину div для тегов
+- фильтровать письма по INPOxxxx в subject
++ в списке заказов показывается общая галочка. хотя других галочек нет вообще, при фильтре по SteelGrade A36
++ не все заказы показываются при фильтре по A36, возможно постраничный вывод
++ список заказов если выбрать компанию, потом очистить поле, она все равно остается
++ не работает фильтр по Order Type "Self-Service"
+- добавить поля invoices.due_date TIMESTAMP, invoices.status_id TINYINT {0, 1 - received, 2 - partially received}, invoices.amount_received DECIMAL(10,4)
+	добавить на страницу редактирования инвойса поле с выбором даты Due Date, селект Status, поле Amount. Поле Amount должно показываться только если
+	выбран статус Partially Received, если выбран другой статус, поле должно очищаться и прятаться.
+- в списке инвойсов должно быть разделение:
+	красные - просроченные
+	зеленые - received
+	желтые - partially received
+- оставить только две формы редактирования айтемов: position/{id}/edit, item/edit/{ids}
+- на странице редактирования айтемов убрать Id, добавить номер по порядку и Plate Id в каждую таблицу
+- ОШИБКА! - /items/filter/stock:1;location:16449
+- RA для америкосов, в шапке должен ыть американский формат даты
+- групповое редактирование айтемов с возможностью добавления файлов и групповых операций, установки значений общих полей
+
+20121103
+========
+- создание письма из RA, заполнять поля и добавлять атачмент pdf
+- добавить steelitems.ddt_company
++ в заказе добавляешь позиции, переходишь на склад, там делашь фильтр и в заказ уже не вернешься из запроса пропадает target/
+- сделать блок просмотра полной информации об айтеме
+- сделать item_ddts, чтобы регистрировать движения айтемов
+
+20121102
+========
++ очищать positionquick-{position_id} при добавлении айтемов, добавлении в заказ, возврата из заказа
++ проверить версию для печати
++ сделать манипуляции с айтемами при выборе главного в RA
++ при добавлении айтема менять статус только у заказанных
++ при удалении айтемов менять статус только у заказанных
++ при добавлении айтема, если он главный, добавлять ему документы присобаченные к RA
+- ? что делать когда стоковый айтем заменяется в RA на айтем из заказа
+
+20121031
+========
+- sc pdf attention не подхватывается
+- в pdf ra не вписывается dtt number и date сли они длинные
++ время на сервере неправильное
+- уточнить неправильный расчет веса с АА // формула правильная
+- откуда еще вставлять айтемы
+- расписать DDT и CMR
+- разобраться с Stock Calculation, подготовить вопросы
+- сделать нормальный выбор главного айтема в RA
+- загружать склад без айтемов, айтемы подтягивать AJAX по требованию
+- * лог перемещений айтема
+- * айтем находящийся на складе не должен менять статус при перемещении
+
+	
+2. На странице редактирования RA:
+2.1 Добавить возможность удаления главных айтемов, в Packing list добавить отдельную колонку для иконки удаления айтема, 
+	а в колонке, где у главных айтемов есть ссылка "add variant" для вариантов писать текст "variant".
+2.2 При удалении в sp_ra_remove_item проверять, является ли айтем главным parent_id = 0 и для него:
+	2.2.1 Менять steelitem.status_id только если текущий статус = ITEM_STATUS_RELEASED при этом
+	если steelitem.order_id > 0 , то новый статус будет ITEM_STATUS_ORDERED
+	если steelitem.order_id = 0, то ITEM_STATUS_STOCK
+	2.2.2 Отвязывать айтем от аттачментов RA - удалить из attachment_objects для айтема те атачменты
+	которые есть в attachment_objects для этого RA
+2.3 Добавить радиогруппу для каждой группы "главный айтем - варианты", должна быть первой колонкой в Packing List
+	2.3.1 При сохранении RA если в любой из групп изменился главный айтем, то главный становится вариантом, 
+	а выбранный вариант становится главным айтемом.	
+	2.3.2 При этом если у предыдущего главного айтема order_id > 0, а у нового главного айтема order_id = 0 нужно:
+		2.3.1.1 Для предыдущего главного айтема сделать $modelOrder->RemoveItem($order_id, $item_id, true), важно true!
+		2.3.1.2 Для нового главного айтема сделать $modelOrder->AddItem($order_id, $position_id, $item_id)
+	2.3.3 Отвязывать старый главный айтем от аттачментов RA - удалить из attachment_objects для айтема те атачменты
+	которые есть в attachment_objects для этого RA. Новый главный привязывать.
+2.4 Добавить кнопку "Add Item" в футер, для добавления нового главного айтема в RA. За основу взять функциональность 
+	кнопки "Add From Stock" со страницы редактирования заказа, только вместо target/order:{order_id} будет target/ra:{ra_id}
+		
+		
+
+20121030
+========
+Сегодня обнаружила две проблемы в e-mails : нет приложений в некоторых письмах(полученных на buy@platesahead) и письма отмеченные как not spam не уходят в нужную папку 
+
+Пожалуйста смотри детальное описание здесь ->
+ищу по (BIZ2140.HANYE.ms6252) в e-mails
+http://home.steelemotion.com/emails/filter/keyword:eb14a6584e6027a997f4de34dab42997
+
+иду в spam, ищу по (BIZ2140.HANYE.ms6252) 
+http://home.steelemotion.com/emails/filter/type:5;keyword:eb14a6584e6027a997f4de34dab42997
+
+здесь письмо находится, я его уже отметила как not spam
+http://home.steelemotion.com/email/101742~tid74fa90d23994a53bdeeaa779eaf5e4e1
+в письме отсутствует приложенный файл
+
+
+иду опять в e-mails ищу по (BIZ2140.HANYE.ms6252) 
+ничего не найдено
+http://home.steelemotion.com/emails/filter/keyword:eb14a6584e6027a997f4de34dab42997
+
+==============================
+примеры писем с missing attachments
+http://home.steelemotion.com/email/82946~tida69b3f60fc88183c072efe8a72bc8b79
+http://home.steelemotion.com/email/82913~tid6d2a90c4183801035334757b8aee2fc1
+
+
+20121022
+========
+1. I was unable to print the order. Printed version is totally distorted. This needs to be corrected as we frequently make printouts from the system and we need to have on the printout what we see on the screen.
+2. The weight calculation is different. Old system gives correct weight calculation in lbs (pounds) using American formula. The new system calculates weight differently. Please investigate and correct.
+
+20121017
+========
+- нужно дать возможность группового редактирования айтемов с возможностью добавления файлов
+
+20121015
+========
+- дальнейшая разработка
+- emails:
+16:17 • J → DJ: Direction.BIZ2385.E-mailManager:
+MS' "STEELemotion Village rev.8" give his vision of E-mail manager. 
+As far as I can see there are few important things that need to be incorporated IN ADDITION to the changes I proposed :
+1. Multiple BIZ tags, i.e. not just one BIZ but many (unlimited number) ;
+2. Additional Tags : Product and Country which are generated automatically by the system from BIZ number but can be changed + additional tags can be added ;
+3. Allocation of Driver (see MS' description of functionality) ;
+4. All incoming e-mails must have Direction/Deadline footer (see MS' description of functionality).
+I do not understand some of MS' ideas. Will discuss with him and revert.
+
++ в emial добавить textarea вместо поля ввода для signature2
+
+
+
+20121011
+========
++ Проверить отправку ответа письма
+
+20121010
+========
+- в системе нет письма 
+
+Date: Wed, 16 May 2012 12:38:11 +0200
+To: stefano@ossilaser.it
+From: STEELemotion <plates@steelemotion.com>
+Subject: BIZ2392.12.OSSILASER.aa4918.OrderForCutting
+Cc: marina@ossilaser.it
+
+20121009
+========
++ список компаний: все ссылки кроме названия компаний сделать черными, не зелеными
+- чат. ирина вышла, но осталась онлайн в айконпарк
++ добавить news@steelemotion.com
++ проверять bcc писем на наличие адреса, при рассылках такое бывает
+- нет письма:
+Received: from [192.168.1.38] ([178.83.12.175])
+        by mail.rapidhost.co.uk (IceWarp 10.3.5) with ASMTP id QVA93654;
+        Sat, 06 Oct 2012 12:20:54 +0100
+Mime-Version: 1.0
+Message-Id: <p06240509cc95c2b7c580@[192.168.1.38]>
+Disposition-Notification-To: STEELemotion <plates@steelemotion.com>
+X-Priority: 1 (Highest)
+Date: Sat, 6 Oct 2012 13:20:47 +0200
+To: FERROSTA/Renata <solcova@thyssenkrupp-ferrosta.cz>
+From: STEELemotion <plates@steelemotion.com>
+Subject: DELIVERY TIME 140-180 mm / S235JR+N  (BIZ2424.FERROSTA.ms6162)
+Content-Type: multipart/alternative; boundary="============_-862600042==_ma============"
+
+- почему-то не отображаются сабжекты:
+From: eChinacities.com <membership2@echinacities.net>
+To: mycareer@steelemotion.com
+Date: 9 Oct 2012 09:51:04 +0800
+Subject: ADRIANA BERTOLINO-SALES CAREER in the global STEEL industry ( 134736)
+-----------------------
+в системе 
+From : membership2@echinacities.net
+To : mycareer@steelemotion.com
+Subject : (no subject)
+
+Date: Wed, 03 Oct 2012 18:37:09 +0000
+To: fax@steelemotion.com
+CC: 
+From: "jConnect" <message@inbound.j2.com>
+Subject:  jConnect fax from "7136760006" - 3 page(s), Caller-ID: 713-676-0006
+--------------------------
+в системе
+From : message@inbound.j2.com
+To : fax@steelemotion.com
+Subject : (no subject)
+
+- http://home.steelemotion.com/emails/filter/keyword:biz2064 смотри исходящие от вчера все равно дублируются
++ парсинг BIZ в тексте сообщений чата надо убрать
+
+20121008
+========
+- в заказе добавляешь позиции, переходишь на склад, там делашь фильтр и в заказ уже не вернешься
+	из запроса пропадает target/
+
+20121005
+========
+- сидишь на странице, приходит уведомление о новом сообщении чата, заходишь в чат, а там появляются сообщения на MaM, 
+	после перезагрузки получатели возвращаются
+
+20121004
+========
++ при поиске  ищет только по RE.:	RE: BIZ1993.13.RWSmith.aa5371.RailTerminal/Transloader
++ Kathy Kaster - в списке заказов mm и евро на PlatesAhead
++ в списке бизнесов в заказе 2118 без индекса показывается в самом низу, а должен быть наверху
+
+20121003
+========
++ при ответе на письмо оригинал должен идти после ответа в тексте письма
++ убрать escape_html из писем
++ убрать escape_html из названий людей, компаний и бизнесов
++ не приходят нове письма
++ убрать Type из списка заказов
+
+20121002
+========
++ ошибка инвойс АА
++ в заказе при добавлении айтема с установленным статусом он не учитывается (Delivered)
++ запретить редактировать айтемы delivered, invoiced
++ при создании айтемов из заказа ставить им статус Ordered
++ при добавлении айтема в заказ ставить ему статус Ordered
++ не работают триггеры
++ In the PersonReg - Edit window, for the people having no role (please see attached) there is "Read Mailboxes" list available. I think it is not needed by default for every person registered w/out role, but needed only for people registered with role - MaM Staff/Moder.
+- * Search in the PersonReg by "Vladimir" gives 378 results(spread in 4 pages). I think they should be listed in alphabetical order (by surnames) + must be shown their ID in system (like 11359 for Zoltan for example)
+- * Search by "Markov" (surname) gave 5 results(please see attached). The last two persons do not have markov anywhere in the info(available to me). Please check if you know why these two were found.
++ Please make the default filter in the orders module by the number how order was registered (1894, 1895, 1896... etc). Additionally will be useful to have filters in the header of columns, ie when I click delivery date column's header, orders get filtered by delivery date. It can be done not for all the columns, most useful are : Buyer, Delivery point, delivery date 
++ QC .pdf is missing Heat/Lot number, despite being inserted in items list. Please check 
++ I have registered DDT Nr for today's loading. MaM IT- 92/2012. When I click the row for this DDT I get the attached error. Please delete 00 before 92 to read 92/2012. Date format is preferable in format xx.xx.xxxx (not with /). The same is for Invoice register, please
++ BIZ Reg : I've registered test BIZ today 3856. "&" in the title was converted to &amp. Please check.
+- * разделить марки стали
+
+
+20121001
+========
++ TL : I think we should only leave notifications on Entered/Left the Village. Away/back online messages take away attention from useful messages. 
+We have traffic light notification in the icon park, this should suffice.
+
++ BIZ selection in TL : is it possible to add search field that would search the buisnesses in relevant TEAM by name as scrolling in large list 
+is very time consuming ?
+
++ Trade->Orders->Search 
+Search by Buyer Co : A.J.S. Profiles Ltd gives no results. 
+If I state Search by Buyer Co : A.J.S. Profiles Ltd and Order Status "Completed" gives the result I was looking for.
+This is not correct.
+Unless specific order status is stated Search must give all results by other parameters. 
+I believe at the moment Search results by default are filtered by Open orders, i.e. excluding Completed and Cancelled.
+
++ Looking at any of the completed orders (for example, http://home.steelemotion.com/order/1848) 
+I was unable to get any information on the plates sold (old system has all data by plates ID, 
+including incoming DDT and also chemical composition/mech properties, as well as internal comments).
+Was some data not imported ??? How can I see the data of the old sold plates and their history ?
+
++ добавить чекбокс в chat icon park
+
++ поиск по 24-24 должен возвращать за дату, 24-25 за две даты
+
++ из поиска исключить вход-выход-ушел-вернулся
+
+- * со страницы человека ему можно написать сообщение
+
+
+
+
+ЗАГРУЗКА
+========
+архитекторы: 40-80
+программисты: 150-300
+дизайнеры: 40-80
+pm: 40-80
+тестировщики: 40-80
++вёрстка, яваскрипт можно отдельно
+итого 465 часов в среднем в месяц
+
+
+
++ при заказе со склада резервировать позиции
++ фотки людей
+- проверить checkusers
++ регистрация с сайта
+- при импорте айтемов учитывать статус
++ пропали тригеры
+- добавить писесы при порезке
+
+
+20120921
+========
++ все операции с датами в MySQL
++ убрать таймзон в датабэйзконекшн
++ send again
+
++ ORDER: при заказе со склада нужно ставить позиции в Reserved чтобы не было ситуации, когда купили лист, и еще до подтверждения заказа его купили еще раз
+- ORDER: показывать фотографии листов на странице просмотра
++ ORDER: изменение статуса заказа, в хп обновлять только если изменяется с nw в ip
++ ORDER: убрать ссылки из списка заказов
++ ORDER: на странице просмотра заказа нет balance to deliver
++ ORDER: сделать вывод Stock заказ или не STock заказ при просмотре и в списке
++ ORDER: Delivered, To Be Invoiced заменить на To Be Invoiced
++ ORDER: убрать выпадающий список статуса заказа, статус будет меняться автоматически
++ ORDER: статусы айтемов надо менять
++ ORDER/position/items: убрать Mill & System, Plate Id вместо Item Id на первое место, коробочки убрать из Id перенести их в Status
+
+- ITEM: purchase price должен быть в любой валюте евро, доллар
+- ITEM: при порезке добавлять буквы A, B, C если guid заказчивается на цифру
+- ITEM: добавить список статусов для айтемов:
+	- In Production
+	- On Stock,
+	---
+	- Ordered
+	- Released
+	- Delivered / Collected
+	- Invoiced
+- ITEM: cut item добавление кусков	
+
+
+- EMAIL: при создании письма инициалы автора надо маленькими буквами: BIZ2470.37, aa546
+- EMAIL: при создании письма добавить поле между STEELemotion/Anna и адресом сайта, для телефона
+- EMAIL: при отправке не сбрасывается кэш
+- EMAIL: возможность сохранять драфты с пустыми полями (писмо может писаться долго)
+- EMAIL: не отображаются китайские символы
+- EMAIL: восстановление из corrupted
+
+- PERSON: не сбрасывается кэш при изменении списка мэйлбоксов у пользователей
+
+- INVOICE: нет возможности удалить инвойс
+- INVOICE: добавить поиск
+
+- QC: если заполнено поле stress relieving, то оно должно показываться вместо Normalizing
+
+- расставить алиасы для Steel Grades в Directories
+- для фильтров нужно сделать кнопочку "clear", даже наверное лучше ссылку
+
+
+- групповые операции спам, прочитано, непрочитано
+- имя вместо email адреса имя человека или компании
+- теги на странице просмотра писем
+- на исходящие добавить посмотреть html
+- не реплай все вместе комкает: http://home.steelemotion.com/email/75556/answer
+- в ссылке reply заменить answer на reply
+- подсвечивать кейвёрд в письме при открытии из списка результатов
+- "reading confirmations" нужно вынести в отдельный тип
+- не показываются приаттаченные картинки: http://home.steelemotion.com/company/2208/email/23814~tidbb706461476e603cacdde5b925e314fe
+- corrupted заменить на "подозрительные", добавить адреса BB: mybossmiki@googlemail.com, чтобы они не попадали в corrupted
+- у писем неправильные даты
+- при просмотре писем показывается апрув дэдлайн качелный
+- в списке писсем за сегодня показывать время, для поздних дату
+- в списке писем показывать только входящие, при переходе в мэйлбокс не переходить в инбокс и показывать вх/исх
+- список инвойсов - добавить поиск
+- не привязываются теги к созданному письму
+
+
+
+- проверить как работает checkuser, пользователи зависают
+- убрать принудительное появление пользователя онлайн перед отправкой сообщениея
+- запретить удаление объекта в котором создано письмо
++ в письме не ставиться дедлайн на сообщение из Approve Dedline
++ при ответе на письмо добавлять когда от кого и с какой темой оно пришло
++ проверить создание писем из документов
+
+
+
+--
+1 - mam			// order for
+2 - pa
+--
+1-collection	// delivery type
+0-delivered
+--
+1-mm
+2-inch
+--
+1-mt
+2-ton
+3-lb
+4-cwt
+--
+1-usd
+2-gbp
+3-eur
+--
+1-us stock => 2
+4-eu stock => 1
+--
+21-hr flat products
+92-hr steel plates
+
+
+
+- написать сообщение ms/jk
+- некорректно отображается HTML-контент писем с кириллицей
+
+
+дизайн
+======
+- это всегда длительный процесс
+- у нас есть возможность заниматься дизайном параллельно
+- в процессе работы над дизайном и коммуникациях на тему дизайна могут появиться ньюансы влияющие на функциональность
+
+
+КОНВЕРТАЦИЯ
+===========
+- users
+- biz
+- biz_companies
+- companies
+- contactdata
+- persons
+- items
+- positions
+* при экспорте из MS SQL Server выбирать ASCII кодировку
+* перед импортом файлы перекодировать в UTF8 программкой
+
+
+СЕНТЯБРЬ 2012
+=============
+- RA
+- PlateMate
+- Фиксы текущей версии
+- Верстка new steelemotion
+
+
+
+ВАЖНО
+=====
+- Развернуть проекты
+- Планы на сентябрь
+	- pa
+	- se
+	- equipment
+- Подбить что сделано по документу
+- Пробежаться по атрибутам айтемов
+
+
+02.09.2012
+==========
+- company.relation, company.status сделать INT
+- Более контрастно список писем (входящих, исходящих)
+- MaM заменить на STEELemotion
+- Теги документов и возможность редактирования тегов
+- Person Register загрузка фото при клике на аватарку
+- Нужно получить отчет: "То, что пришло на склад за определенное время"
+- Нужно иметь отчет: "То, что ушло со склада за определенное время"
+- Cut Item location должно быть Location Item-а (нужно показывать информацию по айтему, а не по позиции)
+- Cut Item нужно сделать сразу 2 pcs
+- Cut Item в выпадающем списке Location калечные скобочки () там должне быть location
+- Cut Item Все атрибуты листа должны копироваться в обрезки
+- Steelemotion Для залогиненого пользователя не показывать в навигации внешние страницы сайта, только кабинет
+- Steelemotion Stock на странице с сообщением о получении заказа заголовок "Order Received" и ссылки на My Orders, Back To Stock, Print Version
+- В Dropbox предоставлять покупателям доступ к файлам
+- В списке заказов подсвечивать конфликтный
+- Общий список писем
+- chat offline archive
+- удаление рынков
+* Файлы приаттаченные в MaM к сообщениям чата не открываются на Steelemotion
+* нужно общее место для хранения файлов a.steelemotion.com
++ Теги писем редактировать
++ Прятать стандартную шапку для писем не созданных через интерфейс
++ Не добавляются позиции в заказ Заказ - Склад - Выбор айтемов - Добавить в заказ
++ Список заказов должен быть не Cancelled и не Completed
++ Bizes -> BIZs
++ В списках бизнесов полные названия
++ Item Edit в Location (o), (h) - непонятно что
++ Из Items удаляем Mill & System
++ MaM UK, MaM IT, PlatesAhead в Owners
++ Internal Notes сделать больше
++ Steelemotion Сhat верстка
++ Steelemotion Stock "delivery costs will be advised additionally" нужно крупнее и сразу под выбором
++ Steelemotion Stock при оформлении заказа выводить тоже Notes
++ Steelemotion Stock на странице preview order должно быть h1 Order Preview
++ Steelemotion Stock Кнопка "Confirm Order" -> "Place Order"
++ Invoice Register (создавать из заказа, если в заказе разный материал IT, UK должно создаваться два инвойса, Iva Ref каждый год обнуляется, Нужно привязывать айтемы к счету)
++ Items Filter ошибка
++ В списке айтемов выводить если на складе, то где и как долго, если продан, то номер заказа, номер инвойса
+
+
+
+29.08.2012
+==========
++ Проверить добавление позиций в заказ со склада из заказа (сессию обновлять надо тоже)
++ Сделать нормальные Owner для айтемов
++ Список заказов на внешних сайтах
++ В QC для twin должны подтягиваться значения оригинального айтема
++ Картинки к листам
+- Развернуть на сервере
+- При натурализации айтема брать параметры из парента.
+
+
+
+
++ Ограничить количество позиции при добавлении 50 pcs.
+- В сообщении чата добавить ссылку "Answer" для ответа на сообщение.
+- Нужно запретить добавление айтема, если он уже в заказе. Пример: дважды добавляешь один и тот же айтем и он помечается как конфликтный.
+- Нужно проверять количество доступных позиций при добавлении в заказ, чтобы не добавить больше чем есть (при ошибочных действиях, например повторное нажатие кнопки добавить)
+- Не добавляет айтемы к существующему заказу (добавляет в заказ но после перехода на страницу редактирования количество не изменяется)
+- В списке заказов нужно сделать переход по нажатию на строку
+- Добавление позиций в заказ со склада как айтемов в QC
+- Сделать нормальные Owner для айтемов
+- картинки к листам
+- Ссылка на оригинальный сертификат качества: Each & every plate must have a reference to the original MTR, ideally the original is uploaded and available for immediate viewing
+- /items/groupedit при изменении Plate Id убирать Is Virtual
+- подключить список статусов айтема из сообщения MS
+- В QC для twin должны подтягиваться значения оригинального айтема
+- Проверить все ли есть в ITEM
+- Возможность share документы с клиентами
+- ЭКСПОРТ ПРОВОДИТЬ В UTF-8
+- Фильтр марок стали по складам, чтобы американские не показывались на европейском
+
++ checking which other clients have rail access and RECORDING SO IN CoREG !!!
++ сделать обраотку /position/1/item/groupedit/... с возвратом к списку позиций
++ На странице предзаказа калечная дата в alert date подтягивается по-умолчанию
++ Убирать шапку для писем в которых она пустая: http://mam/person/10330/email/1948
++ Изменить хлебные крошки при редактировании письма http://mam/biz/4573/edit
++ Создание письма из QC
++ Добавить надписи в PDF SC
++ Редактирование айтемов из сертификата
++ Добавление со страницы айтемов
++ В айтемах показывать в каких документах он находится // достаточно показать в каком заказе
++ в mechanical properties нулевые значения в PDF должны быть пустыми
+
+
+STEELEMOTION.COM
+----------------
+- со страниц убрать дюймы
+- HRSP убрать Transit Time
+- When plates of specific dimensions are needed, MaM rolls within 2-4 weeks. -> MaM rolls to your specific requirements within 2-4 weeks.
+- shotblast -> shotblusted
+- запретить создавать cut и twin из cut и twin-ов
+- cut айтемов не работает : бизнесы не выбираются, после перегрузки не заполняются локейшены
+- в списки для фильтров при просмотре склада и web-склада добавить проверку на is_locked
+- в http://mam/order/selectitems/3/position:1 добавить подсчет суммы в футере
+
+
+(!) запретить одновременное редактирование одного и того же заказа
+(!) добавить order_items.is_saved = 0|1 на нем строить логику
+(!) при добавлении айтемов в уже существующую в заказе позицию, увеличивать количество в order_positions
+(!) при нажатии на кнопку Don't Save возвращать все order_items.is_saved = 0, обновлять количество в заказе и количество на складе
+	и order_positions.is_saved = 0 удалять
+
+- Не подтягивается location на странице редактирования заказа, при просмотре - ок
+- Проверить создание ревизий склада
+- для формировоания списков фильтров при просмотре склада надо тоже учесть те изменения которые внесли для отображения списка склада
+	is_locked и т.д.
+- в список заказов на складе добавить проверку редактируется ли заказ или нет
+
+
+слоганы : 
+- Just-in-time delivery .
+- 24/7 online ordering .
+- Rolling to your requirements .
+- Stockholding and distribution .
+- Steelmakers from China and Europe .
+- Europe, Middle East and USA markets served .
+
+
+В ОФИСЕ
+=======
+- (?) Разобраться с владельцами металла на складе (MaM IT, MaM UK, PlatesAhead), и с Orders.OrderFor
+- (?) обсудить steelemotion
+
+- На SteelEmotion нужно сделать Журнал для клиентов, в нем писать промоушены 
+	+ сделать чекбокс при будликовании в журнале "разослать пользователям" и пользователи получат бриф текст
+	новости и ссылку на http://www.steelemotion.com/myroom
+	
+- На Web Stock при выборе collection exw fca менять надпись Delivery Date на Collection Date
+- Добавить функцию натурализации айтема, т.е. отвязки айтема от парента (добавить в контекстные меню айтемов)
+- Разобраться с вопросом для кого делать заказы: MaM UK, MaM IT, PlatesAhead. И с владельцами позиций тоже разобраться. 
+	Нужно делать через компании или просто через константы?
+- Balance To Deliver считать по статусу айтема
+- проверить добавление в заказ
+- ПОДМЕНА АЙТЕМОВ
+- для входящих писем надо ставить object_alias = person или company, object_id = {id}
+- (!) список SC
+- сертификаты качества
+- чат в steelemotion
+- подмена айтемов
+- при просмотре email показывать атачменты и связанные объекты
+- при редактировании email дать возможность добавлять атачменты и добавлять связанные объекты
+- при добавлении сообщения в чат добавлять в message_objects для пользователей не STAFF их person и company
+- дата сообщения, сортировка сообщений 
+
+
+(-) эмотикончики подменить в сообщениях и перетащить в tinymce
+(+) у сообщений нет текста, см. сообщения от DJ == ЭКСПОРТИРОВАТЬ В UTF8 ==
++ оптимизировать хп по получению пендингов
++ при поиске нужно сделать ограницение доступа пользователя к сообщениям
++ заменять урлы на ссылки в сообщениях
++ chat в biz, company, person, order, sc
++ emails в biz, company, person, order, sc
++ добавить html-purifier при сохранении сообщения
++ долго грузится окно чата
++ косяк: можно написать сообщение из away. нужно сначала вернуться онлайн а потом выдать сообщения
++ постраничный вывод чата в объекте
++ при просмотре чата объекта разрешить обновление только если находимся на первой странице
++ добавить message_users.is_pending
++ pending сделать проверку в модели, сейчас нет проверки получателя
++ поиск
++ сортировка получателей по алфавиту
++ добавить получателя M-a-M
++ окно выбора бизнеса
++ прикреплять файлы
++ внешний вид окна просмотра сообщения (ref)
++ список пендингов
++ отступы по вертикали в ленте сообщений

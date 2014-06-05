@@ -1,0 +1,123 @@
+1. В шаблонах нужно экономить место, там где есть возможность, формы делать в несколько столбцов.
+
+2. Не нужно вставлять пустую строку между <tr>
+
+3. Для идентификации одиночных элементов в шаблоне с использованием в JS нужно использовать атрибут id, 
+а не class.
+
+4. Не нужно украшать комментариями методы и группы методов, достаточно наглядного форматирования кода:
+// start RA-ITEM-VARIANT delete
+$('.ra-item-variant-delete').on('click', function(){
+	...
+});
+// end RA-ITEM-VARIANT delete
+
+5. Не нужно переопределять очевидные объекты, в данном случае это вносит больше путаницы и мусора в код:
+$('.ra-item-variant-delete').on('click', function(){
+	var target_HTML_element = $(this);
+	...
+});
+
+6. Не нужно навешивать события на онлоад страницы, если их можно просто прописать в шаблоне. Вместо
+$(function(){
+    $('.ra-item-variant-delete').on('click', function(){
+...
+нужно просто добавить объекту на форме onclick потому что так понятнее и очевиднее, 
+кроме того можно сразу передать параметры в функцию, а не городить лишние <input type="hidden">
+
+7. Данные формы должны приходить в шаблон в переменной $form, а не как в ra/main_edit.tpl $release_advice
+
+8. Stock Holder -> Stockholder, незнакомые слова нужно проверять в гугл-переводчике 
+
+9. Для заголовков формы нужно использовать классы  
+class="form-td-title-b" - для обязаельных полей,  
+class="form-td-title" - для обычных
+на странице просмотра - class="form-td-title-b"
+
+10. Для полей с недлинными значениями не нужно делать class="max", достаточно class="normal"
+
+11. Не нужно мусорить в коде абсолютно бесполезными комментариями, даже если они генерятся автоматически
+/**
+ * Object
+ * @var ReleaseAdvice
+ */
+private $_modelReleaseAdvice;
+	
+Пример полезного комментария:
+/**
+ * Экземпляр модели ReleaseAdvice
+ * @var ReleaseAdvice
+ */
+private $_modelReleaseAdvice;
+	
+12. Не нужно создавать дополнительный метод, чтобы потом использовать его вызов в контроллере:
+    public function __construct()
+    {
+        parent::ApplicationController();
+        
+        $this->init();
+    }
+
+14. Все методы контроллера доступны неавторизованному пользователю!
+	
+15. Вид конструкторы нужно привести к одному виду, принятому в проекте:
+class MainController extends ApplicationController
+{
+    function MainController()
+    {
+        ApplicationController::ApplicationController();
+        
+        $this->authorize_before_exec['edit']    = ROLE_STAFF;
+        $this->authorize_before_exec['index']   = ROLE_STAFF;
+        $this->authorize_before_exec['view']    = ROLE_STAFF;
+        
+        $this->context = true;
+    }
+
+16. Не нужно создавать экземпляры моделей в конструкторе и потом использовать экземпляры:
+/**
+ * Object
+ * @var ReleaseAdvice
+ */
+private $_modelReleaseAdvice;
+
+/**
+ * Object
+ * @var SteelItem
+ */
+private $_modelSteelItem;
+
+из соображений единобразия, и рекомендаций рефакторинга
+
+17. public function edit() -> function edit(), public по-умолчанию
+
+18. Не нужно разделять на два метода, делать все в одном
+public function edit()
+{
+	if ($this->_release_advice['status_id'] == RA_STATUS_CLOSED)
+	{
+		$this->_message('Release Advice can not edit!', MESSAGE_ERROR);
+		$this->_redirect(array('ras'));
+	}
+	
+	if (array_key_exists('btn_save', $_REQUEST))
+	{
+		$this->_save_edit();
+	}
+
+19. require_once APP_PATH . 'classes/models/ra.class.php'; нужно подключать в алфавитном порядке
+
+20. Вместо параметра нужно использовать два метода public function FillInfo($rowset, $fill_type = 'simple')
+- FillRAMainInfo
+- FillRAInfo
+
+21. array_key_exists('btn_create', $_REQUEST) -> isset($_REQUEST['btn_create'])
+
+22. Нет проверки статуса айтема при добавлении в RA, можно подставить любой в строке запроса
+
+23. В названии метода RAItemSave($id, $parent_id, $ra_id, $item_id) избыточность, достаточно ItemSave($id, $parent_id, $ra_id, $item_id)
+
+24. ХП sp_ra_item_save никогда не будет производить обновление айтема
+
+25. FillRAInfo($rowset, $fill_type = 'simple') неправильно построен метод, для каждого RA будет каждый раз вызываться FillCompanyInfoShort
+что не верно, нужно вынести все company_id наверх и для всех сделать FillCompanyInfoShort

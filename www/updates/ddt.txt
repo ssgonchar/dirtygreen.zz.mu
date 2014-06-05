@@ -1,0 +1,60 @@
+DDT
+===
+1. Создается из RA или со склада.
+1.1. Создается столько штук, сколько уникальных owner_id у айтемов из которых создаются.
+1.2. У каждого owner_id (MaM UK, MaM IT) будет своя шапка в верхнем левом углу.
+1.3. Английская шапка у нас есть, нужно сделать итальянскую шапку: 
+Piazza della Chiesa, 4 San Giorgio di Nogaro, (UD), Italy                              
+Tel : +44 (0)207 792 46 66  Fax: +44 (0)870 169 18 58  
+plates@steelemotion.com www.steelemotion.com                                 
+P.IVA: IT 02636220309
+1.4. Для английской версии нужно добавлять в поле ANNOTAZIONI строку:
+Origine merce: Cervignano (UD) - Beni consegnati per conto di un soggetto passivo comunitarion.
+
+2. Создать объекты БД:
+ddt
+---
+id
+number			VARCHAR(20)
+date			TIMESTAMP
+buyer			VARCHAR(500)	TEXTAREA
+delivery_point	VARCHAR(500)	TEXTAREA
+iva				VARCHAR(20)		INPUT
+paymenttype_id	INT				SELECT можно взять из заказа
+causale_id		INT				SELECT {1 => c/to lavorazione, 2 => c/to vendita}
+porto_id		INT				SELECT {1 => f.co partenza , 2 => f.co destino}
+truck_number	VARCHAR(20)		INPUT
+transporter_id	INT				INPUT с поиском и автозаполнением компаний, можно взять с списка заказа
+weighed_weight	DECIMAL(10, 4)	INPUT
+created_at
+created_by
+modified_at
+modified_by
+
+dtt_items
+---------
+id
+ddt_id			INT
+item_id			INT
+weighed_weight	DECIMAL(10, 4)
+created_at
+created_by
+modified_at
+modified_by
+
+3. Добавить на страницу просмотра RA кнопку Create DDT.
+3.1. При создании, айтемы группируются по owner_id и созадются DDT по количеству уникальных owner_id, но только для тех у кого owner_id > 0.
+
+4. На странице редактирования DDT должна находиться форма с полями в соотвтествии с db.ddt и список айтемов "Packing List".
+4.1. В Packing List должны быть столбцы: Plate Id (steelitem.guid), Steel Grade, Thickness, Width, Length, Qtty (всегда будет 1), 
+Weight, Weighed Weight. Единицы измерения нужно брать из первого айтема.
+4.2. После сохранения DDT:
+4.2.1 Если введено начение поля формы ddt.weighed_weight, должны пропорционально пересчитываться значения ddt_items.weighed_weight по формуле:
+ddt_items.weighed_weight = steelitem.unitweight * ((ddt.weighed_weight * 100 / SUM(steelitem.unitweight)) / 100)
+4.2.2 Должен генерироваться PDF и осуществляться переход на страницу просмотра DDT.
+
+5. На странице списка DDT должна быть таблица со столбцами: Number & Date, Buyer, Delivery Point, Qtty, Weight (ddt.weighed_weight), Pdf, Edit (без заголовка, как в списке RA)
+5.1. При нажатии на строку таблицы должен осуществляться переход на страницу просмотра DDT.
+5.2. При нажатии на иконку в последней колонке должен осуществляться переход на страницу редактирования DDT.
+
+6. На странице просмотра DDT должны быть данные формы, Packing List, ссылка на PDF версию. 
