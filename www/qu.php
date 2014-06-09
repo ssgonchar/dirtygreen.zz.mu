@@ -1,6 +1,6 @@
-<?php
-$link = mysql_connect( 'localhost', 'mam', 'vNovom30Vete=');
- mysql_select_db('mam_www', $link);
+ <?php
+$link = mysql_connect( 'localhost', 'mam', 'vNovom30Vete='); 
+ mysql_select_db('mam_www', $link); 
  //$q="SELECT id FROM steelitems WHERE is_virtual=1 AND status_id = 0 AND is_deleted=0 AND is_available = 0";
  $q="SELECT DISTINCT
         si.id, si.status_id, si.is_available
