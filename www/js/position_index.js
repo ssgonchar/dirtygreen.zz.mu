@@ -10,37 +10,12 @@ $(function(){
     
     $(".location-checkbox").live("click", bind_positions_filter);
     
-    $(".mirror-price").live("keyup", function(event)
-    {
-        if($(this).val() == "") {
-            return;
-        } 
-        
-        $(this).removeClass('');
-    });
+    $('#myModal').on('hidden.bs.modal', function (e) {
+        console.log("close modal");
+    })
+
     
-    /*       Активирует кнопку Save если нет пустых input price       */
-    /*
-    $(".mirror-price").live("change", function(event)
-    {   
-        //$("#button-save").removeAttr('disabled');
-        /*
-        //проверяем все input price на пустое значение
-        $has_empty_price = mirror_check_empty_price();
-        //проверяем на наличие класса empty
-        $(".mirror-price").each(function()
-        {   //если находим пустой input price деактивируем кнопку Save
-            if($(this).hasClass("empty"))
-            {
-                
-            }
-            $("#button-save").attr('class', 'true');
-            $("#button-save").attr('disabled', 'true');
-        });*/
-       /* console.log($('.mirror-price[value = ""]').parent('tr'));
-    });    */  
-    /*_____________________________________________________________________*/
-    
+    //заполняет select списки в модальном окне mirrors
     $(".select-stock").live("change", function(event){
         
         event.preventDefault();
@@ -75,7 +50,68 @@ $(function(){
         }        
     });
     
+    //Обработчик события изменения значения select в модальном окне mirror
+    $("#mirrors-edit select").live("change", function(event)
+    {
+        //получаем параметры для сохранения:
+        //текущая строка-родитель:
+        var stock_tr = $(this).parent().parent();
+        //параметры для таблицы mirrors:
+        var mirror_id       = $(stock_tr).find('span.mirror-id').text();
+        var position_id     = $(stock_tr).find('span.position-id').text();
+        var stock_id        = $(stock_tr).find('.select-stock option:selected').val();
+        var location_id     = $(stock_tr).find('.select-location option:selected').val();
+        var deliverytime_id = $(stock_tr).find('.select-deliverytime option:selected').val();
+        var price           = parseFloat($(stock_tr).find('input.mirror-price').val());
+        //сохраняем
+        save_mirror(mirror_id, position_id, stock_id, location_id, deliverytime_id, price);
+    });
     
+    //Обработчик события изменения значения price в модальном окне mirror
+    $('input.mirror-price').live("keyup", function() {
+        if (this.value.match(/[^0-9^.]/g)) 
+        {   //все кроме точки и цифр удаляем
+            this.value = this.value.replace(/[^0-9^.]/g, "");
+        }
+        if($(this).val() == "") 
+        {
+            return;
+        }
+        else
+        {
+            //получаем параметры для сохранения:
+            //текущая строка-родитель:
+            var stock_tr = $(this).parent().parent();
+            //параметры для таблицы mirrors:
+            var mirror_id = $(stock_tr).find('span.mirror-id').text();
+            var position_id = $(stock_tr).find('span.position-id').text();
+            var stock_id = $(stock_tr).find('.select-stock option:selected').val();
+            var location_id = $(stock_tr).find('.select-location option:selected').val();
+            var deliverytime_id = $(stock_tr).find('.select-deliverytime option:selected').val();
+            var price = parseFloat($(stock_tr).find('input.mirror-price').val());
+            
+            var empty_input = $("#mirrors-edit tr").find("input.mirror-price").val() == ""; 
+            
+            //сохраняем
+            save_mirror(mirror_id, position_id, stock_id, location_id, deliverytime_id, price);
+            
+            //если нет пустых price активируем add row
+            //пустым может быть только последний Price
+            $("#mirrors-edit tr").each(function()
+            {
+                var empty_input = $("#mirrors-edit tr").find("input.mirror-price").val() == ""; 
+                //если нет пустых price активируем del row
+                if(empty_input == false){
+                    //console.log("add mirror disabled");
+                    $('button#add-mirror').removeAttr("disabled");
+                    $('button#del-mirror').removeAttr("disabled");
+                }else{
+                    $('button#add-mirror').attr("disabled", "true");
+                }
+            })
+        }
+        
+    });
     
     //bind_positions_filter();
     $('.selected-control.btn-default').tooltip();
@@ -108,24 +144,7 @@ $(function(){
         //console.log('blur val:'+id);
     });
     
-    //Обработчик события изменения значения select в модальном окне mirror
-    //!!! доработать - должно срабатывать только при редактировании !!!
-    $("#mirrors-edit select").live("change", function(event)
-    {
-        //получаем параметры для сохранения:
-        //текущая строка-родитель:
-        var stock_tr = $(this).parent().parent();
-        //параметры для таблицы mirrors:
-        var mirror_id = $(stock_tr).find('.mirror-id').text();
-        var position_id = $(stock_tr).find('.position-id').text();
-        var stock_id = $(stock_tr).find('.select-stock option:selected').val();
-        var location_id = $(stock_tr).find('.select-location option:selected').val();
-        var deliverytime_id = $(stock_tr).find('.select-deliverytime option:selected').val();
-        var price = $(stock_tr).find('input.mirror-price').val();
-        
-        save_mirror(mirror_id, position_id, stock_id, location_id, deliverytime_id, price);
-        //console.log(stockholder_id);
-    });
+    
 });
 
 var save_position_price = function(id, price) {
@@ -180,10 +199,10 @@ var mirror_check_empty_price = function(){
             //обводим input зеленым
             $(this).css("border", "solid 1px green");
         }
-    });*/
+    });
     if($('.mirror-price[value = ""]').lenth>0) {
         return $result = true;
-    }
+    }*/
 }
 
 var add_row = function(stock_id){
@@ -597,8 +616,6 @@ var show_group_actions = function()
     {
         if (items_length == 0) //если выбрана только позиция, делаем активной кнопку Edit
         {
-            //$('#btn-positions-edit').removeAttr('disabled');
-            //$('#btn-positions-edit').removeAttr('title');
             //кнопка Edit
             $('#btn-positions-edit.btn-default').removeAttr('title');
             $('#btn-positions-edit.btn-default').tooltip('destroy');
@@ -607,16 +624,12 @@ var show_group_actions = function()
         }
         else
         {
-            //$('#btn-positions-edit').attr('disabled', 'true');
             //кнопка Edit
             $('#btn-positions-edit.btn-primary').attr('title', 'Please, select item');
             $('#btn-positions-edit.btn-primary').removeClass('btn-primary');
             $('#btn-positions-edit').addClass('btn-default');
             $('#btn-positions-edit.btn-default').tooltip();
         }
-        
-        //$('.selected-control').removeAttr('disabled');
-        //$('.selected-control').removeAttr('title');
         $('.selected-control.btn-default').removeAttr('title');
         $('.selected-control.btn-default').tooltip('destroy');
         $('.selected-control.btn-default').removeClass('btn-default');
@@ -624,18 +637,12 @@ var show_group_actions = function()
     }
     else
     {
-        //$('#btn-positions-edit').show();
-        //$('.selected-control').show(); 
-        //$('#btn-positions-edit').attr('disabled', 'true');
-        //$('#btn-positions-edit').attr('title', 'Please, select a position');
         //кнопка Edit
         $('#btn-positions-edit.btn-primary').attr('title', 'Please, select position');
         $('#btn-positions-edit.btn-primary').removeClass('btn-primary');
         $('#btn-positions-edit').addClass('btn-default');
         $('#btn-positions-edit.btn-default').tooltip();
         
-        //$('.selected-control').attr('disabled', 'true');
-        //$('.selected-control').attr('title', 'Please, select a position');
         $('.selected-control.btn-primary').attr('title', 'Please, select item');
         $('.selected-control.btn-primary').removeClass('btn-primary');
         $('.selected-control').addClass('btn-default');
@@ -839,45 +846,6 @@ var deprecated_get_steelgrades = function()
     });
 };
 
-/**
- *Зеркало
- *
- *Позволяет создавать и редактировать зеркало (зеркало - отображение позиции на нескольких складах с подменой Location)
- *@param {integer} position_id id позиции
- *@version 20140521
- *@author Gonchar
- *
- *@version 20140605
- *@modified Uskov
- */
-var create_mirror_from_selected = function(position_id)
-{
-    $.ajax({
-        url     : '/mirror/getmirror',
-        
-        data    : {
-            position_id : position_id
-        },
-    
-        success: function(json){
-            if (json.result === 'new_mirror' || json.result === 'edit_mirror') {
-                console.log(json);
-                $('body').append(json.content);
-                $('#myModal'+position_id).modal();
-                //$('#steelgrades-select').html('');
-                //$('#steelgrades-select').html(json.content);
-            } /*
-            if (json.result === 'edit_mirror') {
-                console.log(json);
-                $('body').append(json.content);
-                $('#myModal'+position_id).modal();
-            }*/
-        }
-    });
-    $("#button-save").attr('disabled', 'true');
-    //по умолчанию input price обводим красным т.к. пустой
-    $(".mirror-price").css("border", "solid 1px red");
-};
 
 /**
  *Изменить видимость на складе
@@ -918,7 +886,50 @@ var change_visibility_in_stock = function(obj, position_id, hidden)
     console.log(position_id + ': hidden='+hidden);
 };
 
-
+/**
+ *Зеркало
+ *
+ *Позволяет создавать и редактировать зеркало (зеркало - отображение позиции на нескольких складах с подменой Location)
+ *@param {integer} position_id id позиции
+ *@version 20140521
+ *@author Gonchar
+ *
+ *@version 20140605
+ *@modified Uskov
+ */
+var create_mirror_from_selected = function(position_id)
+{
+    $.ajax({
+        url     : '/mirror/getmirror',
+        
+        data    : {
+            position_id : position_id
+        },
+    
+        success: function(json){
+            if (json.result === 'new_mirror' || json.result === 'edit_mirror') {
+                console.log(json);
+                $('body').append(json.content);
+                $('#myModal'+position_id).modal();
+            } 
+        }
+    });
+    
+    $("#del-mirror").attr('disabled', 'true');
+    $("#add-mirror").attr('disabled', 'true');
+    //деактивируем add row и проверяем значение price для активации delete
+    $("#mirrors-edit tr").each(function()
+    {
+        var empty_input = $("#mirrors-edit tr").find("input.mirror-price").val() == ""; 
+        if(empty_input == true){
+            console.log("Creating new mirror");
+        }else{
+            $('#del-mirror').removeAttr("disabled");
+            $('#add-mirror').removeAttr("disabled");
+            console.log("Editing a mirror");
+        }
+    })
+};
 
 /**
  *Добавляет строку в таблицу редактирования Mirror
@@ -931,32 +942,98 @@ var change_visibility_in_stock = function(obj, position_id, hidden)
  *
  *@version 20140521
  *@author Gonchar
+ *
+ *@version 20140608
+ *@author Uskov
  */
 var mirror_add_row = function()
 {
-    
     var number_rows = $("#mirrors-edit tr").size();
     var index_prev_row = number_rows-1;
     var prev_row_html = $("#mirrors-edit tr:eq("+index_prev_row+")").html();
     var prev_stock_val = $(".select-stock:eq("+index_prev_row+")").val();
     var css = $("#mirrors-edit tr:first").attr('style');
+    //активируем кнопки delete
+    $("#mirrors-edit tr").each(function()
+    {
+        //console.log($('#del-mirror'));
+        $('button#del-mirror').removeAttr("disabled");
+    })
     
-    console.log(prev_stock_val);
-    //$(".add-row").before("<tr>"+row+"</tr><tr><td colspan='2'><hr/></td></tr>");
     $("#mirrors-edit tbody").append("<tr>"+prev_row_html+"</tr>");
-    
-   
-    if(number_rows > 1) {
-        $("#mirrors-edit .btn").removeAttr('disabled');
-    }
-    
     $("#mirrors-edit tr:last").html();
     
     $(".select-stock:last [value='"+prev_stock_val+"']").attr("selected", "selected");
     
-    //при добавлении новой строки деактивируем кнопку Save (защита от пустого price)
-    $("#button-save").attr('disabled', 'true');
-    $(".mirror-price:last").css("border", "solid 1px red");
+    //console.log(position_id);
+    //есть необходимость сохранять новый mirror при создании
+    //получаем параметры для сохранения у последнего mirror:
+    var mirror_id       = "";
+    var position_id     = $("#mirrors-edit tr:last span.position-id").text();
+    var stock_id        = $("#mirrors-edit tr:last .select-stock option:selected").val();
+    var location_id     = $("#mirrors-edit tr:last .select-location option:selected").val();
+    var deliverytime_id = $("#mirrors-edit tr:last .select-deliverytime option:selected").val();
+    var price           = $("#mirrors-edit tr:last input.mirror-price").val();
+    //сохраняем mirror
+    save_mirror(mirror_id, position_id, stock_id, location_id, deliverytime_id, price);
+    //деактивируем add row и проверяем значение price для активации delete
+    $("#mirrors-edit tr").each(function()
+    {
+        var empty_input = $("#mirrors-edit tr").find("input.mirror-price").val() == ""; 
+        if(empty_input == true){
+            $('#add-mirror').attr("disabled", "true");
+        }else{
+            $('#del-mirror').removeAttr("disabled");
+        }
+    })
+};
+
+/*
+ * Сохранение mirror при изменении в любом поле формы. Сохраняет 1 mirror, select которого изменен
+ * Поле input price должно быть заполнено.
+ * Вызывается при изменении в select и price
+ * @param mixed $mirror_id
+ * @param mixed $position_id
+ * @param mixed $location_id
+ * @param mixed $deliverytime_id
+ * @param mixed $price
+ * //@param mixed $status_id
+ * 
+ * @version 20140606
+ * @author Uskov
+ */
+var save_mirror = function(mirror_id, position_id, stock_id, location_id, deliverytime_id, price)
+{
+        $.ajax ({
+            url: '/mirror/savemirror',
+            data : {
+                mirror_id : mirror_id,
+                position_id : position_id,
+                stock_id : stock_id,
+                location_id : location_id,
+                deliverytime_id : deliverytime_id,
+                price: price
+            },
+            type: 'POST',               
+            success: function(json)
+            {
+                if (json.result === 'okay') 
+                {
+                    //получаю id нового mirror
+                    var saved_id = json.object.id;
+                    //если mirror новый присваиваю mirror_id
+                    if(mirror_id !== saved_id)
+                    {
+                        $("#mirrors-edit tr:last").find('span.mirror-id').text(saved_id);
+                        console.log("new mirror saved, id = " + saved_id);
+                    }
+                    else
+                    {
+                        console.log("mirror saved, id = " + saved_id);
+                    }
+                }
+            }
+        });
 };
 
 /**
@@ -973,48 +1050,65 @@ var mirror_add_row = function()
  */
 var mirror_del_row = function(obj)
 {
-
-    //var hr = $(obj).parent().parent().next().remove();
-    var row = $(obj).parent().parent().remove();
+    //var mirror_id = $(obj).val();
+    //var row = $(obj).parent().parent().remove();
+    var stock_tr = $(obj).parent().parent();
+    var mirror_id = $(stock_tr).find('span.mirror-id').text();
+    
     var number_rows = $("#mirrors-edit tr").size();
-    //$(".add-row").before("<tr>"+row+"</tr><tr><td colspan='3'><hr/></td></tr>");
-    if(number_rows === 1) {
-        $("#mirrors-edit .btn").attr('disabled', 'true');
+    if(number_rows == 1){
+        //получаем параметры для сохранения:
+        var mirror_id       = $("span.mirror-id").text();
+        var position_id     = $("span.position-id").text();
+        var stock_id        = $(".select-stock option:selected").val();
+        var location_id     = $(".select-location option:selected").val();
+        var deliverytime_id = $(".select-deliverytime option:selected").val();
+        //var price           = $("input.mirror-price").val();
+        var price           = '';
+        //сохраняем mirror
+        save_mirror(mirror_id, position_id, stock_id, location_id, deliverytime_id, price);
+        $("input.mirror-price").val('');
+        $("#del-mirror").attr('disabled', 'true');
+        $("#add-mirror").attr('disabled', 'true');
+        
+    }else{
+        $.ajax ({
+            url: '/mirror/deletemirror',
+            data : {
+                mirror_id : mirror_id
+            },
+            type: 'POST',               
+            success: function(json)
+            {
+                if (json.result === 'okay') 
+                {
+                    var deleted_id = json.object.id;
+                    console.log("mirror deleted, id = " + deleted_id);
+                }
+            }
+        });
+        var row = $(obj).parent().parent().remove();
+        //активируем кнопки delete
+        $("#mirrors-edit tr").each(function()
+        {
+            var empty_input = $("#mirrors-edit tr").find("input.mirror-price").val() == ""; 
+            //если нет пустых price активируем del row
+            if(empty_input == false){
+                $('button#del-mirror').removeAttr("disabled");
+            }
+        })
     }
-    console.log(number_rows);
+    if(number_rows == 1){
+        //
+    }
 };
 
+//удаляет все mirror кроме первого
 var mirror_del_all = function()
 {
-    $("#mirrors-edit tr:gt(0)").each(function(){
-        $(this).remove();
-    })
-    $("#mirrors-edit .btn").attr('disabled', 'true');
-};
-
-/*
- * Сохранение mirror при изменении в любом поле формы. Сохраняет 1 mirror, select которого изменен
- * Поле input price должно быть заполнено.
- * Вызывается при изменении в select и price
- * 
- * 
- */
-var save_mirror = function(mirror_id, position_id, stock_id, location_id, deliverytime_id, price)
-{
-    $.ajax ({
-        url: '/mirror/savemirror',
-        data : {
-            mirror_id : mirror_id,
-            position_id : position_id,
-            stock_id : stock_id,
-            location_id : location_id,
-            deliverytime_id : deliverytime_id,
-            price: price
-        },
-        type: 'POST',               
-        success: function(json)
-        {
-            console.log(json);
-        }
-    });    
+    $("#mirrors-edit tr").each(function()
+    {
+        var button_del = $(this).find("#del-mirror");
+        mirror_del_row(button_del);
+    });
 };

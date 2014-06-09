@@ -22,6 +22,7 @@
     {include file="templates/layouts/controls/control_app_messages.tpl"}
     <script src="/js/jquery.{$smarty.const.JS_VERSION}.js" type="text/javascript"></script>
             <script type="text/javascript" src="/js/jquery.highlight.js" ></script>       
+            <script type="text/javascript" src="/js/jquery.zclip.min.js" ></script>       
         <script type="text/javascript" src="/js/jquery.scrollTo-min.js" ></script>       
         <script type="text/javascript" src="/js/search_on_page.js" ></script>      
     	 <script src="/js/chosen.jquery.js" type="text/javascript"></script>

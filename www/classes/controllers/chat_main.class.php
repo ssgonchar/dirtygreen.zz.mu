@@ -94,10 +94,11 @@ class MainController extends ApplicationController
 			}
 			
             $messages   = new Message();
-            $rowset     = $messages->Search($keyword, $date_from, $date_to, $sender_id, $recipient_id, $is_dialogue, $is_mam, $search_type, $this->page_no);
+            $rowset     = $messages->Search($keyword, $date_from, $date_to, $sender_id, $recipient_id, $is_dialogue, $is_mam, $search_type, 0, 999999);
+            //$rowset     = $messages->Search($keyword, $date_from, $date_to, $sender_id, $recipient_id, $is_dialogue, $is_mam, $search_type, $this->page_no);
 
-            $pager = new Pagination();
-            $this->_assign('pager_pages',   $pager->PreparePages($this->page_no, $rowset['count']));
+            //$pager = new Pagination();
+            //$this->_assign('pager_pages',   $pager->PreparePages($this->page_no, $rowset['count']));
             $this->_assign('count',         $rowset['count']);
 
             $this->_assign('list',          $rowset['data']);

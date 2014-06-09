@@ -97,7 +97,7 @@ class MainAjaxController extends ApplicationAjaxController
                     if ($object_alias == 'chat')
                     {
                         $this->_assign('message', $row);
-                        $list[] = $this->smarty->fetch('templates/html/chat/control_chat_message.tpl');                                            
+                        $list[] = $this->smarty->fetch('templates/html/chat/control_chat_messagemod.tpl');                                            
                     }
                     else
                     {

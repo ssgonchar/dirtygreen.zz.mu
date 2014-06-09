@@ -34,12 +34,13 @@
         {elseif $message.message.type_id == $smarty.const.MESSAGE_TYPE_ORDER}
             <b>{$message.message.title}</b>
         {/if}            
-            {if $smarty.session.user.role_id <= $smarty.const.ROLE_STAFF && !empty($message.message.is_pending) && isset($message.message.is_pending_recipient) && (empty($message.message.userdata) || empty($message.message.userdata.done_at))}
-            <div id="message-{$message.message.id}-pending" class="panding-label" style="position: absolute; top: 0; right: 0; cursor: pointer;" onclick="mark_message_as_done({$message.message.id});">
-                {if !empty($message.message.deadline)}deadline : {$message.message.deadline|date_format:'d/m/Y'}{else}MustDO !{/if}
-            </div>
-            {/if}
+
         </div>
+            {if $smarty.session.user.role_id <= $smarty.const.ROLE_STAFF && !empty($message.message.is_pending) && isset($message.message.is_pending_recipient) && (empty($message.message.userdata) || empty($message.message.userdata.done_at))}
+            <div id="message-{$message.message.id}-pending" class="btn btn-success btn-xs panding-label" style="cursor: pointer;" onclick="mark_message_as_done({$message.message.id});">
+                {if !empty($message.message.deadline)}deadline : {$message.message.deadline|date_format:'d/m/Y'}{else}Done{/if}
+            </div>
+            {/if}        
         <div style="color: #777; float: right; text-align: right; width: 70px; font-size: 11px; line-height: 14px;{if $message.message.type_id == $smarty.const.MESSAGE_TYPE_LOGIN_FAILED} color: red;{/if}">
             <a href="javascript: void(0);" style="text-decoration: none;" onclick="show_chat_message_ref(this, {$message.message.id}, '{$message.message.created_at|date_format:"d/m/Y"} {$message.message.created_at|date_format:"H:i:s"}');" style="cursor: pointer;">{$message.message.created_at|date_format:'d/m/Y'}<br>
             {$message.message.created_at|date_format:'H:i:s'}</a>

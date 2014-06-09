@@ -102,11 +102,12 @@ var chat_modal_send_message = function(object_alias, object_id, type)
                 if (chat_updater)
                 {
                     //_modal_message_add_to_list(object_alias, json.content);
-					window.opener.console.log(object_alias);
+					//window.opener.console.log(object_alias);
 					//window.opener.console.log(json.content);
                     window.opener._chat_message_add_to_list(object_alias, json.content);
                     window.opener.bind_tooltips();
                     window.opener.bind_prettyphoto();
+                    window.opener.show_user_icons();
                 }
 
                 // save last message id //  сохраняет идентификатор последнего полученного сообщения

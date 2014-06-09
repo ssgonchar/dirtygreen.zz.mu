@@ -72,9 +72,17 @@ class Mirror extends Model {
     function FillMainInfo($rowset, $id_fieldname = 'id', $entityname = 'mirror', $cache_prefix = 'mirror') {
         return $this->_fill_entity_info($rowset, $id_fieldname, $entityname, $cache_prefix, 'sp_mirror_get_list_by_ids', array('mirror' => ''), array());
     }
-
-    function Remove($id) {
-        $result = $this->CallStoredProcedure('sp_mirror_remove', array($this->user_id, $id));
+    
+    /**
+     * Удаляет mirror из базы данных / Deletes mirror from database
+     * Удаление одной строки mirror
+     * @param mixed $mirror_id
+     * @version 20140606 
+     * @author Uskov
+     * @return array() возвращает id удаленной строки
+     */
+    function Remove($mirror_id) {
+        $result = $this->CallStoredProcedure('sp_mirror_remove', array($this->user_id, $mirror_id));
         $result = isset($result) && isset($result[0]) && isset($result[0][0]) ? $result[0][0] : null;
 
         if (empty($result) || array_key_exists('ErrorCode', $result)) {
@@ -90,7 +98,7 @@ class Mirror extends Model {
     /**
      * Сохраняет mirror в базу данных / Saves mirror in database
      * Сохранение одной строки mirror
-     * @param mixed $id
+     * @param mixed $mirror_id
      * @param mixed $position_id
      * @param mixed $location_id
      * @param mixed $deliverytime_id
@@ -98,10 +106,11 @@ class Mirror extends Model {
      * @param mixed $status_id
      * @version 20140605 
      * @author Uskov
+     * @return array() возвращает id сщхраненной строки
      */
-    function Save($id, $position_id, $location_id, $deliverytime_id, $price)
+    function Save($mirror_id, $position_id, $location_id, $deliverytime_id, $price)
     {        
-        $result = $this->CallStoredProcedure('sp_mirror_save', array($this->user_id, $id, $position_id, $location_id, $deliverytime_id, $price));
+        $result = $this->CallStoredProcedure('sp_mirror_save', array($this->user_id, $mirror_id, $position_id, $location_id, $deliverytime_id, $price));
         $result = isset($result) && isset($result[0]) && isset($result[0][0]) ? $result[0][0] : null;
         
         if (empty($result) || array_key_exists('ErrorCode', $result)) return null;
@@ -110,5 +119,6 @@ class Mirror extends Model {
         Cache::ClearTag('mirror');
         
         return $result;
+        //debug("1682", $result);
     }
 }

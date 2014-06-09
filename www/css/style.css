@@ -367,12 +367,12 @@ table.list tr td, table.list tr td input.text, table.list tr td input[type="text
 table.form tr.deleted td, table.form tr.deleted td input, table.form tr.deleted td select { color: #aaa; border-color: #aaa; }
 table.form tr.deleted td a { color: #aaa; }
 
-
+/*
 table.table { border: #917955 solid 1px; }
 table.table caption { font-size: 16px; text-align: left; font-weight: bold; color: #513915; }
 table.table tr th { padding: 7px 0; background-color: #89847B; font-size: 12px; font-weight: bold; color: #484848; }
 table.table tr td { padding: 7px 0; border: #a5a5a5 solid 1px; background-color: #FFFFFF; }
-
+*/
 /******************************************
  *  Фиксированнный заголовок таблицы
  *          
@@ -1313,6 +1313,5 @@ table.list tbody tr.report-item-sold td { background: #C1FFC1 !important; }
 	height:auto;
 	margin:0px;
 	padding:0px;
-	/*text-align:left;*/
-}
-*/
+	/*text-align:left;
+}*/

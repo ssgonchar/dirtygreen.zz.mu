@@ -56,8 +56,11 @@
     <div class="col-md-12">
 -->    
             <table id="mirrors-edit" class="table table-striped" style="width:100%;">
-                <tr class="test">                               
+                <tr class="">                               
                     <td id='td-stock' style="width:25%">
+                    <!-- $position_id записываем в скрытый span -->
+                            <span class="mirror-id" style="display: none;" type="text"></span>
+                            <span class="position-id" style="display: none;" type="text">{$position.id}</span>
                         <select class="select-stock" style="width:100%">
                             {foreach from=$stocks item=row}
                                 <option value='{$row.stock.id}' {if $position.stock_id == $row.stock.id}selected{/if}>{$row.stock.title}</option>
@@ -65,16 +68,16 @@
                         </select>
                     </td>                                
                     <td class='td-location' style="width:25%">
-                        <select style="width:100%">
+                        <select class="select-location" style="width:100%">
                             {foreach from=$locations item=row}
-                                <option {if $position.quick.locations == $row.location.title}selected{/if}>{$row.location.title}</option>
+                                <option value="{$row.location.id}" {if $position.quick.locations == $row.location.title}selected{/if}>{$row.location.title}</option>
                             {/foreach}
                         </select>
                     </td>
                     <td class='td-deliverytime' style="width:20%">
-                        <select style="width:100%">
+                        <select class="select-deliverytime" style="width:100%">
                             {foreach from=$deliverytimes item=row}
-                                <option {if $position.deliverytime_id == $row.deliverytime_id}selected{/if}>{$row.deliverytime.title}</option>
+                                <option value="{$row.deliverytime_id}" {if $position.deliverytime_id == $row.deliverytime_id}selected{/if}>{$row.deliverytime.title}</option>
                             {/foreach}
                         </select>
                     </td>
@@ -82,7 +85,7 @@
                         <input class="mirror-price" style="width:100%; height: 20px;" type="text" placeholder="price*">
                     </td> 
                     <td style="width:10%">
-                        <button style="width:100%" class="btn btn-primary btn-xs" onClick="mirror_del_row(this);" disabled="true"><span  class="glyphicon glyphicon-remove"></span> Delete</button>
+                        <button id="del-mirror" value="{$mirror_id}" style="width:100%" class="btn btn-primary btn-xs" onClick="mirror_del_row(this);"><span  class="glyphicon glyphicon-remove"></span> Delete</button>
                     </td>
                 </tr>
                 <!--
@@ -126,19 +129,19 @@
                 {/foreach}
                 *}
             </table>
-                        <div class="row">
+                        <div class="row" style="margin-bottom: 15px;">
                             <div class="container">
                                 <div class="col-md-12">
                                     <button class="btn btn-primary btn-xs" onclick="mirror_del_all()" ><span  class="glyphicon glyphicon-trash"></span> Delete all mirrors</button>
-                                    <button class="btn btn-primary btn-xs" onclick="mirror_add_row();" ><span  class="glyphicon glyphicon-plus"></span> Add mirror</button>
+                                    <button id="add-mirror" class="btn btn-primary btn-xs" onclick="mirror_add_row();" ><span  class="glyphicon glyphicon-plus"></span> Add mirror</button>
                                 </div>
                             </div>
                         </div>
-                                            
+            <!--                                
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal"><span  class="glyphicon glyphicon-chevron-left"></span> Close</button>
                 <button id="button-save" type="button" class="btn btn-primary" disabled><span  class="glyphicon glyphicon-save"></span> Save</button>
-            </div>
+            </div>-->
         </div>
     </div>
 </div>

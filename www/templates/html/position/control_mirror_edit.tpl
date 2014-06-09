@@ -50,19 +50,22 @@
                         <b>total price, {$position.currency}: {$position.value|escape:'html'|string_format:'%.2f'|wunit}</b><br/>                                
                     </div>
                 </div>
-            </div>
+            </div> 
         <!-- Таблица с данными по выбраному mirror -->                
             <table id="mirrors-edit" class="table table-striped" style="width:100%;">
                 {foreach from=$mirrorlist item=row}
                     <!-- Переменные со значениями по данному mirror для сравнения с элементами select -->
-                    {$mirror_id = ""}
+                    {$mirror_id = $row.mirror.id}
+                    {$position_id = $row.mirror.position_id}
                     {$stock_id = $row.position.steelposition.stock_id}
                     {$location_id = $row.mirror.location_id}
                     {$deliverytime_id = $row.mirror.deliverytime_id}
                     {$price = $row.mirror.price}
-                    <input class="mirror-id" value="{$price}" style="display: none;" type="text" placeholder="price*">
                     <tr class="">                               
                         <td id='td-stock' style="width:25%">
+                    <!-- $mirror_id и $position_id записываем в скрытые span -->
+                            <span class="mirror-id" style="display: none;" type="text">{$row.mirror.id}</span>
+                            <span class="position-id" style="display: none;" type="text">{$row.mirror.position_id}</span>
                             <select class="select-stock" style="width:100%">
                     <!-- Выбираем stock, id которого совпадает с тем, который в mirror -->
                                 {foreach from=$stocks item=row}
@@ -90,25 +93,25 @@
                             <input class="mirror-price" value="{$price}" style="width:100%; height: 20px;" type="text" placeholder="price*">
                         </td> 
                         <td style="width:10%">
-                            <button style="width:100%" class="btn btn-primary btn-xs" onClick="mirror_del_row(this);" disabled="true"><span  class="glyphicon glyphicon-remove"></span> Delete</button>
+                            <button id="del-mirror" value="{$mirror_id}" style="width:100%" class="btn btn-primary btn-xs" onClick="mirror_del_row(this);"><span  class="glyphicon glyphicon-remove"></span> Delete</button>
                         </td>
                     </tr>
                 {/foreach}
             </table>
         <!--// -->
-            <div class="row">
+            <div class="row" style="margin-bottom: 15px;">
                 <div class="container">
                     <div class="col-md-12">
                         <button class="btn btn-primary btn-xs" onclick="mirror_del_all()" ><span  class="glyphicon glyphicon-trash"></span> Delete all mirrors</button>
-                        <button class="btn btn-primary btn-xs" onclick="mirror_add_row();" ><span  class="glyphicon glyphicon-plus"></span> Add mirror</button>
+                        <button id="add-mirror" class="btn btn-primary btn-xs" onclick="mirror_add_row();" ><span  class="glyphicon glyphicon-plus"></span> Add mirror</button>
                     </div>
                 </div>
             </div>
-                                            
+            <!--                                
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal"><span  class="glyphicon glyphicon-chevron-left"></span> Close</button>
                 <button id="button-save" type="button" class="btn btn-primary" disabled><span  class="glyphicon glyphicon-save"></span> Save</button>
-            </div>
+            </div>-->
         </div>
     </div>
 </div>

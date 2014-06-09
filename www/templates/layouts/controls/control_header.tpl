@@ -24,7 +24,7 @@
 		<link rel="stylesheet" href="/css/style.{$smarty.const.CSS_VERSION}.css" type="text/css" media="screen, projection" />
 	{/if}
 	
-    {if isset($include_ui)}<link rel="stylesheet" href="/css/jquery-ui.css" type="text/css" media="screen, projection" />{/if}
+    
     {if isset($include_upload)}<link rel="stylesheet" href="/css/fileuploader.css" type="text/css" media="screen, projection" />{/if}
     {if isset($include_prettyphoto)}<link rel="stylesheet" href="/css/prettyPhoto.css" type="text/css" media="screen" />{/if}
     {*{if isset($include_mce)}<script type="text/javascript" src="/js/mce.js"></script>{/if}*}
@@ -54,7 +54,7 @@
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css" type="text/css" media="screen, projection" />
     <link rel="stylesheet" href="/css/bootstrap-my.css" type="text/css" media="screen, projection" />
     <link rel="stylesheet" href="/css/chosen.css" type="text/css" media="screen, projection" />
-    
+    {if isset($include_ui)}<link rel="stylesheet" href="/css/jquery-ui.css" type="text/css" media="screen, projection" />{/if}
     
     {*<script src="http://www.fuelcdn.com/fuelux/2.6.0/loader.min.js" type="text/javascript"></script>
     	<!--<script src="http://jqueryui.com/jquery-wp-content/themes/jquery/js/plugins.js"></script>
@@ -106,7 +106,7 @@
                 <!--<span id="test-popover" type="button" class="btn btn-default" data-container="body" data-toggle="popover" data-placement="right" title='About this page' data-content="page info" style="border-radius: 10px; border: solid 1px; width: 24px; height: 24px; margin-right: 5px; margin-bottom: 5px; padding-left: 4px; padding-top: 3px;">
                 <span class="glyphicon glyphicon-info-sign"></span>
                 </span>-->
-                <h1>{$page_name}</h1>{/if}
-            {include file='templates/layouts/controls/control_breadcrumb.tpl'}
+                <h1>{$page_name}&nbsp;<button class="btn btn-primary icon-hide btn-xs" onclick="show_hide_column(this); return false;"><i class="glyphicon glyphicon-th"></i>&nbsp;Toolbox</button></h1>{/if}
+            
         </div>
         

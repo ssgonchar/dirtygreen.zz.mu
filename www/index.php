@@ -1,4 +1,4 @@
-<?php                             
+<?php
 ini_set('session.name',             'mam');
 ini_set('session.use_cookies',      true);
 ini_set('session.use_trans_sid',    false);
@@ -6,7 +6,7 @@ ini_set('session.gc_maxlifetime',   300);   // 5 min
 ini_set('url_rewriter.tags',        '');
 
 //_503();
-session_start(); 
+session_start();    
 
 if ($_SERVER['HTTP_HOST'] == 'mam.kvadrosoft.com')
 {    

@@ -785,7 +785,11 @@ class MainController extends ApplicationController
 //        $hcontext = $this->smarty->fetch('/templates/html/email/hcontext_index.tpl');
 //        $this->_assign('hcontext', $hcontext);
        // dg($rowset['data']);
-        $this->_display('index');
+        if($_SESSION['user']['id'] == '1671') {
+            $this->_display('indexmod');
+        } else {
+            $this->_display('index');
+        }
     }
     
     /**
