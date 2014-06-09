@@ -23,5 +23,5 @@ $link = mysql_connect( 'localhost', 'mam', 'vNovom30Vete=');
                       sh.steelitem_id = '{$row['id']}' AND sh.status_id<7 AND sh.status_id<>0 ORDER BY sh.id DESC LIMIT 1),
 			s.is_available = 1
 			WHERE s.id = '{$row['id']}'";
-  mysql_query($q_upd, $link);*/
+  mysql_query($q_upd, $link);*/    
  }
