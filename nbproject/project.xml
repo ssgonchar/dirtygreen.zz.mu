@@ -3,7 +3,11 @@
     <type>org.netbeans.modules.php.project</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/php-project/1">
+<<<<<<< HEAD
             <name>salva_home.steelemotion.com</name>
+=======
+            <name>xada_home.steelemotion.com</name>
+>>>>>>> 01ddae6253b24dd0450c863b3abe04cb7e0dd90e
         </data>
     </configuration>
 </project>

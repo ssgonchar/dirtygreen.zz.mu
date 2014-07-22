@@ -1,0 +1,27 @@
+Options +FollowSymLinks 
+RewriteEngine On
+
+RewriteRule ^(/?)js/([0-9a-zA-Z_-]+)\.[0-9]+\.(js)$ /js/$2.js [L,QSA]
+RewriteRule ^(/?)css/([0-9a-zA-Z]+)\.[0-9]+\.(css)$ /css/$2.css [L,QSA]
+
+RewriteCond %{QUERY_STRING} !^arg=.*
+RewriteCond %{REQUEST_URI} !^/?css/.*
+RewriteCond %{REQUEST_URI} !^/?img/.*
+RewriteCond %{REQUEST_URI} !^/?js/.*
+RewriteCond %{REQUEST_URI} !^/?favicon.ico
+RewriteCond %{REQUEST_URI} !^/?robots.txt
+RewriteCond %{REQUEST_URI} !^/?tunnel.php
+RewriteCond %{REQUEST_URI} !^/?google.*?\.html
+RewriteCond %{REQUEST_URI} !^/?yandex_*?\.html
+RewriteCond %{REQUEST_URI} !^/?uf/.*
+RewriteCond %{REQUEST_URI} !^/?download/.*
+RewriteCond %{REQUEST_URI} !^/?templates/js/.*
+
+RewriteCond %{REQUEST_URI} !^/?skins/cms/css/.*
+RewriteCond %{REQUEST_URI} !^/?skins/cms/img/.*
+
+RewriteRule ^(.*)$ /index.php?arg=$1 [L,QSA]
+
+<FilesMatch "\\.(js|css)$">
+SetOutputFilter DEFLATE
+</FilesMatch>
