@@ -1,0 +1,651 @@
+<?php
+require_once APP_PATH . 'classes/models/ra.class.php';
+require_once APP_PATH . 'classes/models/ra_pdf.class.php';
+
+require_once APP_PATH . 'classes/models/steelitem.class.php';
+require_once APP_PATH . 'classes/models/order.class.php';
+
+require_once APP_PATH . 'classes/core/Pagination.class.php';
+
+class MainController extends ApplicationController
+{
+    /**
+     * Object
+     * @var ReleaseAdvice
+     */
+    private $_modelReleaseAdvice;
+    
+    /**
+     * Object
+     * @var SteelItem
+     */
+    private $_modelSteelItem;
+    
+    
+    /**
+     * Объект-массив данных о ReleaseAdvice
+     * @var array
+     */
+    private $_release_advice = array();
+    
+    public function __construct()
+    {
+        parent::ApplicationController();
+        
+        $this->init();
+    }
+    
+    /**
+     * Отображает страницу со списком
+     * 
+     * @version 20121012, d10n
+     */
+    public function index()
+    {
+        $this->page_name                    = 'Release Advices';
+        $this->breadcrumb[$this->page_name] = '';
+        
+        $data_set = $this->_modelReleaseAdvice->GetList($this->page_no);
+        
+        $pager = new Pagination();
+        $this->_assign('pager_pages',   $pager->PreparePages($this->page_no, $data_set['count']));
+        $this->_assign('count',         $data_set['count']);
+        
+        $this->_assign('ras_list',      $data_set['data']);
+        
+        $this->js = 'ra_index';
+        $this->context  = true;
+        
+        $this->_display('index');
+    }
+    
+    public function view()
+    {
+        // формирует pdf
+//        $modelRAPdf = new RAPdf();
+//        $modelRAPdf->Generate($this->_release_advice['id']);
+//        _epd("===END===");
+        
+        $this->page_name = 'Release Advice No ' . htmlspecialchars($this->_release_advice['doc_no']);
+        $this->breadcrumb[$this->page_name] = '';
+        
+        $this->_assign('release_advice',    $this->_release_advice);
+        
+        //$steelitems_list = $this->_modelReleaseAdvice->RAItemGetList($this->_release_advice['id']);
+        $steelitems_list = array_key_exists('items', $this->_release_advice) ? $this->_release_advice['items'] : array();
+        $this->_assign('steelitems_list',   $steelitems_list);
+        
+        $this->context  = true;
+        $this->_display('view');
+    }
+    
+    public function addnew()
+    {
+        if (array_key_exists('btn_create', $_REQUEST))
+        {
+            $this->_save_create();
+        }
+        
+        $this->page_name = 'Create Release Advices';
+        
+        $steelitem_ids_string = Request::GetString('item_ids', $_REQUEST);
+        
+        $steelitems_list    = array();
+        $stockholders_list  = array();
+        
+        if ($steelitem_ids_string != '')
+        {
+            $steelitem_ids_array = explode(',', $steelitem_ids_string);
+            
+            $steelitem_ids = array();
+            foreach ($steelitem_ids_array as $item)
+            {
+                $steelitem_ids[] = array('steelitem_id' => $item);
+            }
+            
+            $steelitems_list = $this->_modelSteelItem->FillSteelItemInfo($steelitem_ids);
+            
+            foreach ($steelitems_list as $item)
+            {
+                $steelitem      = $item['steelitem'];
+                $stockholder_id = $steelitem['stockholder_id'];
+                
+                $stockholders_list[$stockholder_id] = array_key_exists('stockholder', $steelitem) ? $steelitem['stockholder'] : array();
+                
+                $stockholders_list[$stockholder_id]['dimension_unit'] = $steelitem['dimension_unit'];
+                $stockholders_list[$stockholder_id]['weight_unit'] = $steelitem['weight_unit'];
+            }
+            
+            if (isset($stockholders_list[0]))
+            {
+                $not_defined = $stockholders_list[0];
+                unset($stockholders_list[0]);
+                
+                $stockholders_list['0'] = $not_defined;
+            }
+        }
+        //_epd($steelitems_list);
+        $this->_assign('stockholders_list', $stockholders_list);
+        $this->_assign('steelitems_list',   $steelitems_list);
+        
+        $this->js       = 'ra_add';
+        $this->context  = true;
+        
+        $this->_display('add');
+    }
+    
+    public function edit()
+    {
+        if ($this->_release_advice['status_id'] == RA_STATUS_CLOSED)
+        {
+            $this->_message('Release Advice can not edit!', MESSAGE_ERROR);
+            $this->_redirect(array('ras'));
+        }
+        
+        if (array_key_exists('btn_save', $_REQUEST))
+        {
+            $this->_save_edit();
+        }
+        
+        $this->breadcrumb['Release Advice No ' . htmlspecialchars($this->_release_advice['doc_no'])] = '/ra/' . $this->_release_advice['id'] . '/view';
+        $this->page_name = 'Edit Release Advice';
+        
+        $this->breadcrumb[$this->page_name] = '';
+        
+        $this->_assign('release_advice',    $this->_release_advice);
+        
+        //$steelitems_list = $this->_modelReleaseAdvice->RAItemGetList($this->_release_advice['id']);
+        $steelitems_list = array_key_exists('items', $this->_release_advice) ? $this->_release_advice['items'] : array();
+        $this->_assign('steelitems_list',   $steelitems_list);
+        
+        // подключение jQuery UI
+        $this->_assign('include_ui',    true);
+        
+        $this->js       = 'ra_edit';
+        $this->context  = true;
+        
+        $this->_display('edit');
+    }
+    
+    public function addvariant()
+    {
+        $ra_item_id = Request::GetInteger('item_id', $_REQUEST, -1);
+        
+        $redirect_to = array('ra', $this->_release_advice['id'], 'edit');
+        
+        if ($ra_item_id <= 0)
+        {
+            $this->_message('Incorrect Release Advice Item');
+            $this->_redirect($redirect_to);
+        }
+        
+        $sitem = $this->_modelReleaseAdvice->RAItemGetById($ra_item_id);
+        
+        if (!array_key_exists('ra_item', $sitem))
+        {
+            $this->_message('Release Advice Item was not found');
+            $this->_redirect($redirect_to);
+        }
+        
+        $ra_item = $sitem['ra_item'];
+        
+        if ($ra_item['ra_id'] != $this->_release_advice['id'])
+        {
+            $this->_message('Incorrect Release Advice Item');
+            $this->_redirect($redirect_to);
+        }
+        
+        if (array_key_exists('btn_save', $_REQUEST))
+        {
+            $this->_save_item_variants();
+        }
+        
+        $item_id    = $ra_item['item_id'];
+        $status_id  = ITEM_STATUS_RELEASED;
+        $data_set   = $this->_modelReleaseAdvice->RAItemGetAvailableVariants($item_id, $status_id);
+        
+        $rai_list_available = !empty($data_set) ? $data_set : array();
+        //$ra_items_list      = array_key_exists('items', $this->_release_advice) ? $this->_release_advice['items'] : array();
+        $ra_items_list      = $this->_modelReleaseAdvice->RAItemGetList($this->_release_advice['id'], FALSE);
+        
+        foreach ($rai_list_available as $raila_key => $raila_set)
+        {
+            $item_id_si = $raila_set['steelitem_id'];
+            
+            foreach ($ra_items_list as $rail_key => $rai_set)
+            {
+                $item_id_ra = $rai_set['ra_item']['item_id'];
+                
+                if ($item_id_si != $item_id_ra) continue;
+                //if ($item_id_si != $item_id_ra || $rai_set['ra_item']['parent_id'] == 0) continue;
+                
+                unset($rai_list_available[$raila_key]);
+                break;
+            }
+        }
+        
+        if (empty($rai_list_available))
+        {
+            $this->_message('No Item Variants Available', MESSAGE_ERROR);
+            $this->_redirect(array('ra', $this->_release_advice['id'], 'edit'));
+        }
+        
+        $this->_assign('release_advice',    $this->_release_advice);
+        $this->_assign('ra_available_iv',   $rai_list_available);
+        
+        $this->breadcrumb['Release Advice No ' . htmlspecialchars($this->_release_advice['doc_no'])] = '/ra/' . $this->_release_advice['id'] . '/view';
+        $this->breadcrumb['Edit'] = '/ra/' . $this->_release_advice['id'] . '/edit';
+        $this->page_name = 'Choose Variants for Release Advice Item';
+        
+        $this->breadcrumb[$this->page_name] = '';
+        
+        $this->js = 'ra_addvariant';
+        $this->context = true;
+        $this->_display('addvariant');
+    }
+    
+    public function close()
+    {
+        if ($this->_release_advice['status_id'] != RA_STATUS_OPEN)
+        {
+            $this->_message('Release Advice can not closed!', MESSAGE_ERROR);
+            $this->_redirect(array('ras'));
+        }
+        
+        if (array_key_exists('btn_save', $_REQUEST))
+        {
+            $this->_save_close();
+        }
+        
+        $this->breadcrumb['Release Advice No ' . htmlspecialchars($this->_release_advice['doc_no'])] = '/ra/' . $this->_release_advice['id'] . '/view';
+        $this->page_name = 'Close Release Advice';
+        
+        $this->breadcrumb[$this->page_name] = '';
+        
+        $this->_assign('release_advice',    $this->_release_advice);
+        
+        //$steelitems_list = $this->_modelReleaseAdvice->RAItemGetList($this->_release_advice['id']);
+        $steelitems_list = array_key_exists('items', $this->_release_advice) ? $this->_release_advice['items'] : array();
+        $this->_assign('steelitems_list',   $steelitems_list);
+        
+        // подключение jQuery UI
+        $this->_assign('include_ui',    true);
+        
+//        $this->js = 'ra_close';
+        $this->context  = true;
+        
+        $this->_display('close');
+    }
+    
+    private function _save_create()
+    {
+        $form = array_key_exists('form', $_REQUEST) ? $_REQUEST['form'] : array();
+        $steelitem_ids = array_key_exists('steelitem_ids', $form) ? $form['steelitem_ids'] : array();
+        
+        if (empty($steelitem_ids))
+        {
+            $this->_message('Steelitem(s) not specified', MESSAGE_ERROR);
+            return FALSE;
+        }
+        
+        $si_ids = array();
+        foreach ($steelitem_ids as $item)
+        {
+            $si_ids[] = array('steelitem_id' => $item);
+        }
+        
+        $si_list = $this->_modelSteelItem->GetByIds($si_ids);
+        
+        $si_list_by_stockholders = array();
+        foreach ($si_list as $item)
+        {
+            $steelitem      = $item['steelitem'];
+            $stockholder_id = $steelitem['stockholder_id'];
+            
+            if ($stockholder_id == 0 || !array_key_exists('stockholder', $steelitem)) continue;
+            
+            $si_list_by_stockholders[$stockholder_id][] = $steelitem;
+        }
+        
+        $ra = array();
+        
+        foreach ($si_list_by_stockholders as $sh_id => $steelitems)
+        {
+            $id             = 0;
+            $stockholder_id = $sh_id;
+            $company_id     = 0;
+            $truck_number   = '';
+            $destination    = '';
+            $loading_date   = '';
+            $marking        = '';
+            $dunnaging      = '';
+            $status_id      = RA_STATUS_OPEN;
+            $max_weight     = '';
+            $weighed_weight = '';
+            $ddt_number     = '';
+            $ddt_date       = '';
+            $ddt_instructions = '';
+            
+            $ra = $this->_modelReleaseAdvice->Save($id, $stockholder_id, $company_id, $truck_number, $destination, $loading_date, $marking, $dunnaging, $status_id, $max_weight, $weighed_weight, $ddt_number, $ddt_date, $ddt_instructions);
+            
+            if (!array_key_exists('ra', $ra)) continue;
+            
+            foreach ($steelitems as $si)
+            {
+                $id         = 0;
+                $parent_id  = 0;
+                $ra_id      = $ra['ra_id'];
+                $item_id    = $si['id'];
+                
+                $ra_item = $this->_modelReleaseAdvice->RAItemSave($id, $parent_id, $ra_id, $item_id);
+                
+                if (!array_key_exists('ra_item', $ra_item)) continue;
+                
+                $ra_item = $ra_item['ra_item'];
+                
+                $this->_modelSteelItem->SetStatus($ra_item['item_id'], ITEM_STATUS_RELEASED);
+            }
+        }
+        
+        if (!array_key_exists('ra', $ra))
+        {
+            $this->_message('Saving error', MESSAGE_ERROR);
+            return FALSE;
+        }
+        
+        $this->_redirect(array('ra', $ra['ra_id'], 'edit'));
+    }
+    
+    private function _save_edit()
+    {
+        $form = array_key_exists('form', $_REQUEST) ? $_REQUEST['form'] : array();
+        
+        $company        = Request::GetString('company', $form);
+        $company_id     = Request::GetInteger('company_id', $form, -1);
+        $truck_number   = Request::GetString('truck_number', $form);
+        $destination    = Request::GetString('destination', $form);
+        $loading_date   = Request::GetString('loading_date', $form);
+        $marking        = Request::GetString('marking', $form);
+        $dunnaging      = Request::GetString('dunnaging', $form);
+        $max_weight     = Request::GetNumeric('max_weight', $form, 0);
+        $weighed_weight = Request::GetNumeric('weighed_weight', $form, 0);
+        $ddt_number     = Request::GetString('ddt_number', $form);
+        $ddt_date       = Request::GetDateForDB('ddt_date', $form);
+        $ddt_instructions = Request::GetString('ddt_instructions', $form);
+        
+        if (empty($company))
+        {
+            $this->_message('Company must be specified', MESSAGE_ERROR);
+            return FALSE;
+        }
+        if ($company_id <= 0)
+        {
+            $this->_message('Company must be specified', MESSAGE_ERROR);
+            return FALSE;
+        }
+        
+        $id             = array_key_exists('id', $this->_release_advice) ? $this->_release_advice['id'] : 0;
+        $stockholder_id = $this->_release_advice['stockholder_id'];
+        $company_id     = $company_id;
+        $truck_number   = $truck_number;
+        $destination    = $destination;
+        $loading_date   = $loading_date;
+        $marking        = $marking;
+        $dunnaging      = $dunnaging;
+        $status_id      = RA_STATUS_OPEN;
+        $max_weight     = $max_weight;
+        $weighed_weight = $weighed_weight;
+        $ddt_number     = $ddt_number;
+        $ddt_date       = $ddt_date;
+        $ddt_instructions = $ddt_instructions;
+        
+//        if (!empty($ddt_number) && !empty($ddt_date))
+//        {
+//            $status_id = RA_STATUS_CLOSED;
+//        }
+        
+        $data_set = $this->_modelReleaseAdvice->Save($id, $stockholder_id, $company_id, $truck_number, $destination, $loading_date, $marking, $dunnaging, $status_id, $max_weight, $weighed_weight, $ddt_number, $ddt_date, $ddt_instructions);
+        
+        if (!array_key_exists('ra', $data_set))
+        {
+            $this->_message('Saving Error', MESSAGE_ERROR);
+            return FALSE;
+        }
+        
+        // формирует pdf
+        $modelRAPdf = new RAPdf();
+        $modelRAPdf->Generate($data_set['ra']['id']);
+        
+        $this->_message('Release Advice was saved', MESSAGE_OKAY);
+        $this->_redirect(array('ras'));
+    }
+    
+    private function _save_close()
+    {
+        $form = array_key_exists('form', $_REQUEST) ? $_REQUEST['form'] : array();
+        
+        $company        = Request::GetString('company', $form);
+        $company_id     = Request::GetInteger('company_id', $form, -1);
+        $truck_number   = Request::GetString('truck_number', $form);
+        $destination    = Request::GetString('destination', $form);
+        $loading_date   = Request::GetString('loading_date', $form);
+        $marking        = Request::GetString('marking', $form);
+        $dunnaging      = Request::GetString('dunnaging', $form);
+        $max_weight     = Request::GetNumeric('max_weight', $form, 0);
+        $weighed_weight = Request::GetNumeric('weighed_weight', $form, 0);
+        $ddt_number     = Request::GetString('ddt_number', $form);
+        $ddt_date       = Request::GetDateForDB('ddt_date', $form);
+        $ddt_instructions = Request::GetString('ddt_instructions', $form);
+        
+        $ra_items_checked = array_key_exists('items', $form) ? $form['items'] : array();
+        
+        
+        if (empty($ddt_number))
+        {
+            $this->_message('DDT number must be specified', MESSAGE_ERROR);
+            return FALSE;
+        }
+        
+        if (empty($ddt_date))
+        {
+            $this->_message('DDT date must be specified', MESSAGE_ERROR);
+            return FALSE;
+        }
+        
+        if (empty($ra_items_checked))
+        {
+            $this->_message('Steelitem must be specified', MESSAGE_ERROR);
+            return FALSE;
+        }
+        
+        if (empty($company))
+        {
+            $this->_message('Company must be specified', MESSAGE_ERROR);
+            return FALSE;
+        }
+        if ($company_id <= 0)
+        {
+            $this->_message('Company must be specified', MESSAGE_ERROR);
+            return FALSE;
+        }
+        
+        if (empty($truck_number))
+        {
+            $this->_message('Truck number must be specified', MESSAGE_ERROR);
+            return FALSE;
+        }
+        
+        // start проверка списка АЙТЕМОВ
+        $ra_items_available = $this->_modelReleaseAdvice->RAItemGetList($this->_release_advice['id'], FALSE);
+        $ra_items_count = array();
+        foreach ($ra_items_checked as $key => $value)
+        {
+            $ra_item_id = Request::GetInteger($key, $ra_items_checked, -1);
+            
+            if ($ra_item_id <= 0)
+            {
+                $this->_message('Release Advice Item must be correct', MESSAGE_ERROR);
+                return FALSE;
+            }
+            
+            $ra_item_is_exists = FALSE;
+            
+            foreach ($ra_items_available as $__key => $set)
+            {
+                $ra_items_available[$__key]['ra_item']['is_closing'] = FALSE;
+                
+                $ra_item = $set['ra_item'];
+                
+                if ($ra_item_id == $ra_item['id'])
+                {
+                    $ra_item_is_exists = TRUE;
+                    
+                    $parent_id = $ra_item['parent_id'] > 0 ? $ra_item['parent_id'] : $ra_item['id'];
+                    
+                    $ra_items_count[$parent_id] = array_key_exists($parent_id, $ra_items_count) ? $ra_items_count[$parent_id] + 1 : 1;
+                    
+                    if ($ra_items_count[$parent_id] > 1)
+                    {
+                        $this->_message('Release Advice Item must be specified correctly', MESSAGE_ERROR);
+                        return FALSE;
+                    }
+                    
+                    $ra_items_available[$__key]['ra_item']['is_closing'] = TRUE;
+                }
+            }
+            
+            if (!$ra_item_is_exists)
+            {
+                $this->_message('Release Advice Item not found', MESSAGE_ERROR);
+                return FALSE;
+            }
+            
+            
+        }
+        // end проверка списка АЙТЕМОВ
+        
+        $id             = $this->_release_advice['id'];
+        $stockholder_id = $this->_release_advice['stockholder_id'];
+        $company_id     = $company_id;
+        $truck_number   = $truck_number;
+        $destination    = $destination;
+        $loading_date   = $loading_date;
+        $marking        = $marking;
+        $dunnaging      = $dunnaging;
+        $status_id      = RA_STATUS_CLOSED;
+        //$status_id      = RA_STATUS_OPEN;
+        $max_weight     = $max_weight;
+        $weighed_weight = $weighed_weight;
+        $ddt_number     = $ddt_number;
+        $ddt_date       = $ddt_date;
+        $ddt_instructions = $ddt_instructions;
+        
+        $data_set = $this->_modelReleaseAdvice->Save($id, $stockholder_id, $company_id, $truck_number, $destination, $loading_date, $marking, $dunnaging, $status_id, $max_weight, $weighed_weight, $ddt_number, $ddt_date, $ddt_instructions);
+        
+        if (!array_key_exists('ra', $data_set))
+        {
+            $this->_message('Saving Error', MESSAGE_ERROR);
+            return FALSE;
+        }
+        
+        $modelOrder = new Order();
+        
+        foreach ($ra_items_available as $ra_item_id => $set)
+        {
+            $ra_item_set = $set['ra_item'];
+            
+            $stock_id   = $ra_item_set['item']['stock_id'];
+            $id         = $ra_item_set['item']['id'];
+            $status_id  = $ra_item_set['item']['status_id'];
+            $status_id  = $status_id < ITEM_STATUS_RELEASED ? $status_id : 0;
+            
+            if ($ra_item_set['is_closing'])
+            {
+                $status_id  = $stock_id == 2 ? ITEM_STATUS_DELIVERED : ITEM_STATUS_RELEASED;
+                $parent_id  = $ra_item_set['parent_id'];
+                $order_id   = $ra_item_set['item']['order_id'];
+                
+                // start изменение заказа для Itema-Varianta
+                if ($parent_id > 0 && $order_id > 0)
+                {
+                    $item_id    = $ra_items_available[$parent_id]['ra_item']['item_id'];
+                    $modelOrder->RemoveItem($order_id, $item_id, true);
+                    
+                    $item_id    = $ra_item_set['item_id'];
+                    $position_id= $ra_item_set['item']['steelposition_id'];
+                    $modelOrder->AddItem($order_id, $position_id, $item_id);
+                }
+                // end изменение заказа для Itema-Varianta
+            }
+            
+            $this->_modelSteelItem->SetStatus($id, $status_id);
+        }
+        
+        $this->_message('Release Advice was closed', MESSAGE_OKAY);
+        $this->_redirect(array('ras'));
+    }
+    
+    private function _save_item_variants()
+    {
+        $ra_item_parent_id = Request::GetInteger('item_id', $_REQUEST);
+        
+        $form = array_key_exists('form', $_REQUEST) ? $_REQUEST['form'] : array();
+        $steelitem_ids = array_key_exists('steelitem_ids', $form) ? $form['steelitem_ids'] : array();
+        
+        if (empty($steelitem_ids))
+        {
+            $this->_message('Item variant(s) not specified', MESSAGE_ERROR);
+            return FALSE;
+        }
+        
+        $si_ids = array();
+        foreach ($steelitem_ids as $item)
+        {
+            $si_ids[] = array('steelitem_id' => $item);
+        }
+        
+        $si_list = $this->_modelSteelItem->GetByIds($si_ids);
+        
+        foreach ($si_list as $si)
+        {
+            $id         = 0;
+            $parent_id  = $ra_item_parent_id;
+            $ra_id      = $this->_release_advice['id'];
+            $item_id    = $si['steelitem_id'];
+            
+            $ra_item = $this->_modelReleaseAdvice->RAItemSave($id, $parent_id, $ra_id, $item_id);
+        }
+        
+        $this->_redirect(array('ra', $this->_release_advice['id'], 'edit'));
+    }
+    
+    
+    private function init()
+    {
+        $this->_modelReleaseAdvice  = new ReleaseAdvice();
+        $this->_modelSteelItem      = new SteelItem();
+        
+        $ra_id = Request::GetInteger('id', $_REQUEST, 0);
+        
+        if ($ra_id < 0)
+        {
+            $this->_message('Release Advice was not found!', MESSAGE_ERROR);
+            $this->_redirect(array('ras'));
+        }
+        
+        if ($ra_id > 0)
+        {
+            $ra = $this->_modelReleaseAdvice->GetExtendedById($ra_id);
+            
+            if (!array_key_exists('ra', $ra))
+            {
+                $this->_message('Release Advice was not found!', MESSAGE_ERROR);
+                $this->_redirect(array('ras'));
+            }
+            
+            $this->_release_advice = $ra['ra'];
+        }
+        
+        $this->breadcrumb   = array('Release Advices' => '/ras');
+    }
+}

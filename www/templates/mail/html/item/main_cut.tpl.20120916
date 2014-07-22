@@ -1,0 +1,143 @@
+<table class="list" width="100%">
+    <tbody>
+        <tr class="top-table">
+            <th width="3%" class="text-center">Id</th>
+            <th width="5%">Plate Id</th>
+            <th width="8%">Steel Grade</th>
+            <th width="5%" class="text-center">Thickness<br>{$list.0.steelitem.dimension_unit|escape:'html'}</th>
+            <th width="5%" class="text-center">Width<br>{$list.0.steelitem.dimension_unit|escape:'html'}</th>
+            <th width="5%" class="text-center">Length<br>{$list.0.steelitem.dimension_unit|escape:'html'}</th>
+            <th width="7%" class="text-center">Weight<br>{$list.0.steelitem.weight_unit|escape:'html'|wunit}</th>
+            <th width="7%" class="text-center">Purchase Price<br>{$list.0.steelitem.currency_sign}</th>
+            <th>Supplier</th>
+            <th>DDT Number</th>
+            <th>DDT Date</th>
+            <th width="5%" class="text-center">Days On Stock</th>
+            <th>Internal Notes</th>
+            <th>Location</th>
+            <th>Status</th>
+        </tr>
+        <tr id="position-{$row.steelposition_id}-item-{$item.steelitem.id}">
+            <td class="text-center">{$item.steelitem.id}</td>
+            <td>{$item.steelitem.guid|escape:'html'}</td>
+            <td>{if isset($item.steelitem.steelgrade)}{$item.steelitem.steelgrade.title|escape:'html'}{else}{''|undef}{/if}</td>
+            <td class="text-center">{$item.steelitem.thickness|escape:'html'}</td>
+            <td class="text-center">{$item.steelitem.width|escape:'html'}</td>
+            <td class="text-center">{$item.steelitem.length|escape:'html'}</td>
+            <td class="text-center">{$item.steelitem.unitweight|escape:'html'|string_format:'%.2f'}</td>
+            <td class="text-center">{$item.steelitem.purchase_price|escape:'html'|string_format:'%.2f'}</td>
+            <td>{if isset($item.steelitem.supplier)}{$item.steelitem.supplier.title}{/if}</td>
+            <td>{$item.steelitem.ddt_number|escape:'html'}</td>
+            <td>{if !empty($item.steelitem.ddt_date)}{$item.steelitem.ddt_date|escape:'html'|date_format:'d/m/Y'}{/if}</td>
+            <td class="text-center">{$item.steelitem.days_on_stock}</td>
+            <td>
+                {if $item.steelitem.parent_id > 0}
+                    <div style="margin-bottom: 5px;"><a href="/item/edit/{$item.steelitem.parent_id}">Twin of : {if !empty($item.steelitem.parent.guid)}{$item.steelitem.parent.guid|escape:'html'}{else}#{$item.steelitem.parent_id}{/if}</a></div>
+                {/if}
+                {$item.steelitem.internal_notes|escape:'html'}
+            </td>
+            <td>{$item.steelitem.location.title|escape:'html'}</td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+<div class="pad"></div>
+
+{if empty($item.steelitem.parent_id)}
+{foreach from=$pieces item=row}
+<div id="piece-{$row.index}"{if $row.index > 1 && !$row.checked} style="display: none;"{/if}>
+<h3>Piece {$row.index} :</h3>
+<table class="form">
+    <tbody>
+        <tr>
+            <td class="text-center" style="font-weight: bold;">
+                <input type="checkbox" id="cut-{$row.index}" value="1" name="cut[{$row.index}][checked]"{if $row.checked} checked="checked"{/if}>
+                <input type="hidden" id="cut-{$row.index}-steelgrade-1" name="cut[{$row.index}][steelgrade]" value="{$row.steelgrade_id}">
+                <input type="hidden" id="cut-{$row.index}-thickness-1" name="cut[{$row.index}][thickness]" value="{$row.thickness}">
+                <input type="hidden" id="cut-{$row.index}-qtty-1" name="cut[{$row.index}][thickness]" value="{$row.thickness}">
+            </td>
+            <td>Width :</td>
+            <td><input type="text" id="cut-{$row.index}-width-1" name="cut[{$row.index}][width]" value="{$row.width|escape:'html'}" class="narrow" onkeyup="calc_unitweight(1, '{$row.dimension_unit}', '{$row.weight_unit}', 'cut-{$row.index}');"></td>
+            <td>Length :</td>
+            <td><input type="text" id="cut-{$row.index}-length-1" name="cut[{$row.index}][length]" value="{$row.length|escape:'html'}" class="narrow" onkeyup="calc_unitweight(1, '{$row.dimension_unit}', '{$row.weight_unit}', 'cut-{$row.index}');"></td>
+            <td>Weight :</td>
+            <td><input type="text" id="cut-{$row.index}-unitweight-1" name="cut[{$row.index}][unitweight]" value="{$row.unitweight|escape:'html'}" class="narrow"></td>
+            <td>Put to :</td>
+            <td>
+                <select id="cut-{$row.index}-stock-1" name="cut[{$row.index}][stock]" class="normal" onchange="bind_locations(this.value, 'cut-{$row.index}', '1');">
+                    <option value="0"{if !isset($row.stock_id)} selected="selected"{/if}>--</option>
+                    {foreach from=$stocks item=stock}
+                    <option value="{$stock.stock.id}"{if $row.stock_id == $stock.stock.id} selected="selected"{/if}>{$stock.stock.title|escape:'html'}</option>
+                    {/foreach}
+                </select>
+            </td>
+            <td>
+                <select id="cut-{$row.index}-location-1" name="cut[{$row.index}][location]" class="normal">
+                    <option value="0">--</option>
+                    {foreach from=$row.locations item=location}
+                    <option value="{$location.location.id}"{if $row.location_id == $location.company_id} selected="selected"{/if}>{$location.company.title|escape:'html'}</option>
+                    {/foreach}
+                </select>
+            </td>
+            <td><input type="button" value="Find Positions" class="btn150" onclick="find_positions('cut', {$row.index}, 1, '1'); $('#cut-{$row.index}').attr('checked', true);"></td>
+        </tr>
+    </tbody>
+</table>
+<div class="pad-10"></div>
+
+<div id="cut-{$row.index}-positions">
+{if $row.is_positions}
+    {include file="templates/html/position/control_serachresult.tpl" 
+            positions=$row.positions 
+            position_id=$row.position_id
+            new_position=$row.new_position 
+            index=$row.index 
+            dimension_unit=$row.dimension_unit
+            weight_unit=$row.weight_unit
+            currency_sign=$row.currency_sign
+            new_qtty=1
+            prefix='cut'}
+{else}
+    Please find positions first
+{/if}
+</div>
+<div class="pad"></div>
+</div>
+{/foreach}
+{/if}
+
+
+
+{*
+<h3>1 :</h3>
+<table class="list" width="50%">
+    <tbody>
+        <tr class="top-table">
+            <th width="1%"></th>
+            <th width="8%">Steel Grade</th>
+            <th width="5%" class="text-center">Thickness<br>{$list.0.steelitem.dimension_unit|escape:'html'}</th>
+            <th width="5%" class="text-center">Width<br>{$list.0.steelitem.dimension_unit|escape:'html'}</th>
+            <th width="5%" class="text-center">Length<br>{$list.0.steelitem.dimension_unit|escape:'html'}</th>
+            <th>Stock</th>
+            <th>Location</th>
+            <th>Find</th>
+        </tr>
+        <tr id="position-{$row.steelposition_id}-item-{$item.steelitem.id}">
+            <td class="text-center"><input type="checkbox" id="cut-1" value="1"></td>
+            <td>
+                {$item.steelitem.steelgrade.title|escape:'html'}
+                <input type="hidden" id="cut-1-steelgrade" value="{$item.steelitem.steelgrade.id}">
+            </td>
+            <td>
+                {$item.steelitem.thickness|escape:'html'}
+                <input type="hidden" id="cut-1-thickness" value="{$item.steelitem.thickness|escape:'html'}">
+            </td>
+            <td><input type="text" id="cut-1-width" value="{$item.steelitem.width|escape:'html'}"></td>
+            <td><input type="text" id="cut-1-width" value="{$item.steelitem.length|escape:'html'}"></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+*}

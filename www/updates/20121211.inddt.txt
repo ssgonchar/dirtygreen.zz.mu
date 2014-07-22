@@ -1,0 +1,146 @@
+Модуль in_ddt
+-------------
+1. Объекты:
+	1.1. Контроллер:
+		- inddt_main.class.php
+	
+	1.2. Модель:
+		- inddt.class.php
+	
+	1.3. БД:
+		- in_ddt
+		- in_ddt_items
+		- sp_in_ddt_get_list
+		- sp_in_ddt_get_list_by_ids
+		- sp_in_ddt_save
+		- sp_in_ddt_items_get_list
+		- sp_in_ddt_item_save
+		- sp_in_ddt_item_remove
+		
+	1.4. Константы:
+		- INDDT_STATUS_OPEN = 1
+		- INDDT_STATUS_CLOSED = 2
+
+
+2. Страница со списком in_ddt
+	2.1. Url:
+		- /inddt
+	
+	2.2. Обработчик:
+		- inddt_main.class.php::index(), доступ: ROLE_STAFF
+	
+	2.3. Контент:
+		- Таблица со столбцами:
+			- Number
+			- Date
+			- Company
+			- Qtty, pcs
+			- PDF
+		
+		- Строки с inddt.status_id = INDDT_STATUS_CLOSED должны быть выделены: background-color:#C1FFC1
+		
+		- При нажатии на строку таблицы нужно переходить:
+			- Для INDDT_STATUS_OPEN на /inddt/{inddt.id}/edit
+			- Для INDDT_STATUS_CLOSED на /inddt/{inddt.id}
+		
+		- Футер страницы: 
+			- Кнопка "Add", class="btn100o", '/inddt/add'
+			
+			
+3. Страница добавления / редактирования in_ddt.
+	3.1. Url:
+		- /inddt/add
+		- /inddt/{id}/edit
+		
+	3.2. Обработчик:
+		- inddt_main.class.php::add(), доступ: ROLE_STAFF, выполняет edit()
+		- inddt_main.class.php::edit(), доступ: ROLE_STAFF
+		- Редактирование in_ddt со статусом INDDT_STATUS_CLOSED запрещено, переводить на страницу просмотра
+		
+	3.3. Форма:
+		- Левая колонка:
+			- "Number", <input type="text">
+			- "Date", <input type="text">, с date-селектором
+			- "Company", <input type="text">, с авто-заполнением
+		
+		- Правая колонка:
+			- "Owner", <select>, все owner
+			- "Stockholder", <select> - все stockholder
+				- При изменении, если выбрано значение > 0, выбирать такого же Stockholder в списке айтемов
+			- "Status", <select> - два статуса
+			
+		- Список айтемов, под колонками:
+			- Колонки таблицы:
+				- id, текст
+				- Plate Id, текст
+				- Steel Grade, текст
+				- Thickness, текст
+				- Width, текст
+				- Length, текст
+				- Weight, текст
+				- Stockholder, <select> - все stockholder
+				- Remove From List, <img>, /img/icons/cross-small.png
+		
+		- Футер страницы:
+			- Кнопка "Add Item", submit class="btn100"
+			- Кнопка "Save", submit class="btn100o"
+			
+	3.4. Обработка действий:
+		- При нажатии на "Add Item":
+			- Если выбран статус INDDT_STATUS_CLOSED, меняем его на INDDT_STATUS_OPEN: нельзя закрыть и добавить новые айтемы
+			- Сохраняем in_ddt
+			- Сохраняем айтемы in_ddt_items
+			- Если выбран Stockholder, переводим на /target/inddt:{inddt.id}/items/filter/location:{stockholder_id}
+			- Если не выбран Stockholder, переводим на /target/inddt:{inddt.id}/items
+			- Нельзя добавить айтемы у которых steelitems.in_ddt_id > 0
+			
+		- При нажатии на "Save":
+			- Сохраняем in_ddt
+			- Сохраняем айтемы in_ddt_items, если установлен in_ddt.status_id = INDDT_STATUS_CLOSED, в хп sp_in_ddt_item_save:
+				- Обновить для айтема в steelitems
+					- in_ddt_id = in_ddt.id, 
+					- in_ddt_number = in_ddt.number, 
+					- in_ddt_date = in_ddt.id, 
+					- in_ddt_company_id,
+					- owner_id,
+					
+				- Выполнить sp_steelitem_timeline_save и sp_steelitem_update_from_timeline
+				
+		- При нажатии на картинку "удалить" в списке айтемов:
+			- Переходим на /inddt/{id}/removeitem/{steelitem_id}, удаляем айтем и возвращаемся обратно на страницу редактирования, 
+				можно сделать аяксом
+			- Нельзя удалить айтем из закрытого in_ddt
+			- При удалении айтема в хп sp_in_ddt_item_remove: 
+				- Выполнить sp_steelitem_timeline_remove и sp_steelitem_update_from_timeline
+			
+4. Страница просмотра in_ddt.
+	4.1. Url:
+		- /inddt/{id}
+		
+	4.2. Обработчик:
+		- inddt_main.class.php::view(), доступ: ROLE_STAFF
+		
+	4.3. Форма:
+		- Левая колонка:
+			- "Number"
+			- "Date"
+			- "Company"
+		
+		- Правая колонка:
+			- "Owner"
+			- "Stockholder"
+			- "Status"
+			
+		- Список айтемов, под колонками:
+			- Колонки:
+				- id, текст
+				- Plate Id, текст
+				- Steel Grade, текст
+				- Thickness, текст
+				- Width, текст
+				- Length, текст
+				- Weight, текст
+				- Stockholder, <select> - все stockholder
+		
+		- Футер страницы:
+			- Кнопка "Edit", class="btn100o", /inddt/{in_ddt.id}/edit, показывается только для in_ddt.status_id = INDDT_STATUS_OPEN
