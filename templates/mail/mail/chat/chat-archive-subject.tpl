@@ -1,0 +1,1 @@
+{$mail.title} on {$mail.date_to}
