@@ -1,9 +1,13 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> d36cee0999ea075952aff36ae4a3ebe8f7efbdf9
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://www.netbeans.org/ns/project/1">
     <type>org.netbeans.modules.php.project</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/php-project/1">
+<<<<<<< HEAD
             <name>xada_home.steelemotion.com</name>
         </data>
     </configuration>
@@ -19,3 +23,13 @@
     </configuration>
 </project>
 >>>>>>> 43bcfc6d053751bb4b1a550af7b6895b600b5529
+=======
+<<<<<<< HEAD
+            <name>salva_home.steelemotion.com</name>
+=======
+            <name>xada_home.steelemotion.com</name>
+>>>>>>> 01ddae6253b24dd0450c863b3abe04cb7e0dd90e
+        </data>
+    </configuration>
+</project>
+>>>>>>> d36cee0999ea075952aff36ae4a3ebe8f7efbdf9

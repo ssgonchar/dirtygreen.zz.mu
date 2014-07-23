@@ -1,0 +1,237 @@
+<table class="list" width="100%">
+    <tbody>
+        <tr class="top-table" style="height: 25px;">
+            <th width="9%" rowspan="2">Plate Id</th>
+            <th width="8%" rowspan="2">Steel Grade</th>
+            <th width="7%" rowspan="2">Thickness,<br>{$steelposition.dimension_unit}</th>
+            <th width="7%" rowspan="2">Width,<br>{$steelposition.dimension_unit}</th>
+            <th width="7%" rowspan="2">Length,<br>{$steelposition.dimension_unit}</th>
+            <th width="7%" rowspan="2">Weight,<br>{$steelposition.weight_unit|wunit}</th>
+            <th colspan="4" style="border-bottom : 1px solid #B9B9B9;">Measured</th>
+            <th colspan="2" style="border-bottom : 1px solid #B9B9B9;">Transport</th>
+            <th width="7%" rowspan="2">Weighed Weight,<br>{$steelposition.weight_unit|wunit}</th>                        
+            <th width="5%" rowspan="2">Is Virtual</th>
+            {if $order.status != 'co'}<th rowspan="2"><input type="checkbox" onchange="check_all(this, 'position');"></th>{/if}
+        </tr>
+        <tr class="top-table" style="height: 25px;">
+            <th width="7%">Thickness,<br>{$steelposition.dimension_unit}</th>
+            <th width="7%">Width,<br>{$steelposition.dimension_unit}</th>
+            <th width="7%">Length,<br>{$steelposition.dimension_unit}</th>
+            <th width="7%">Weight,<br>{$steelposition.weight_unit|wunit}</th>
+            <th width="7%">Width,<br>{$steelposition.dimension_unit}</th>
+            <th width="7%">Length,<br>{$steelposition.dimension_unit}</th>
+        </tr>        
+        {foreach name=i from=$items item=row}
+        <tr{if !empty($row.steelitem.is_conflicted)} class="td-item-conflicted"{elseif $row.steelitem.order_id >= 0 && $row.steelitem.order_id != $order.id} class="item-status-{$row.steelitem.status_id}"{/if}>
+            <td class="text-left">{$row.steelitem.guid|undef}</td>
+            <td>{if isset($row.steelitem.steelgrade)}{$row.steelitem.steelgrade.title|escape:'html'}{/if}</td>
+            <td>{if !empty($row.steelitem.thickness)}{$row.steelitem.thickness|escape:'html'}{/if}</td>
+            <td>{if !empty($row.steelitem.width)}{$row.steelitem.width|escape:'html'}{/if}</td>
+            <td>{if !empty($row.steelitem.length)}{$row.steelitem.length|escape:'html'}{/if}</td>
+            <td>{if !empty($row.steelitem.unitweight)}{$row.steelitem.unitweight|escape:'html'|string_format:'%.2f'}{/if}</td>
+            <td>{if !empty($row.steelitem.thickness_measured)}{$row.steelitem.thickness_measured|escape:'html'}{/if}</td>
+            <td>{if !empty($row.steelitem.width_measured)}{$row.steelitem.width_measured|escape:'html'}{/if}</td>
+            <td>{if !empty($row.steelitem.length_measured)}{$row.steelitem.length_measured|escape:'html'}{/if}</td>
+            <td>{if $row.steelitem.unitweight_measured > 0}{$row.steelitem.unitweight_measured|escape:'html'}{/if}</td>
+            <td>{if !empty($row.steelitem.width_max)}{$row.steelitem.width_max|escape:'html'}{/if}</td>
+            <td>{if !empty($row.steelitem.length_max)}{$row.steelitem.length_max|escape:'html'}{/if}</td>
+            <td>{if $row.steelitem.unitweight_weighed > 0}{$row.steelitem.unitweight_weighed|escape:'html'}{/if}</td>
+            <td>{if !empty($row.steelitem.is_virtual)}yes{else}no{/if}</td>
+            {if $order.status != 'co'}
+            <td>
+                {if empty($row.steelitem.order_id) || $row.steelitem.order_id == $order.id}
+                <input type="checkbox" name="selected_items[{$row.steelitem.id}]" value="{$row.steelitem.id}" class="cb-row-position"{if $row.steelitem.order_id == $order.id} checked="checked"{/if}{* onchange="order_select_item(this, {$row.steelitem.id});"*}>
+                {/if}
+            </td>            
+            {/if}            
+        </tr>        
+        {/foreach}
+    </tbody>    
+</table>
+<div class="pad"></div>
+
+<h3>Location</h3>
+<table class="list" width="100%">
+    <tbody>
+        <tr class="top-table" style="height: 25px;">
+            <th width="9%" rowspan="2">Plate Id</th>
+            <th colspan="3" style="border-bottom : 1px solid #B9B9B9;">Supplier Invoice</th>
+            <th colspan="3" style="border-bottom : 1px solid #B9B9B9;">Incoming DDT</th>
+            <th colspan="3" style="border-bottom : 1px solid #B9B9B9;">Outgoing DDT</th>
+            <th rowspan="2">Owner</th>
+            <th rowspan="2">Location</th>
+        </tr>
+        <tr class="top-table" style="height: 25px;">
+            <th width="80px">Number</th>
+            <th width="80px">Date</th>
+            <th>Company</th>
+            <th width="80px">Number</th>
+            <th width="80px">Date</th>
+            <th>Company</th>
+            <th width="80px">Number</th>
+            <th width="80px">Date</th>
+            <th>Company</th>
+        </tr>
+        {foreach name=i from=$items item=row}
+        <tr{if !empty($row.steelitem.is_conflicted)} class="td-item-conflicted"{elseif $row.steelitem.order_id >= 0 && $row.steelitem.order_id != $order.id} class="item-status-{$row.steelitem.status_id}"{/if}>
+            <td class="text-left">{$row.steelitem.guid|undef}</td>
+            <td>{if isset($row.steelitem.supplier_invoice)}<a href="/supplierinvoice/{$row.steelitem.supplier_invoice_id}">{$row.steelitem.supplier_invoice.number|escape:'html'}</a>{/if}</td>
+            <td>{if isset($row.steelitem.supplier_invoice)}<a href="/supplierinvoice/{$row.steelitem.supplier_invoice_id}">{$row.steelitem.supplier_invoice.date|date_format:'d/m/Y'}</a>{/if}</td>
+            <td>{if isset($row.steelitem.supplier_invoice)}<a href="/supplierinvoice/{$row.steelitem.supplier_invoice_id}">{$row.steelitem.supplier_invoice.company.doc_no|escape:'html'}</a>{/if}</td>            
+            <td>{if !empty($row.steelitem.in_ddt_number)}<a href="/inddt/{$row.steelitem.in_ddt_id}">{$row.steelitem.in_ddt_number|escape:'html'}</a>{/if}</td>
+            <td>{if !empty($row.steelitem.in_ddt_date)}<a href="/inddt/{$row.steelitem.in_ddt_id}">{$row.steelitem.in_ddt_date|escape:'html'|date_format:'d/m/Y'}</a>{/if}</td>
+            <td>{if isset($row.steelitem.in_ddt_company)}<a href="/inddt/{$row.steelitem.in_ddt_id}">{$row.steelitem.in_ddt_company.doc_no|escape:'html'}</a>{/if}</td>
+            <td>{if !empty($row.steelitem.ddt_number)}{$row.steelitem.ddt_number|escape:'html'}{/if}</td>
+            <td>{if !empty($row.steelitem.ddt_date)}{$row.steelitem.ddt_date|escape:'html'|date_format:'d/m/Y'}{/if}</td>
+            <td>{if isset($row.steelitem.ddt_company)}{$row.steelitem.ddt_company.doc_no|escape:'html'}{/if}</td>
+            <td>{if isset($row.steelitem.owner)}{$row.steelitem.owner.title_trade|escape:'html'}{/if}</td>
+            <td>{if isset($row.steelitem.stockholder)}{$row.steelitem.stockholder.title|escape:'html'}{/if}</td>
+        </tr>
+        {/foreach}
+    </tbody>
+</table>
+<div class="pad"></div>
+
+<h3>Status</h3>
+<table class="list" width="100%">
+    <tbody>
+        <tr class="top-table">
+            <th width="9%">Plate Id</th>
+            <th width="10%">Mill</th>
+            {* <th width="10%">System</th> *}
+            <th width="7%">Purchase Price,<br>per {$steelposition.weight_unit|wunit}</th>
+            <th width="7%">Current Cost,<br>{$steelposition.currency|cursign}/{$steelposition.weight_unit|wunit}</th>
+            <th width="7%">P/L,<br>{$steelposition.currency|cursign}/{$steelposition.weight_unit|wunit}</th>
+            <th width="7%">Days On Stock</th>
+            <th width="10%">Status</th>
+            <th width="15%">Load Ready</th>
+            <th>Internal Notes</th>
+        </tr>
+        {foreach name=i from=$items item=row}
+        <tr{if !empty($row.steelitem.is_conflicted)} class="td-item-conflicted"{elseif $row.steelitem.order_id >= 0 && $row.steelitem.order_id != $order.id} class="item-status-{$row.steelitem.status_id}"{/if}>
+            <td>{$row.steelitem.guid|undef}</td>
+            <td>{if !empty($row.steelitem.mill)}{$row.steelitem.mill|escape:'html'}{/if}</td>
+            {* <td>{if !empty($row.steelitem.system)}{$row.steelitem.system|escape:'html'}{/if}</td> *}
+            <td>{if $row.steelitem.purchase_price > 0}{$row.steelitem.purchase_price|string_format:'%.2f'}{if !empty($row.steelitem.purchase_currency)} {$row.steelitem.purchase_currency|cursign}{/if}{/if}</td>
+            <td>{if $row.steelitem.current_cost != 0}{$row.steelitem.current_cost|escape:'html'}{/if}</td>
+            <td>{if $row.steelitem.pl != 0}{$row.steelitem.pl|escape:'html'}{/if}</td>
+            <td>{$row.steelitem.days_on_stock}</td>
+            <td>
+                {if empty($row.steelitem.status_id)}{''|undef}
+                {else}
+                    {$row.steelitem.status_title}
+                    {if $row.steelitem.order_id > 0 && $row.steelitem.order_id != $order.id}<br><a href="/order/{$row.steelitem.order_id}">{$row.steelitem.order_id|order_doc_no}</a>{/if}
+                {/if}
+            </td>
+            <td>{if !empty($row.steelitem.load_ready)}{$row.steelitem.load_ready|escape:'html'}{/if}</td>
+            <td>{if !empty($row.steelitem.parent_id)}<a href="/item/edit/{$row.steelitem.parent_id}">{$row.steelitem.rel_title}</a>{else}{if !empty($row.steelitem.internal_notes)}{$row.steelitem.internal_notes|escape:'html'}{/if}{/if}</td>
+        </tr>
+        {/foreach}
+    </tbody>
+</table>
+<div class="pad"></div>
+
+<h3>Chemical Analysis</h3>
+<table id="t-ic" class="list" width="100%">
+    <tbody>
+        <tr class="top-table">
+            <th width="9%" class="text-left">Plate Id</th>
+            <th>Heat / Lot</th>
+            <th>%C</th>
+            <th>%Si</th>
+            <th>%Mn</th>
+            <th>%P</th>
+            <th>%S</th>
+            <th>%Cr</th>
+            <th>%Ni</th>
+            <th>%Cu</th>
+            <th>%Al</th>
+            <th>%Mo</th>
+            <th>%Nb</th>
+            <th>%V</th>
+            <th>%N</th>
+            <th>%Ti</th>
+            <th>%Sn</th>
+            <th>%B</th>
+            <th>CEQ</th>
+        </tr>
+        {foreach name=i from=$items item=row}
+        <tr id="t-ic-{$smarty.foreach.i.index + 1}"{if !empty($row.steelitem.is_conflicted)} class="td-item-conflicted"{elseif $row.steelitem.order_id >= 0 && $row.steelitem.order_id != $order.id} class="item-status-{$row.steelitem.status_id}"{/if}>
+            <td class="text-left">{$row.steelitem.guid|undef}</td>
+            <td>{if !empty($row.steelitem.properties.heat_lot)}{$row.steelitem.properties.heat_lot|escape:'html'}{/if}</td>
+            <td>{if $row.steelitem.properties.c != 0}{$row.steelitem.properties.c|escape:'html'}{/if}</td>
+            <td>{if $row.steelitem.properties.si != 0}{$row.steelitem.properties.si|escape:'html'}{/if}</td>
+            <td>{if $row.steelitem.properties.mn != 0}{$row.steelitem.properties.mn|escape:'html'}{/if}</td>
+            <td>{if $row.steelitem.properties.p != 0}{$row.steelitem.properties.p|escape:'html'}{/if}</td>
+            <td>{if $row.steelitem.properties.s != 0}{$row.steelitem.properties.s|escape:'html'}{/if}</td>
+            <td>{if $row.steelitem.properties.cr != 0}{$row.steelitem.properties.cr|escape:'html'}{/if}</td>
+            <td>{if $row.steelitem.properties.ni != 0}{$row.steelitem.properties.ni|escape:'html'}{/if}</td>
+            <td>{if $row.steelitem.properties.cu != 0}{$row.steelitem.properties.cu|escape:'html'}{/if}</td>
+            <td>{if $row.steelitem.properties.al != 0}{$row.steelitem.properties.al|escape:'html'}{/if}</td>
+            <td>{if $row.steelitem.properties.mo != 0}{$row.steelitem.properties.mo|escape:'html'}{/if}</td>
+            <td>{if $row.steelitem.properties.nb != 0}{$row.steelitem.properties.nb|escape:'html'}{/if}</td>
+            <td>{if $row.steelitem.properties.v != 0}{$row.steelitem.properties.v|escape:'html'}{/if}</td>
+            <td>{if $row.steelitem.properties.n != 0}{$row.steelitem.properties.n|escape:'html'}{/if}</td>
+            <td>{if $row.steelitem.properties.ti != 0}{$row.steelitem.properties.ti|escape:'html'}{/if}</td>
+            <td>{if $row.steelitem.properties.sn != 0}{$row.steelitem.properties.sn|escape:'html'}{/if}</td>
+            <td>{if $row.steelitem.properties.b != 0}{$row.steelitem.properties.b|escape:'html'}{/if}</td>
+            <td>{if $row.steelitem.properties.ceq != 0}{$row.steelitem.properties.ceq|escape:'html'}{/if}</td>            
+        </tr>
+        {/foreach}
+    </tbody>
+</table>
+<div class="pad"></div>
+
+<h3>Mechanical Properties</h3>
+<table id="t-im" class="list" width="100%">
+    <tbody>
+        <tr class="top-table" style="height: 25px;">
+            <th width="9%" rowspan="2" class="text-left">Plate Id</th>
+            <th colspan="4" style="border-bottom : 1px solid #B9B9B9;">Tensile</th>
+            <th rowspan="2">{*Reduction Of Area*} Z-test, %</th>
+            <th colspan="3" style="border-bottom : 1px solid #B9B9B9;">Impact</th>
+            <th rowspan="2">Hardness<br>HD</th>
+            <th rowspan="2">UST</th>
+            <th rowspan="2">Stress Relieving Temp<br>deg. C</th>
+            <th rowspan="2">Heating Rate Per Hour<br>deg. C</th>
+            <th rowspan="2">Holding Time<br>Hours</th>
+            <th rowspan="2">Cooling Down Rate Per Hour<br>deg. C</th>
+            <th rowspan="2">Normalizing Temp<br>deg. C</th>
+            <th rowspan="2">Condition</th>
+        </tr>
+        <tr class="top-table" style="height: 25px;">
+            <th>Sample Direction</th>            
+            <th>Strength<br>N/mm<sup>2</sup></th>
+            <th>Yield Point<br>N/mm<sup>2</sup></th>
+            <th>Elongation<br>%</th>
+            <th>Sample Direction</th>
+            <th>Strength<br>J/cm<sup>2</sup></th>
+            <th>Test Temp<br>deg. C</th>
+        </tr>
+        {foreach name=i from=$items item=row}
+        <tr id="t-im-{$smarty.foreach.i.index + 1}"{if !empty($row.steelitem.is_conflicted)} class="td-item-conflicted"{elseif $row.steelitem.order_id >= 0 && $row.steelitem.order_id != $order.id} class="item-status-{$row.steelitem.status_id}"{/if}>
+            <td class="text-left">{$row.steelitem.guid|undef}</td>
+            <td>{if !empty($row.steelitem.properties.tensile_sample_direction)}{$row.steelitem.properties.tensile_sample_direction|escape:'html'}{/if}</td>
+            <td>{if !empty($row.steelitem.properties.tensile_strength)}{$row.steelitem.properties.tensile_strength|escape:'html'}{/if}</td>
+            <td>{if !empty($row.steelitem.properties.yeild_point)}{$row.steelitem.properties.yeild_point|escape:'html'}{/if}</td>
+            <td>{if $row.steelitem.properties.elongation != 0}{$row.steelitem.properties.elongation|escape:'html'}{/if}</td>
+            <td>{if $row.steelitem.properties.reduction_of_area != 0}{$row.steelitem.properties.reduction_of_area|escape:'html'}{/if}</td>
+            <td>{if !empty($row.steelitem.properties.sample_direction)}{$row.steelitem.properties.sample_direction|escape:'html'}{/if}</td>
+            <td>{if !empty($row.steelitem.properties.impact_strength)}{$row.steelitem.properties.impact_strength|escape:'html'}{/if}</td>
+            <td>{if !empty($row.steelitem.properties.test_temp)}{$row.steelitem.properties.test_temp|escape:'html'}{/if}</td>
+            <td>{if !empty($row.steelitem.properties.hardness)}{$row.steelitem.properties.hardness|escape:'html'}{/if}</td>
+            <td>{if !empty($row.steelitem.properties.ust)}{$row.steelitem.properties.ust|escape:'html'}{/if}</td>
+            <td>{if !empty($row.steelitem.properties.stress_relieving_temp)}{$row.steelitem.properties.stress_relieving_temp|escape:'html'}{/if}</td>
+            <td>{if !empty($row.steelitem.properties.heating_rate_per_hour)}{$row.steelitem.properties.heating_rate_per_hour|escape:'html'}{/if}</td>
+            <td>{if !empty($row.steelitem.properties.holding_time)}{$row.steelitem.properties.holding_time|escape:'html'}{/if}</td>
+            <td>{if !empty($row.steelitem.properties.cooling_down_rate)}{$row.steelitem.properties.cooling_down_rate|escape:'html'}{/if}</td>
+            <td>{if !empty($row.steelitem.properties.normalizing_temp)}{$row.steelitem.properties.normalizing_temp|escape:'html'}{/if}</td>
+            <td>
+                {if $row.steelitem.properties.condition == 'ar'}As Rolled
+                {elseif $row.steelitem.properties.condition == 'n'}Normalized
+                {elseif $row.steelitem.properties.condition == 'nr'}Normalizing Rolling{/if}
+            </td>
+        </tr>
+        {/foreach}
+    </tbody>
+</table>
