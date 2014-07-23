@@ -1,5 +1,4 @@
 <?php
-//1
 ini_set('session.name',             'mam');
 ini_set('session.use_cookies',      true);
 ini_set('session.use_trans_sid',    false);
@@ -18,7 +17,7 @@ if ($_SERVER['HTTP_HOST'] == 'mam.kvadrosoft.com')
         echo 'Hello World!';
         exit;
     }
-}
+} 
 
 require_once('settings/constants.php');
 
