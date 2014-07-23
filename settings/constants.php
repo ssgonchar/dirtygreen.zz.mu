@@ -6,11 +6,16 @@
 
     ini_set('max_execution_time',           '120');
     ini_set('zend.ze1_compatibility_mode',  0);    
-
+    //production server
     if ($_SERVER['HTTP_HOST'] == 'home.steelemotion.com' || $_SERVER['HTTP_HOST'] == 'www.home.steelemotion.com')
     {
         require_once('/home/mam/home.steelemotion.com/settings/app/settings.php');
     }
+    //development server
+    else if ($_SERVER['HTTP_HOST'] == 'home.steelemotion.local' || $_SERVER['HTTP_HOST'] == 'www.home.steelemotion.local')
+    {
+        require_once('/home/mam/home.steelemotion.local/settings/app/settings.php');
+    }    
     else if ($_SERVER['HTTP_HOST'] == 'mam.kvadrosoft.com' || $_SERVER['HTTP_HOST'] == 'www.mam.kvadrosoft.com')
     {
         require_once('/home/mam/mam.kvadrosoft.com/settings/app/settings.php');
