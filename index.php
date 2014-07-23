@@ -18,7 +18,7 @@ if ($_SERVER['HTTP_HOST'] == 'mam.kvadrosoft.com')
         echo 'Hello World!';
         exit;
     }
-}
+} 
 
 require_once('settings/constants.php');
 
