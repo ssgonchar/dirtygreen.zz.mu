@@ -6,7 +6,7 @@ ini_set('session.gc_maxlifetime',   300);   // 5 min
 ini_set('url_rewriter.tags',        '');
 //_503();
 session_start(); 
-
+/*
 if ($_SERVER['HTTP_HOST'] == 'mam.kvadrosoft.com')
 {    
     if ((!isset($_SERVER['PHP_AUTH_USER']) || $_SERVER['PHP_AUTH_USER'] != 'kvadro' || $_SERVER['PHP_AUTH_PW'] != 'zovd!')
@@ -18,7 +18,7 @@ if ($_SERVER['HTTP_HOST'] == 'mam.kvadrosoft.com')
         exit;
     }
 } 
-
+*/
 require_once('settings/constants.php');
 
 // для пингера не добавляется запись в лог                                                  

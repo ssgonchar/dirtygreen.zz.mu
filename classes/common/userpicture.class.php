@@ -1,4 +1,4 @@
-<?
+<?php
     require_once APP_PATH . 'classes/common/translit.class.php';
     require_once APP_PATH . 'settings/pictures.php';
 
@@ -6,26 +6,33 @@ class UserPicture
 {    
     
     /**
-     * Формирует префикс к атачментам на основании используемого домена
+     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
      * 
      */
     public static function GetUrlPrefix()
     {
+        //production server
         if ($_SERVER['HTTP_HOST'] == 'home.steelemotion.com' || $_SERVER['HTTP_HOST'] == 'www.home.steelemotion.com')
         {
             return 'http://a.steelemotion.com';
         }
+        //development server
+        else if ($_SERVER['HTTP_HOST'] == 'home.steelemotion.local' || $_SERVER['HTTP_HOST'] == 'www.home.steelemotion.local')
+        {
+            return 'http://a.steelemotion.local';
+        }
+        /*
         else if ($_SERVER['HTTP_HOST'] == 'mam.kvadrosoft.com' || $_SERVER['HTTP_HOST'] == 'www.mam.kvadrosoft.com')
         {
             return 'http://mamatt.kvadrosoft.com';
         }
-        
+        */
         return '';        
     }
     
     /**
-     * Формирует тег картинки
-     * Ссылка на картинку имеет вид /picture/type/{secretcode}/{realname}.{extension}
+     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+     * пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ /picture/type/{secretcode}/{realname}.{extension}
      * @param mixed $type
      * @param mixed $size
      * @param mixed $secretcode
@@ -48,7 +55,7 @@ class UserPicture
                 $filename   = urlencode(mb_substr(Translit::EncodeAndClear($params['filename']), 0, 80, 'utf-8'));
                 $pos        = strrpos($filename, '.');
 
-                // убираем расширение только у картинок
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                 if ($pos !== false) 
                 {
                     $ext = substr($filename, $pos);
@@ -74,7 +81,7 @@ class UserPicture
         $tag = '<img src="' . $path . '"';
         
         
-        // дополнительные параметры
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         $width_set = false;
         foreach ($params as $param => $value)
         {
@@ -92,16 +99,16 @@ class UserPicture
         }
         
         /**
-        * 20111106, zharkov: убрана установка ширины, но нужно как-то расчитать стороны и обязательно указать
+        * 20111106, zharkov: пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ-пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         * 
-        * // если ширина не указана, берется ширина из настроек
+        * // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         * if (!$width_set) $tag .= ' width="' . $__picture_settings[$type][$size]['width'] . 'px"';
         */
         
         $tag .= '>';
         
         
-        // мулька для PrettyPhoto
+        // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ PrettyPhoto
         //if (isset($params['pretty']) && isset($params['pretty_id']))
         if (isset($params['pretty_id']))
         {
@@ -113,7 +120,7 @@ class UserPicture
     }
     
     /**
-     * Возвращает контент картинки
+     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
      * 
      * @param mixed $type
      * @param mixed $secretcode
@@ -134,7 +141,7 @@ class UserPicture
     }
     
     /**
-     * Возвращает путь к файлу
+     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ
      * 
      * @param mixed $secretcode
      */
