@@ -1,1 +1,0 @@
-{$mail.stock.title|escape:'html'} : Order No {$mail.order.id} was cancelled

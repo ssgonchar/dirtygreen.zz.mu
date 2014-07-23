@@ -1,3 +1,0 @@
-{if $page == 'about'}<b>About</b>{else}<a href="/item/{$object_id}/edit">About</a>{/if}
-{*if $page == 'dropbox'}<b style="margin-left: 10px;">Pictures</b>{else}<a href="/steelitem/{$object_id}/dropbox" style="margin-left: 10px;">Pictures</a>{/if}{if !empty($object_stat.attachments)} ({$object_stat.attachments}){/if*}
-<a href="javascript:void(0)" onclick="uploader_show_modal('steelitem', {$object_id})" style="margin-left: 10px;">Share Files</a>

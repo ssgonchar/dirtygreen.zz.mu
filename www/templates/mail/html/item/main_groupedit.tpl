@@ -1,1 +1,0 @@
-{include file="templates/controls/steelitems_edit.tpl" eternal=true}

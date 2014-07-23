@@ -1,2 +1,0 @@
-{if $page == 'about'}<b>About</b>{else}<a href="/email/{$object_id}">About</a>{/if}
-{if $page == 'chat'}<b style="margin-left: 10px;">TouchLine</b>{else}<a href="/email/{$object_id}/touchline" style="margin-left: 10px;">TouchLine</a>{/if}{if !empty($object_stat.messages)} ({$object_stat.messages}){/if}	

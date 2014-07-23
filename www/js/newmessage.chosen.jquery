@@ -1,8 +1,0 @@
-$(
-$('#chat-message-biz-select').live('mouseover', function(event) {
-$('#chat-message-biz-select').chosen({no_results_text:'Нет результатов'});
-});
-function() {
-$('#chat-message-biz-select').chosen({no_results_text:'Нет результатов'});
-}
-);
