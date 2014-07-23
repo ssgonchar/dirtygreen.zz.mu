@@ -2,6 +2,7 @@
 //3
 //4
 //5
+//6
 ini_set('session.name',             'mam');
 ini_set('session.use_cookies',      true);
 ini_set('session.use_trans_sid',    false);
