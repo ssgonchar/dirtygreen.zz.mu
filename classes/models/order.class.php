@@ -68,6 +68,8 @@ class Order extends Model
         }        
     }
     
+    
+    
     /**
      * Возвращает статистику по заказу
      * 
@@ -1121,7 +1123,7 @@ class Order extends Model
     public function GetListOfRelatedDocs($id)
     {
         $rowset = $this->CallStoredProcedure('sp_order_get_related_docs', array($id));
-        //debug('1682', $rowset);
+        
         $modelCMR       = new CMR();
         $modelDDT       = new DDT();
         $modelInvoice   = new Invoice();
@@ -1206,5 +1208,27 @@ class Order extends Model
         Cache::ClearTag('reports');
         return $result;
         //debug("1682", $result);
+    }  
+    
+    public function getCompliteOrders() {
+        //$modelOrder = new Order();
+        
+        $arg = array (
+            'fields' => array('id'),
+            'limit' => array(
+                'lower' => 1, 
+                'number' => 5,
+            ),
+            'where' => 'status = "co"',
+            'order' => 'id DESC'
+        );
+        
+        $rowset = $this->table->SelectList($arg);
+        
+        foreach ($rowset as $row) {
+            $orders[] = $this->GetById($row['id']);
+        }
+        
+        return $orders;
     }    
 }
