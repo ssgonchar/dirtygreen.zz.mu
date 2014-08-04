@@ -16,6 +16,8 @@ class MainAjaxController extends ApplicationAjaxController
         $this->authorize_before_exec['putpositionstoorder'] = ROLE_STAFF;
         $this->authorize_before_exec['remove']              = ROLE_STAFF;
         $this->authorize_before_exec['getchart']            = ROLE_STAFF;
+        
+        $this->modelOrder = new Order();
     }
     
     /**
@@ -249,23 +251,7 @@ class MainAjaxController extends ApplicationAjaxController
         ));        
     }
     
-    public function getchart() {
-        $table = 'orders';
-        
-        $fields = array (
-            'x' => '',
-            'y' => '',
-        );
-        
-        $modelOrder = new Order();
-        
-        //$modelOrder->ExecuteQuery("SELECT price FROM ");
-        
-        while ($row = mysql_fetch_array($result)) {
-            //$datetime *= 1000; // convert from Unix timestamp to JavaScript time
-            $data[] = "[$datetime, $value]";
-        }
-    }
+  
     
     function saveprice()
     {
@@ -310,5 +296,37 @@ class MainAjaxController extends ApplicationAjaxController
             'object'        => $last_order_id,
             'order_info'    => $last_order_id_info
         ));
+    }
+    
+    
+    /**
+     * Возвращает список dekivery points
+     * url: /order/getdeliverypoints
+     */    
+    public function getdeliverypoints() {
+        $title = Request::GetString('title', $_REQUEST);
+        
+        //$modelOrder = new Order();
+        $delivery_points = $this->modelOrder->getDeliveryPoints($title);
+        
+        $this->_send_json(array(
+            'result'        => 'okay',
+            'deliverypoints'    => $delivery_points,
+        ));        
+    }
+    
+    /**
+     * Возвращает список customers
+     * url: /order/getcustomers
+     */        
+    public function getcustomers() {
+        $title = Request::GetString('title', $_REQUEST);
+        $where = Request::GetString('where', $_REQUEST);
+        $customers = $this->modelOrder->getCustomers($title, $where);
+        
+        $this->_send_json(array(
+            'result'        => 'okay',
+            'customers'    => $customers,
+        ));          
     }
 }

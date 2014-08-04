@@ -525,7 +525,21 @@
                 => array('module' => 'email', 'controller' => 'filter', 'action' => 'add', 'email_id' => '$1', ),
             )
         ),
-        
+    '/^(analytics)(.*)$/' => array(
+        'subrules' => array(
+            '/^(analytics)\/(filter)$/' => array(
+                'module' => 'analytics',
+                'controller' => 'main',
+                'action' => 'index',
+            ),
+            '/^(analytics)\/(filter)\/(.*)$/' => array(
+                'module' => 'analytics',
+                'controller' => 'main',
+                'action' => 'index',
+                'filter' => '$3'
+            ),
+        ),
+    ),  
         '/^(emailmanager)(.*)$/' => array(
             'subrules' => array(                
                 
@@ -701,7 +715,46 @@
                 => array('module' => 'ra', 'controller' => 'main', 'action' => 'addvariant', 'ra_id' => '$2', 'item_id' => '$4'),                            
             )
         ),
-        
+'/^([^\/]+?)\/(\d+)\/(emailmanager)(.*)$/' => array(
+            'subrules' => array(                
+                
+                '/^([^\/]+?)\/(\d+)\/(emailmanager)$/'
+                => array('module' => 'emailmanager', 'controller' => 'main', 'action' => 'index', 'object_alias' => '$1', 'object_id' => '$2'),
+                
+                '/^([^\/]+?)\/(\d+)\/(emailmanager)\/(filter)$/'
+                => array('module' => 'emailmanager', 'controller' => 'main', 'action' => 'index', 'object_alias' => '$1', 'object_id' => '$2'),
+                
+                '/^([^\/]+?)\/(\d+)\/(emailmanager)\/(filter)\/(.*)$/'
+                => array('module' => 'emailmanager', 'controller' => 'main', 'action' => 'index', 'object_alias' => '$1', 'object_id' => '$2', 'filter' => '$5'),
+                
+                '/^([^\/]+?)\/(\d+)\/(emailmanager)\/(compose)$/'
+                => array('module' => 'emailmanager', 'controller' => 'main', 'action' => 'compose', 'object_alias' => '$1', 'object_id' => '$2'),
+            
+                '/^([^\/]+?)\/(\d+)\/(emailmanager)\/(dfa)$/'
+                => array('module' => 'emailmanager', 'controller' => 'main', 'action' => 'index', 'object_alias' => '$1', 'object_id' => '$2', 'is_dfa' => TRUE, ),
+                
+                '/^([^\/]+?)\/(\d+)\/emailmanager\/dfa\/other$/'
+                => array('module' => 'emailmanager', 'controller' => 'main', 'action' => 'index', 'object_alias' => '$1', 'object_id' => '$2', 'is_dfa_other' => TRUE, ),
+            
+                '/^([^\/]+?)\/(\d+)\/(emailmanager)\/(deleted)$/'
+                => array('module' => 'emailmanager', 'controller' => 'main', 'action' => 'deletedbyuser', 'object_alias' => '$1', 'object_id' => '$2'),
+            
+                '/^([^\/]+?)\/(\d+)\/(emailmanager)\/(deleted)\/(filter)$/'
+                => array('module' => 'emailmanager', 'controller' => 'main', 'action' => 'deletedbyuser', 'object_alias' => '$1', 'object_id' => '$2'),
+                
+                '/^([^\/]+?)\/(\d+)\/(emailmanager)\/(deleted)\/(filter)\/(.*)$/'
+                => array('module' => 'emailmanager', 'controller' => 'main', 'action' => 'deletedbyuser', 'object_alias' => '$1', 'object_id' => '$2', 'filter' => '$5'),
+
+                '/^([^\/]+?)\/(\d+)\/(emailmanager)\/(\d+)$/'
+                => array('module' => 'emailmanager', 'controller' => 'main', 'action' => 'view', 'object_alias' => '$1', 'object_id' => '$2', 'id' => '$4'),
+
+                '/^([^\/]+?)\/(\d+)\/(emailmanager)\/(\d+)~tid(.+)$/'
+                => array('module' => 'emailmanager', 'controller' => 'main', 'action' => 'view', 'object_alias' => '$1', 'object_id' => '$2', 'id' => '$4', 'token' => '$5'),
+
+                '/^([^\/]+?)\/(\d+)\/(emailmanager)\/(\d+)\/(\w+)$/'
+                => array('module' => 'emailmanager', 'controller' => 'main', 'action' => '$5', 'object_alias' => '$1', 'object_id' => '$2', 'id' => '$4'),
+            )
+        ),        
         '/^([^\/]+?)\/(\d+)\/(email)(.*)$/' => array(
             'subrules' => array(                
                 

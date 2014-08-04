@@ -70,7 +70,7 @@
         <script type="text/javascript" charset="utf-8">
 		var user_last_chat_message_id = {if isset($user_last_chat_message_id)}{$user_last_chat_message_id}{else}0{/if};
 	</script>
-
+ 
          
 </body>
 </html>

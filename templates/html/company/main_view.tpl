@@ -350,6 +350,7 @@
 <div class="pad"></div>
 <h3 id="chart">Orders</h3>
 <div id="orders"></div>
+
 <script type="text/javascript">
     var dataTable =  {ldelim}
         cols: [{ldelim}label: 'Year', type: 'string', p: {ldelim}role:'domain'{rdelim}{rdelim},
