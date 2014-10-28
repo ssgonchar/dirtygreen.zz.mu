@@ -6,15 +6,16 @@
     {if $email.type_id == $smarty.const.EMAIL_TYPE_DRAFT}{$smarty.now|date_format:"d/m/Y"}{else}{$email.date_mail|date_format:"d/m/Y"}{/if}
     {/if}</font></b>
     <br><br><br>
-    <i>{'To'|str_pad:10}</i> : {$email.to}<br>
-    <i>{'Attention'|str_pad:10}</i> : <b style="color:#f00;"><font color="#ff0000">{$email.attention}</font></b><br><br>
+    <i>To</i> : {$email.to}<br>
+    <i>Attention</i> : <b style="color:#f00;"><font color="#ff0000">{$email.attention}</font></b><br>
     
-    <i>{'Subject'|str_pad:10}</i> : {$email.subject}<br>
-    <i>{'Our Ref.'|str_pad:10}</i> : {$email.our_ref}<br>
-    <i>{'Your Ref.'|str_pad:10}</i> : {$email.your_ref}<br>
-    {if isset($email.attached)}<i>{'Attached'|str_pad:10}</i> : {$email.attached}<br>{/if}
+    <i>Subject</i> : {$email.subject}<br>
+    <i>Our Ref.</i> : {$email.our_ref}<br>
+    <i>Your Ref.</i> : {$email.your_ref}<br>
+    {if isset($email.attached)}<i>Attached</i> : {$email.attached}<br>{/if}
     <br>
     <hr width="100%">
+    <br>
     <br>
 </p>
 </font>
@@ -35,6 +36,7 @@
     {/if}
 {/if}
 
+{*
 {if isset($email.parent)}
 <br><br><br>{if $email.sender_domain == 'platesahead.com'}{$email.parent.date_mail|date_format:"F jS 'y"}{else}{$email.parent.date_mail|date_format:"d/m/Y"}{/if}
 <br>From : {$email.parent.sender_address}
@@ -44,3 +46,4 @@
 {$email.parent.description|nl2br}
 </blockquote>
 {/if}
+*}

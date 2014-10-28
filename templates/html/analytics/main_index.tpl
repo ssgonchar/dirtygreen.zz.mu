@@ -2,12 +2,42 @@
 <!-- Button trigger modal -->
 <h2>Analytics</h2>
 
+                                                                   {debug}
+                                                                    
+{if isset($orders)}
+
+<script type="text/javascript">
+    var dataTable =  {ldelim}
+        cols: [{ldelim}label: 'Day', type: 'string', p: {ldelim}role:'domain'{rdelim}{rdelim},
+                {ldelim}label: 'Value', type: 'number', p: {ldelim}role:'data'{rdelim}{rdelim},
+                {ldelim}label: null, type: 'string', p: {ldelim}role:'tooltip'{rdelim}{rdelim},
+                {ldelim}label: 'Weight', type: 'number', p: {ldelim}role:'data'{rdelim}{rdelim},
+                {ldelim}label: null, type: 'string', p: {ldelim}role:'tooltip'{rdelim}{rdelim}],
+        rows: [{foreach $order as $row}
+            {ldelim}c:[{ldelim}v: '{$row.order.modified_at}'{rdelim},
+            {ldelim}v: {$row.order.quick.value}{rdelim}, {ldelim}f:"Day: {$row.order.modified_at}\n Value: {$row.order.currency_sign} {$row.order.quick.value|number_format}"{rdelim}, {ldelim}v: {$row.order.quick.weight}{rdelim}, {ldelim}f:"Day : {$row.order.modified_at}\nWeight : {if $row.order.weight_unit == 'lbs'}{$row.order.quick.weight|number_format:0}{else}{$row.order.quick.weight|number_format:3}{/if} {$row.order.weight_unit}"{rdelim}]{rdelim}
+            
+        {/foreach}],
+        p:null
+    {$smarty.rdelim};
+    
+    var chart_options = {ldelim}
+        title   : '',
+        legend  : {ldelim}position: 'in', alignment: 'center'{rdelim},
+        vAxes   : [{ldelim}title: "{$row.order.weight_delivered}", format:'#,###'{rdelim}, {ldelim}title: 'Weight, tons'{rdelim}],
+        hAxis   : {ldelim}title: '{$row.order.modified_at}'{rdelim},
+        series: [{ldelim}type: 'line', targetAxisIndex: 0, format:'#,###%'{rdelim}, {ldelim}type: 'line', targetAxisIndex: 1{rdelim}],
+        pointSize: 5
+    {rdelim};
+</script>
+<div class="chart" style="width: 1000px; height: 480px; margin: 0 auto;"></div>
+{/if}    
 
 {*<div class="row">
 <div id='chart' class="col-md-6"></div>
 <div id='circle-chart' class="col-md-6"></div>
 </div>*}
-<div class="row">
+<div class="row"> 
     <div class="col-md-12">
         <div class="table-responsive">
             <h3>Sales</h3>
@@ -30,7 +60,7 @@
                             <th>Value</th>
                             <th>Price<br>Equivalent</th>
                             {*<th>Status</th>*}
-                            <th>Compleated</th>
+                            <th>Completed</th>
                         </tr>
                     </thead>
                     {*debug*}
@@ -205,3 +235,6 @@
                                 </div>
                             </form>
                         </div>
+       
+                 
+                 

@@ -7,7 +7,6 @@
         <label for="cb-{$name}-{$row.id}"><input type="checkbox" id="cb-{$name}-{$row.id}" name="form[{$name}][{$row.id}]" value="{$row.id}">&nbsp;{$row.name|escape:'html'}&nbsp;&nbsp;&nbsp;</label>
         <br/>
         {/foreach}
-        <div class="separator"></div>
     {/if}
 {else}
 <span style="color: #aaa;">none</span>

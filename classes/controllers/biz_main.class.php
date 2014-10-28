@@ -42,7 +42,7 @@ class MainController extends ApplicationController
     {
         $biz_model = new Biz();
 		
-		if (isset($_REQUEST['btn_select']))
+	if (isset($_REQUEST['btn_select']))
         {
             $form       = $_REQUEST['form'];    
 			//@version 20130515 Sasha filter
@@ -52,9 +52,9 @@ class MainController extends ApplicationController
             $status			= Request::GetString('status', $form);
             $market_id		= Request::GetInteger('market_id', $form);
             $driver_id		= Request::GetInteger('driver_id', $form);
-			$keyword		= Request::GetString('keyword', $form);
+            $keyword		= Request::GetString('keyword', $form);
 			
-			$filter  = (!empty($keyword) ? 'keyword:' . str_replace(';', ',', $keyword) . ';' : '');
+            $filter  = (!empty($keyword) ? 'keyword:' . str_replace(';', ',', $keyword) . ';' : '');
             $filter .= ($objective_id > 0 ? 'objective:' . $objective_id . ';' : '');
             $filter .= ($team_id > 0 ? 'team:' . $team_id . ';' : '');
             $filter .= ($product_id > 0 ? 'product:' . $product_id . ';' : '');
@@ -496,7 +496,7 @@ class MainController extends ApplicationController
     {
         //$this->js       = 'chat_index';
 		
-		$biz_id = Request::GetInteger('id', $_REQUEST);
+	$biz_id = Request::GetInteger('id', $_REQUEST);
         if (empty($biz_id)) _404();
         
         $bizes  = new Biz();
@@ -547,6 +547,7 @@ class MainController extends ApplicationController
         
         $modelAttachment    = new Attachment();
         $attachments_list   = $modelAttachment->GetListByType('', 'biz', $biz_id);
+        //debug('1682', $attachments_list);
         $this->_assign('attachments_list', $attachments_list['data']);
 
         $this->_display('viewmod');        

@@ -63,7 +63,7 @@
             {if isset($target_doc)}
                 <input type="button" class="btn btn-default" value="Back to {$target_doc_no}" onclick="location.href = '{if $target_doc == 'neworder'}/order/{$target_doc}/{$target_doc_id}{else}/{$target_doc}/{if empty($target_doc_id)}add{else}{$target_doc_id}/edit{/if}{/if}';">
                 <input type="button" class="btn btn-primary selected-control" value="Add to {$target_doc_no}" onclick="add_selected_to_document('{$target_doc}', '{$target_doc_id}');" style="margin-left: 10px;">
-                <!--<input type="submit" name="btn_setfilter" value="Find" class="btn100b" style=''>-->
+                <input type="submit" class='btn btn-primary' name="btn_setfilter" value="Find">
             {else}        
                 {if empty($is_revision)}
                     <!--									�����  display: none;, ������� disabled="disabled"
@@ -83,9 +83,8 @@
                     <input type="button" id="btn-ra" class="btn btn-default selected-control" title="Please, select a position" value="Create RA" onclick="add_selected_to_document('newra', '0');" style="margin-left: 3px;">
                     <input type="button" id="btn-ra" class="btn btn-default selected-control" title="Please, select a position" value="Create QC" onclick="add_selected_to_document('newqc', '0');" style="margin-left: 3px;">
                     <input type="button" id="btn-positions-edit" class="btn btn-default" title="Please, select a position" value="Edit" onclick="redirect_selected('position', '/position/groupedit/');" style="margin-left: 3px;">
-                    <!--<input type="submit" name="btn_setfilter" value="Find" class="btn100b" style=''>-->
+                    <input type="submit" name="btn_setfilter" value="Find" class="btn btn-primary">
                 {/if}
-
             {/if}
         {/if}
     </li>	

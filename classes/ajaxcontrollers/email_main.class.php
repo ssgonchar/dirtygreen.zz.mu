@@ -192,4 +192,17 @@ class MainAjaxController extends ApplicationAjaxController
 		$object_id = $biz_id;
 		$modelEmail->GetList($object_alias, $object_id, $mailbox_id, $type_id, $doc_type_id, $is_deleted, $keyword, $approve_by, $this->page_no);
 	}*/
+    
+     public function setstarred() {
+         $email_id = Request::GetInteger('email_id', $_REQUEST);
+         $starr = Request::GetBoolean('starred', $_REQUEST);
+         
+         $modelEmail = new Email();
+         $result = $modelEmail->setStarr($email_id, $starr);
+         if($result) {
+             $this->_send_json(array('result' => 'okay'));
+         } else {
+             $this->_send_json(array('result' => 'error', 'msg' => $result));
+         }
+     }
 }

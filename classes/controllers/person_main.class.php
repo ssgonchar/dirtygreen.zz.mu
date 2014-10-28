@@ -65,7 +65,6 @@ class MainController extends ApplicationController
         
         $this->_assign('count', $count);
         $this->_assign('list',  $rowset);
-        
         $pager = new Pagination();
         $this->_assign('pager_pages', $pager->PreparePages($this->page_no, $count));
         
@@ -479,7 +478,7 @@ class MainController extends ApplicationController
         
      //dg($_SESSION);
         
-         if ($_SESSION['user']['id'] == '1682' || $_SESSION['user']['id'] == '1705' || $_SESSION['user']['id'] == ''){
+         if ($_SESSION['user']['id'] == '' || $_SESSION['user']['id'] == '1705' || $_SESSION['user']['id'] == ''){
           //  $this->rcontext = true;
           //  $this->layout   = 'rcolumnmod';            
             $this->_display('editnew');
@@ -535,6 +534,8 @@ class MainController extends ApplicationController
             
             $mailboxes = new Mailbox();
             $this->_assign('mailboxes', $mailboxes->GetListForUser($user['user']['id']));
+        //debug('1682', $mailboxes->GetListForUser($user['user']['id']));
+            
         } 
         
         $this->_assign('person', $person); 

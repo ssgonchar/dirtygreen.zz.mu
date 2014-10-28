@@ -1,3 +1,4 @@
+<div  class="col-md-3" style="position: fixed;">
 <ul class="nav nav-sidebar">
     <div class="col-md-6" style="padding-left: 0px;">
         <!-- Split button -->
@@ -37,3 +38,4 @@
 </div>
 <input type="hidden" id="chat-object-alias" value="{if isset($chat_object_alias)}{$chat_object_alias}{/if}">
 <input type="hidden" id="chat-object-id" value="{if isset($chat_object_id)}{$chat_object_id}{/if}">    
+</div>

@@ -3,7 +3,7 @@
         <tr class="top-table alt1" style="height: 25px;">
            {* <th width="3%"><input type="checkbox" onchange="check_all(this, 'item-position-{$position.id}'); calc_selected(); show_group_actions(); show_selected_items_actions({$position.id});"></th>*}
             <th width="10%">Plate Id</th>
-            {*<th width="8%">Steel Grade</th>*}
+            <th width="8%">Steel Grade</th>
             <th width="5%">Thickness<br>{$position.dimension_unit}</th>
             <th width="5%">Width<br>{$position.dimension_unit}</th>
             <th width="5%">Length<br>{$position.dimension_unit}</th>
@@ -33,6 +33,7 @@
             <td onclick="show_position_item_context(event, {$item.steelitem.id}, {$is_revision});">
                 {$item.steelitem.guid|escape:'html'|undef}</td>
             {/if}
+            <td>{$item.steelitem.steelgrade.title}</td>
             {*<td onclick="show_position_item_context(event, {$item.steelitem.id}, {$is_revision});" class="pos{$position.id}-steelgrade">{$item.steelitem.steelgrade.title|escape:'html'}</td>*}
             <td onclick="show_position_item_context(event, {$item.steelitem.id}, {$is_revision});" class="text-center pos{$position.id}-thickness">{$item.steelitem.thickness|escape:'html'}</td>
             <td onclick="show_position_item_context(event, {$item.steelitem.id}, {$is_revision});" class="text-center pos{$position.id}-width">{$item.steelitem.width|escape:'html'}</td>

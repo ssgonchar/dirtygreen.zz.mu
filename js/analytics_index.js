@@ -1,22 +1,7 @@
 /* 
  * Line chart 
  */
-google.load("visualization", "1", {packages:["corechart"]});
-google.setOnLoadCallback(drawChart);
-
-function drawChart()
-{
-    if (typeof dataTable == 'undefined') return;
-    
-    if (dataTable)
-    {
-        //var data    = google.visualization.arrayToDataTable(chart_data.sales_volume);
-        var data    = new google.visualization.DataTable(dataTable);
-        var chart   = new google.visualization.LineChart($('.chart')[0]);
-        chart.draw(data, chart_options);
-    }
-}
-
+ 
 var chosenInit = function() {
     var arg = ({
         width: "95%",
@@ -176,7 +161,7 @@ $(function() {
 
             if (ui.item)
             {
-                $('.deliverypoint_title').val(ui.item.label);
+                $('.deliverypoint_title').val(ui.item.label); 
             }
             else
             {
@@ -190,5 +175,36 @@ $(function() {
         close: function() {
         }
     });
+
+
+
+    
+
+
 });
 
+
+google.load("visualization", "1", {packages:["corechart"]});
+google.setOnLoadCallback(drawChart);
+
+function drawChart()
+{
+    if (typeof dataTable == 'undefined') return;
+    
+    if (dataTable)
+    {
+        //var data    = google.visualization.arrayToDataTable(chart_data.sales_volume);
+        var data    = new google.visualization.DataTable(dataTable);
+        var chart   = new google.visualization.LineChart($('.chart')[0]);
+        chart.draw(data, chart_options);
+    }
+}
+$('input[placeholder], textarea[placeholder]').each(function(){
+  var $input = $(this);
+  var value = $input.attr('placeholder');
+  $input.removeAttr('placeholder').val(value);
+  $input.bind({
+   blur: function() {if (this.value=='') this.value=value;},
+   focus: function() {if (this.value==value) this.value='';}
+  });
+ });

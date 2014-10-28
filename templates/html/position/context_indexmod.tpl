@@ -58,7 +58,7 @@
     </li>
 </ul>
 <ul class="nav navbar-nav navbar-right" style='margin-top: 7px;'>
-    <li>
+    <li>{*debug*}
         {if empty($is_revision)}
             {if isset($target_doc)}
                 <input type="button" class="btn150" value="Back to {$target_doc_no}" onclick="location.href = '{if $target_doc == 'neworder'}/order/{$target_doc}/{$target_doc_id}{else}/{$target_doc}/{if empty($target_doc_id)}add{else}{$target_doc_id}/edit{/if}{/if}';">
@@ -83,7 +83,7 @@
                     <input type="button" id="btn-ra" class="btn btn-default selected-control" title="Please, select a position" value="Create RA" onclick="add_selected_to_document('newra', '0');" style="margin-left: 3px;">
                     <input type="button" id="btn-ra" class="btn btn-default selected-control" title="Please, select a position" value="Create QC" onclick="add_selected_to_document('newqc', '0');" style="margin-left: 3px;">
                     <input type="button" id="btn-positions-edit" class="btn btn-default" title="Please, select a position" value="Edit" onclick="redirect_selected('position', '/position/groupedit/');" style="margin-left: 3px;">
-                    <input type="submit" name="btn_setfilter" value="Find" class="btn100b" style=''>
+                    <input type="submit" name="btn_setfilter" value="Find" class="btn100b" style="margin-left: 3px;">
                 {/if}
 
             {/if}

@@ -1,63 +1,71 @@
 {if !isset($page) || ($page != 'ownerless' && $page != 'stockholderless')}
 <div class="row">
-    <div class="col-md-9  sidebar column-side">  
-       
-           <div class="row">
-            <div class='col-md-4 border' >
-                                <p>
+    <div class="col-md-12 col-lg-12 sidebar column-side">  
+    <div id="collapseFilterSettings" class="panel-collapse collapse in">   
+           <div id="first-column" class='col-xs-4' style="">
+                           <p>
                                Stock :
-                            </p>
-                           
+                           </p>
                             <p>
                                 <select id="stock" name="form[stock_id]" class="chosen-select" onchange="bind_items_filter();" style="width:200px">
-                            <option value="0"{if empty($stock_id)} selected="selected"{/if}>--</option>
+                          <option value="0"{if empty($stock_id)} selected="selected"{/if}>--</option>
                             {foreach from=$stocks item=row}
                             <option value="{$row.stock.id}"{if !empty($stock_id) && $stock_id == $row.stock.id} selected="selected"{/if}>{$row.stock.title|escape:'html'}</option>
                             {/foreach}
                         </select>                          
                             </p>
                             <hr>
-                            <p>
+                            <p class='name'>
                                 Location :
                             </p>
-                            <div id="locations" style='padding:3px'>
+                            <p id="locations" style='padding:3px'>
                                 {*debug*}
                                 {if !empty($locations)}
                                     {if count($locations) == 1}
                                         {$locations[0].stockholder.title|escape:'html'}
                                     {else}
-                                    <hr>
+                                    
                                     {foreach from=$locations item=row}
-                                        <div style="float: left; margin-right: 5px;">
+                                        <p style="float: left; margin-right: 5px;">
 
                                             <label for="cb-location-{$row.stockholder_id}">
                                                 <input type="checkbox" id="cb-location-{$row.stockholder_id}" name="form[stockholder][{$row.stockholder_id}]" value="{$row.stockholder_id}"{if isset($row.selected)} checked="checked"{/if}>&nbsp;{$row.stockholder.doc_no|escape:'html'}&nbsp;({$row.stockholder.city.title|escape:'html'})&nbsp;&nbsp;
                                             </label>
-                                        </div>
+                                        </p>
                                     {/foreach}
                                         <div class="separator"></div>
                                     {/if}
                                 {else}
                                     <span style="color: #aaa;">{if empty($stock_id)}Please select stock first{else}Please select stock first{/if}</span>
                                 {/if}                        
-                            </div>
+                            </p>
                             <hr>
                             <p>
                                 Type :
                             </p>
                             <p>
                                 <label for="cb-type-r"><input type="checkbox" id="cb-type-r" name="form[type][r]" value="r"{if isset($type_r)} checked="checked"{/if}>&nbsp;Real&nbsp;&nbsp;&nbsp;</label>
-                        <label for="cb-type-v"><input type="checkbox" id="cb-type-v" name="form[type][v]" value="v"{if isset($type_v)} checked="checked"{/if}>&nbsp;Virtual&nbsp;&nbsp;&nbsp;</label>
-                        <label for="cb-type-t"><input type="checkbox" id="cb-type-t" name="form[type][t]" value="t"{if isset($type_t)} checked="checked"{/if}>&nbsp;Twin&nbsp;&nbsp;&nbsp;</label>
-                        <label for="cb-type-c"><input type="checkbox" id="cb-type-c" name="form[type][c]" value="c"{if isset($type_c)} checked="checked"{/if}>&nbsp;Cut&nbsp;&nbsp;&nbsp;</label>
-                        <label for="cb-type-a"><input type="checkbox" id="cb-type-a" name="form[available]" value="1"{if isset($available) && !empty($available)} checked="checked"{/if}>&nbsp;Only Available Items</label>
+                                <label for="cb-type-v"><input type="checkbox" id="cb-type-v" name="form[type][v]" value="v"{if isset($type_v)} checked="checked"{/if}>&nbsp;Virtual&nbsp;&nbsp;&nbsp;</label>
+                       <!-- <label for="cb-type-t"><input type="checkbox" id="cb-type-t" name="form[type][t]" value="t"{if isset($type_t)} checked="checked"{/if}>&nbsp;Twin&nbsp;&nbsp;&nbsp;</label>-->
+                       <!-- <label for="cb-type-c"><input type="checkbox" id="cb-type-c" name="form[type][c]" value="c"{if isset($type_c)} checked="checked"{/if}>&nbsp;Cut&nbsp;&nbsp;&nbsp;</label>-->
+                       <!-- <label for="cb-type-a"><input type="checkbox" id="cb-type-a" name="form[available]" value="1"{if isset($available) && !empty($available)} checked="checked"{/if}>&nbsp;Only Available Items</label>-->
                             </p>
                             <hr>
-                           
+                            <p>
+                                Status :
+                            </p>
+                            <p><select name="form[status_id]" id="status" class="chosen-select" style="width:300px">
+                                <option value="0"{if empty($status_id)} selected="selected"{/if}>--</option>
+                                {foreach from=$list item=row}
+                                <option value="{$row.status_id}"{if !empty($status_id) && $status_id == $row.status_id} selected="selected"{/if}>{$row.status.doc_no_full|escape:'html'}</option>
+                                {/foreach}
+                            </select>      
+                           </p>
+                            <hr>
                             </div>
-                           <div class="col-md-4 border">
-                           <p>
-                                Steel Grade :
+                           <div id="second-column" class="col-xs-4" style="border-right: 1px solid #ccc; border-left: 1px solid #ccc;">
+                        <p class='name'>
+                              Steel Grade :
                             </p>
                            
                             <div>  <!--<select  id="steelgrade" name="form[steelgrade_id]" class="chosen normal" style="width:200px">-->
@@ -69,36 +77,52 @@
                             </select>  
                             </div>
                             <hr>
-                            <div class="row">  
-                                <div class=" col-md-6"
-                            <p>
-                                Thickness :  
-                            </p>
-                            <p><input class="find-parametr" type="text" name="form[thickness]" class="normal"{if isset($thickness)} value="{$thickness}"{/if}><span class="size">{if isset($stock)}{$stock.dimension_unit|dunit}{/if}</span></p>
-                             <hr>
-                            <p>
-                                Length :
-                            </p>
-                            <p><input class="find-parametr" type="text" name="form[length]" class="normal"{if isset($length)} value="{$length}"{/if}><span class="size">{if isset($stock)}{$stock.dimension_unit|dunit}{/if}</span></p>
-                             <hr>
-                                </div>
-                            <div class=" col-md-6"
-                             <p>
-                                Width : 
-                            </p>                            
-                            <p><input class="find-parametr" type="text" name="form[width]" class="normal"{if isset($width)} value="{$width}"{/if}><span class="size">{if isset($stock)}{$stock.dimension_unit|dunit}{/if}</span></p>
-                            <hr>
-                            <p>
-                                Weight : 
-                            </p>
-                            <p>
-                              <input class="find-parametr" type="text" name="form[weight]" class="normal"{if isset($weight)} value="{$weight}"{/if}><span class="weight">{if isset($stock)}{$stock.weight_unit|wunit}{/if}</span>  
-                            </p>
-                         
-                             <hr>
-                            </div>
-                            </div>
-                        </div>
+                        
+                        <p class='name'>
+                            Thickness:
+                        </p>
+                        <p>
+                            <u>exact value</u> <input class="find-parametr" type="text" name="form[thickness]" size="8" placeholder="number" {if isset($thickness)} value="{$thickness}"{/if}>
+                            or range
+                            <input class="find-parametr" type="text" name="form[thicknessmin]" placeholder="min" size="6" {if isset($thicknessmin)} value="{$thicknessmin}"{/if}>
+                            &mdash; <input class="find-parametr" type="text" name="form[thicknessmax]" placeholder="max" size="6" {if isset($thicknessmax)} value="{$thicknessmax}"{/if}>
+                        </p>
+                        <hr/>
+                        <p class='name'>
+                            Width:
+                        </p>
+                        <p>
+                            <u>exact value</u> <input class="find-parametr" type="text" name="form[width]" size="8" placeholder="number" {if isset($width)} value="{$width}"{/if}>
+                            or range 
+                            <input class="find-parametr" type="text" name="form[widthmin]" placeholder="min" size="6" {if isset($widthmin)} value="{$widthmin}"{/if}>
+                            &mdash; <input class="find-parametr" type="text" name="form[widthmax]" placeholder="max" size="6" {if isset($widthmax)} value="{$widthmax}"{/if}>
+
+                        </p>
+                        <hr/>
+                        <p class='name'>
+                            Length:
+                        </p>
+                        <p>
+                            <u>exact value</u> <input class="find-parametr" type="text" name="form[length]" size="8" placeholder="number" {if isset($length)} value="{$length}"{/if}>                            
+                            or range 
+                            <input class="find-parametr" type="text" name="form[lengthmin]" placeholder="min" size="6" {if isset($lengthmin)} value="{$lengthmin}"{/if}>
+                            &mdash; <input class="find-parametr" type="text" name="form[lengthmax]" placeholder="max" size="6"  {if isset($lengthmax)} value="{$lengthmax}"{/if}>
+
+                        </p>
+                        <hr/>
+                        <p class='name'>
+                            Weight:
+                        </p>
+                        <p>
+                            <u>exact value</u> <input class="find-parametr" type="text" name="form[weight]" size="8" placeholder="number" {if isset($weight)} value="{$weight}"{/if}>
+                            or range 
+                            <input class="find-parametr" type="text" name="form[weightmin]" placeholder="min" size="6"  {if isset($weightmin)} value="{$weightmin}"{/if}>
+                            &mdash; <input class="find-parametr" type="text" name="form[weightmax]" placeholder="max" size="6"  {if isset($weightmax)} value="{$weightmax}"{/if}>
+
+                        </p>
+                        <hr/>
+                    </div>
+                            
                         
                          <div class="col-md-4 border">
                             <p>
@@ -126,7 +150,7 @@
                                 {/foreach}
                             </select>      
                            </p>
-                            <input type="submit" name="btn_select" value="Find" class="btn100b" style='float: right;'>
+                            
                         </div>
                     </div>
                 </div>            

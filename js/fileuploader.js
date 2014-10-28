@@ -265,7 +265,10 @@ qq.FileUploaderBasic = function(o){
         // return false to cancel submit
         onSubmit: function(id, fileName){},
         onProgress: function(id, fileName, loaded, total){},
-        onComplete: function(id, fileName, responseJSON){},
+        onComplete: function(id, fileName, responseJSON) //выполняется когда аттач загружен
+        {
+            attachments_counter();
+        },
         onCancel: function(id, fileName){},
         // messages                
         messages: {
@@ -515,6 +518,7 @@ qq.FileUploader = function(o){
     });
 
     // overwrite options with user supplied    
+    console.log($(this).length);
     qq.extend(this._options, o);       
        
     this._element = this._options.element;

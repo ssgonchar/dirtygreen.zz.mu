@@ -5,5 +5,5 @@
         {$attachment.original_name} ({$attachment.size|human_filesize})
         {if !$readonly}<br><a class="delete" href="javascript:void(0);" onclick="remove_attachment('{if isset($object_alias)}{$object_alias}{else}{$attachment.object_alias}{/if}', {if isset($object_id)}{$object_id}{else}{$attachment.object_id}{/if}, {$attachment.id}); return false;">remove</a>{/if}
     </div>
-</div>
+</div><br/>
 {/if}

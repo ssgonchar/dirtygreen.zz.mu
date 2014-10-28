@@ -58,5 +58,4 @@ class MainAjaxController extends ApplicationAjaxController {
 
         RETURN $locations;
     }
-
 }

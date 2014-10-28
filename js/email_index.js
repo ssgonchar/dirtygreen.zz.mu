@@ -59,45 +59,22 @@ $(function(){
 		event.stopPropagation();  		
 	});
     
-    
-//    $('.choose-all-checkboxes').on('click', function(){
-//        var HTML_checkboxes     = $('.single-checkbox'),
-//            HTML_manage_buttons = $('.manage-buttons'),
-//            choosen_items_count = 0;
-//        
-//        if ($(this).attr('checked') == 'checked')
-//        {
-//            HTML_checkboxes.attr('checked', 'checked');
-//            var checked_items = $('.single-checkbox:checked');
-//            
-//            if (checked_items.hasClass('et-notspam'))
-//            {
-//                if (checked_items.hasClass('et-unread'))
-//                {
-//                    $('.manage-buttons.mb-type-read').show();
-//                }
-//                if (checked_items.hasClass('et-read'))
-//                {
-//                    $('.manage-buttons.mb-type-unread').show();
-//                }
-//                $('.manage-buttons.mb-type-spam').show();
-//            }
-//            else
-//            {
-//                $('.manage-buttons.mb-type-notspam').show();
-//                $('.manage-buttons.mb-type-delete').show();
-//            }
-//            choosen_items_count = $('.single-checkbox:checked').length;
-//        }
-//        else
-//        {
-//            HTML_checkboxes.removeAttr('checked');
-//            HTML_manage_buttons.hide();
-//        }
-//        
-//        $('.choosen-items-stats').children('.cis-checked').html(choosen_items_count);
-//    });
-    
+    $('.delete-emails').live('click', function(e){
+        var email_id = $(this).data('id');
+        
+        $.ajax({
+                    url: '/emailmanager/delete',
+                    data: {
+                        email_id: email_id,
+                    },
+                    success: function(json) {
+                                  
+                    },
+        });   
+        
+        $(this).parent().parent().remove();
+    });
+ 
     $('.group-checkbox').on('click', function(){
         var _this = $(this),
             HTML_single_checkboxes = $('.single-checkbox');
@@ -260,3 +237,31 @@ $(function(){
     });
     
 });
+var attachments_counter = function()
+{
+    //данные, необходимые для получения кол-ва аттачей
+    var uploader_object_alias = $('#uploader_object_alias').val();
+    var uploader_object_id = $('#uploader_object_id').val();
+    
+    //счетчик shared docs обновляю из js (кол-во span в #shared-docs)
+    //var shared_docs_count = $('#shared-docs span').length > 0 ? '('+$('#shared-docs span').length+')' : '';
+    //$('#shared-docs-count').text(shared_docs_count);
+    
+    
+    //счетчик аттачей беру из сессии
+    $.ajax({
+        url     : '/emailmanager/getattachcount',
+        data    : {
+            uploader_object_alias : uploader_object_alias,
+            uploader_object_id    : uploader_object_id,
+            
+        },
+        success : function(json){
+            if(json.result == 'okay'){
+                var attachments_count = json.attach_count > 0 ? '('+json.attach_count+')' : '';
+                $('#attachments-count').text(attachments_count);
+            }
+        }
+    });
+    
+};

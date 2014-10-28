@@ -1,7 +1,7 @@
 <table class="form" width="50%">
     <tr>
         <td><input type="text" name="form[keyword]" class="form-control find-parametr"{if isset($keyword)} value="{$keyword|escape:'html'}"{/if}></td>
-        <td><input type="submit" name="btn_select" value="Find" class="btn btn-primary"></td>
+        
     </tr>
 </table>
 

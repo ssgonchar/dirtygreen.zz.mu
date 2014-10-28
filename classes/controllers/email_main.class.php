@@ -468,7 +468,7 @@ class MainController extends ApplicationController
         
         $this->page_name = !empty($email['title']) ? $email['title'] : '(No subject)';
         
-        $backurl = '/emails';
+        $backurl = '/emailmanager';
         if (!empty($token))
         {
             $value = Cache::GetKey($token);
@@ -777,9 +777,8 @@ class MainController extends ApplicationController
         $this->_assign('token', $token);
 
         $page = empty($filter_params) && (!$is_dfa && !$is_dfa_other) ? 'all_emails' : '';
-		
-		$this->_assign('page', $page);
-        
+	$this->_assign('page', $page);	
+
 //        спец лейаут с правой колонкой (контентные зоны с прокруткой)
 //        $this->layout = 'email';
 //        $hcontext = $this->smarty->fetch('/templates/html/email/hcontext_index.tpl');
@@ -1140,7 +1139,7 @@ $form = $_REQUEST['form'];
 		
             $attachments        = new Attachment();
             $this->attachments  = $attachments->GetUploadedIds($uploader_object_alias . '-' . $uploader_object_id, $this->attachments);
-        
+
             // преобразовывает массив объектов письма к нормальному виду
             $objects_list = array();
             foreach ($objects as $object => $id)

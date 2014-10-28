@@ -6,7 +6,7 @@
     {if $email.type_id == $smarty.const.EMAIL_TYPE_DRAFT}{$smarty.now|date_format:"d/m/Y"}{else}{$email.date_mail|date_format:"d/m/Y"}{/if}
     {/if}</font></b>
     <br><br><br>
-    <i>{'To'|str_pad:10}</i> : {$email.to}<br>
+    {if $email.to !== ""}<i>{'To'|str_pad:10}</i> : {$email.to}<br>{/if}
     <i>{'Attention'|str_pad:10}</i> : <b style="color:#f00;"><font color="#ff0000">{$email.attention}</font></b><br><br>
     
     <i>{'Subject'|str_pad:10}</i> : {$email.subject}<br>

@@ -89,10 +89,10 @@ var set_columns_height = function()
     var first_column_height = $("#first-column").css("height");
     $("#second-column").css("height", first_column_height);
     $("#third-column").css("height", first_column_height);
-    //вычисляем margin-top для кнопки Find
-    var margin_top = parseInt(first_column_height.replace(/\D+/g,"") - 90);
+    //вычисляем margin-top для кнопки Find (кнопка перенесена в контекст - поэтому изменение margin закомментил)
+    //var margin_top = parseInt(first_column_height.replace(/\D+/g,"") - 90);
     //задаем margin-top
-    $('input[value=Find]').css("margin-top", margin_top + "px");
+    //$('input[value=Find]').css("margin-top", margin_top + "px");
     //текст checkbox - обычный
     $(".row label").css("font-weight", "normal");
     //стираем значения всех input
@@ -808,13 +808,14 @@ var change_visibility_in_stock = function(obj, position_id, hidden)
 	    success: function(json){
 		if (json.result == 'okay') 
 		{
-		    console.log(json);
+		    if(hidden == true) Message('Position was hidden from external stock!', 'okay');
+		    if(hidden == false) Message('Now the position is displayed on the external stock!', 'okay');
 		   //$('#steelgrades-select').html('');
 		   //$('#steelgrades-select').html(json.content);
 		}
 		else
 		{
-		    console.log(json);
+		    //console.log(json);
 		   //$('#steelgrades-select').html('');
 		   //$('#steelgrades-select').html(json.content);
 		}

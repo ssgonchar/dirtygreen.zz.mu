@@ -10,5 +10,5 @@
     <td class="uf-buttons" style="width: 75px;">
         {if !isset($readonly)}<img src="/img/icons/cross.png" onclick="uploader_remove_attachment(this);" style="cursor: pointer;" />{/if}
     </td>
-</tr>
+</tr><br/>
 {/if}

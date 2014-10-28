@@ -240,6 +240,7 @@ class MainAjaxController extends ApplicationAjaxController
             
             $modelSteelItem = new SteelItem();
             $steelitems     = $modelSteelItem->FillSteelItemInfo($steelitems);
+            //debug('1682', $steelitems);
             
             // filter items by stockholder // фильтр айтемов по стокхолдерам
             $stockholders   = array();
@@ -271,13 +272,14 @@ class MainAjaxController extends ApplicationAjaxController
             
             
             $modelRA = new RA();
-            
             // save // сохранение
             foreach ($stockholders as $stockholder_id => $row)
             {
+                //print_r($row);
                 $notes = $row['stock_object_alias'] == 'platesahead'
                     ? 'Please be so kind to state actual dimensions in your bill of lading as well as plate ID'
                     : 'Please send to us DDT & weighbridge ticket as soon as issued';
+                //debug('1682', $row['items']);
                 
                 $result     = $modelRA->Save(0, $stockholder_id, 0, 0, '', '', '', '', '', RA_STATUS_OPEN, '', '', '', '', '', '', $notes);
                 $item_ids   = '';
@@ -288,6 +290,21 @@ class MainAjaxController extends ApplicationAjaxController
                 
                 $item_ids = trim($item_ids, ',');
                 $modelRA->ItemsAdd(0, $result['ra_id'], $item_ids);
+                
+                //костыль - записываю в табл. ra_items owner_id выбранных итемов
+                foreach ($row['items'] as $item)
+                {
+                    $steelitem_id = $item['id'];
+                    $owner_id = $item['owner_id'];
+                    $ra_id = $result['ra_id'];
+                    //сохраняю ids  в БД
+                    $query  = '';
+                    $query .= "UPDATE `ra_items` ";
+                    $query .= "SET `owner_id`     = '{$owner_id}' ";
+                    $query .= "WHERE `ra_id`      = '{$ra_id}' ";
+                    $query .= "AND `steelitem_id` = '{$steelitem_id}'";
+                    $modelRA->table->_exec_raw_query($query);
+                }
             }
             
             $href = '/ra/' . $result['ra_id'] . '/edit';
@@ -485,7 +502,7 @@ class MainAjaxController extends ApplicationAjaxController
                     
                     if (empty($stockholder_id) || empty($row['owner_id']) || $row['status_id'] >= ITEM_STATUS_RELEASED)
                     {
-                        continue;    
+                        continue;
                     }
                                         
                     if (!isset($stockholders[$stockholder_id]))

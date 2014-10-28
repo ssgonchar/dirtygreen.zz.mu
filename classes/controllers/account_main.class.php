@@ -11,7 +11,7 @@ class MainController extends ApplicationController
     
     /**
      * User Logon from security token
-     * 
+     *  
      */
     function autologin()
     {

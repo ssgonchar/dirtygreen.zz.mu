@@ -345,12 +345,10 @@
         </td>
     </tr>
 </table>
-
 {if !empty($chart_data.matrix)}
 <div class="pad"></div>
 <h3 id="chart">Orders</h3>
 <div id="orders"></div>
-
 <script type="text/javascript">
     var dataTable =  {ldelim}
         cols: [{ldelim}label: 'Year', type: 'string', p: {ldelim}role:'domain'{rdelim}{rdelim},
@@ -377,6 +375,7 @@
 </script>
 <div class="chart" style="width: 1000px; height: 480px; margin: 0 auto;"></div>
 {/if}
+
 
 <div class="pad"></div>
 {include file='templates/controls/object_shared_files.tpl' object_alias='company' object_id=$form.id}

@@ -42,6 +42,7 @@ and open the template in the editor.
 
     </head>
     <body>
+        <div id="app_messages" style="display: none;"></div>
         {include file='templates/layouts/controls/control_navigation_mod.tpl'}
         {include file='templates/html/emailmanager/main_index.tpl'}
     </body>

@@ -12,5 +12,6 @@
 <ul class="nav navbar-nav navbar-right" style='margin: 7px;'>
 	<li>
 		<input type="button" class="btn btn-primary" value="Add" onclick="location.href='/company/add';">
+                <input type="submit" name="btn_select" value="Find" class="btn btn-primary">
 	</li>	
 </ul>

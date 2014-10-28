@@ -1,4 +1,5 @@
 <?php
+  
 ini_set('session.name',             'mam');
 ini_set('session.use_cookies',      true);
 ini_set('session.use_trans_sid',    false);
@@ -19,7 +20,7 @@ if ($_SERVER['HTTP_HOST'] == 'mam.kvadrosoft.com')
     }
 } 
 */
-require_once('settings/constants.php');
+require_once(dirname(__FILE__).'/settings/constants.php');
 
 // для пингера не добавляется запись в лог                                                  
 if ((!isset($_SERVER['QUERY_STRING']) || $_SERVER['QUERY_STRING'] != 'arg=service/pinger') && (!isset($_SERVER['HTTP_USER_AGENT']) || $_SERVER['HTTP_USER_AGENT'] != 'sespider'))
@@ -29,7 +30,7 @@ if ((!isset($_SERVER['QUERY_STRING']) || $_SERVER['QUERY_STRING'] != 'arg=servic
 }
 
 require_once(APP_PATH . 'classes/core/Model.class.php');
-require_once('settings/mappings.php');
+require_once(dirname(__FILE__).'/settings/mappings.php');
 
 $module             = isset($_REQUEST['module'])        ? $_REQUEST['module']           : 'main';
 $controller_name    = isset($_REQUEST['controller'])    ? $_REQUEST['controller']       : 'main';
@@ -72,12 +73,13 @@ if (preg_match('/^[a-z0-9]{1,64}$/', $controller_name) && preg_match('/^[a-z0-9]
         {
             $controller = new $controller_classname();
         }
+        /*
         else
         {
             //no such class
             error('no such class:' . $controller);
         }
-
+         ;*/
         if (method_exists($controller, $action))
         {
             $controller->_exec($action);
@@ -106,7 +108,7 @@ function debug($user_id, $var)
     if ($user_id == $_SESSION['user']['id']) {
         dg($var);
     }
-    //dg($_SESSION);
+    //dg($_SESSION); 
 }
 
 

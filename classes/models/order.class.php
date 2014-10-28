@@ -1155,14 +1155,15 @@ class Order extends Model {
             'order' => 'orders.id DESC',
             'group' => 'orders.id'
         );
-        //dg($arg_query);
+        
         $rowset = $this->table->SelectList($arg_query);
         /* dg( 'status = "co" '
           . $str_where); */
         foreach ($rowset as $row) {
+            $day = date('D', strtotime($row['modified_at']));
             $orders[] = $this->GetById($row['id']);
         }
-
+//dg($orders);
         return $orders;
     }
 
@@ -1206,5 +1207,6 @@ class Order extends Model {
         }
         return $customers;
     }
+    
 
 }

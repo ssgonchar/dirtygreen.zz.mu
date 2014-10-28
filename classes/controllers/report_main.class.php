@@ -664,7 +664,7 @@ class MainController extends ApplicationController
                         $total[$weight_unit . '-' . $stock_currency]['qtty']     += 1;
                         $total[$weight_unit . '-' . $stock_currency]['price']    += $stock_price;
                         $total[$weight_unit . '-' . $stock_currency]['weight']   += $row['unitweight'];
-                        $total[$weight_unit . '-' . $stock_currency]['value']    += ($row['unitweight'] * $stock_price);
+                        $total[$weight_unit . '-' . $stock_currency]['value']    += ($row['unitweight'] * $stock_price)/100;
                         $total[$weight_unit . '-' . $stock_currency]['currency'] = $stock_currency;
                         $total[$weight_unit . '-' . $stock_currency]['unit']     = $row['weight_unit'];                        
                     }

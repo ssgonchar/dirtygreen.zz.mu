@@ -344,7 +344,7 @@ The purpose of these DNS sittings is to avoid such problem.';
         $filename   = Request::GetString('filename', $_REQUEST);
 
         $data = UserPicture::GetData($type, $secretcode, $size, $filename);
-        
+        dg($data);
         $this->_display_binary($data['data'], $data['content_type']);
     }
     

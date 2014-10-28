@@ -64,7 +64,7 @@ class MainController extends ApplicationController
      * 
      * @version 20121017, zharkov
      */
-    function add()
+    function add() 
     {
         if (isset($_REQUEST['btn_create']))
         {
@@ -84,7 +84,6 @@ class MainController extends ApplicationController
 
                 $modelSteelItem = new SteelItem();
                 $steelitems     = $modelSteelItem->FillSteelItemInfo($steelitems);
-
                 // фильтр айтемов по стокхолдерам
                 $stockholders   = array();
                 foreach ($steelitems as $row)
@@ -105,7 +104,7 @@ class MainController extends ApplicationController
                 }
                 
                 // сохранение
-                $modelRA = new RA();
+                $modelRA = new RA();    
                 foreach ($stockholders as $stockholder_id => $row)
                 {
                     $notes = $row['stock_object_alias'] == 'platesahead'
@@ -122,6 +121,21 @@ class MainController extends ApplicationController
                     
                     $item_ids = trim($item_ids, ',');
                     $modelRA->ItemsAdd(0, $result['ra_id'], $item_ids);
+                    
+                    //костыль - записываю в табл. ra_items owner_id выбранных итемов
+                    foreach ($row['items'] as $item)
+                    {
+                        $steelitem_id = $item['id'];
+                        $owner_id = $item['owner_id'];
+                        $ra_id = $result['ra_id'];
+                        //сохраняю ids  в БД
+                        $query  = '';
+                        $query .= "UPDATE `ra_items` ";
+                        $query .= "SET `owner_id`     = '{$owner_id}' ";
+                        $query .= "WHERE `ra_id`      = '{$ra_id}' ";
+                        $query .= "AND `steelitem_id` = '{$steelitem_id}'";
+                        $modelRA->table->_exec_raw_query($query);
+                    }
                 }
                 
                 $this->_message('Release Advice was created successfully', MESSAGE_OKAY);
@@ -137,10 +151,13 @@ class MainController extends ApplicationController
         {
             foreach ($modelOrder->GetItems($order_id) as $item)
             {
-                if (!in_array($item['status_id'], array(ITEM_STATUS_RELEASED, ITEM_STATUS_DELIVERED)))  /*    , ITEM_STATUS_INVOICED  */
-                {
-                    $steelitems[] = array('steelitem_id' => $item['id']);
-                }
+                //if (!in_array($item['status_id'], array(ITEM_STATUS_RELEASED, ITEM_STATUS_DELIVERED)))  /*    , ITEM_STATUS_INVOICED  */
+                
+//                if (!in_array($item['status_id'], array(ITEM_STATUS_DELIVERED)))  /*    , ITEM_STATUS_INVOICED  */
+//                {
+//                    $steelitems[] = array('steelitem_id' => $item['id']);
+//                }
+                $steelitems[] = array('steelitem_id' => $item['id']);
             }
         }
 
@@ -406,11 +423,10 @@ class MainController extends ApplicationController
                         //необходимо узнать location_id по $dest_stockholder_id
                         $modelCompany    = new Company();
                         $company_info = $modelCompany->GetById($dest_stockholder_id);
-                        $location_id = $company_info[company][location][id];
+                        //debug('1682', $company_info);
+                        $location_id = $company_info['company']['location']['id'];
                         //выковыриваем id итемов из списка RA, которые надо апдейтить.
-                        //debug('1682', $modelRA->GetItems($ra_id));
                         $ra_items = $modelRA->GetItems($ra_id);
-                        //debug('1682', $ra_items);
                         foreach($ra_items as $key => $row)
                         {
                             $items_list[] = $ra_items[$key]['steelitem_id'];

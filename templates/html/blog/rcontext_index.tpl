@@ -1,8 +1,8 @@
-<h2 style="margin-top: 5px;">Filter</h2>
+<h2 style="margin-top: 5px;">Search</h2>
 
 <table class="form" width="100%">
     <tr>
-        <td>Keyword : </td>
+        <td>exact phrase : </td>
     </tr>
     <tr>
         <td>
@@ -28,9 +28,9 @@
     <tr>
         <td>
             <div class="pad1"></div>
-            <label for="type-1"><input type="checkbox" id="type-1" name="form[type][1]" value="1" style="vertical-align:-2px; margin-right: 5px;"{if isset($filter) && isset($filter.type) && isset($filter.type[1])} checked="checked"{/if}>Only eMails</label><br><br>
-            <label for="type-2"><input type="checkbox" id="type-2" name="form[type][2]" value="2" style="vertical-align:-2px; margin-right: 5px;"{if isset($filter) && isset($filter.type) && isset($filter.type[2])} checked="checked"{/if}>Only TL messages</label><br><br>
-            <label for="type-3"><input type="checkbox" id="type-3" name="form[type][3]" value="3" style="vertical-align:-2px; margin-right: 5px;"{if isset($filter) && isset($filter.type) && isset($filter.type[3])} checked="checked"{/if}>Only shared files</label>        
+            <label for="type-1"><input type="checkbox" id="type-1" name="form[type][1]" value="1" style="vertical-align:-2px; margin-right: 5px;"{if isset($filter) && isset($filter.type) && isset($filter.type[1])} checked="checked"{/if}>eMails</label><br><br>
+            <label for="type-2"><input type="checkbox" id="type-2" name="form[type][2]" value="2" style="vertical-align:-2px; margin-right: 5px;"{if isset($filter) && isset($filter.type) && isset($filter.type[2])} checked="checked"{/if}>TL messages</label><br><br>
+            <label for="type-3"><input type="checkbox" id="type-3" name="form[type][3]" value="3" style="vertical-align:-2px; margin-right: 5px;"{if isset($filter) && isset($filter.type) && isset($filter.type[3])} checked="checked"{/if}>shared files</label>        
         </td>
     </tr>    
 
@@ -56,10 +56,16 @@
         </td>
     </tr>	
 	{/if}
-    <tr>
+        {*<tr>
+            <td>
+                <p><strong>BIZ</strong></p>
+                <p><input placeholder="type free text" type="text"  class="form-control find-parametr" {if isset($keyword) && !empty($keyword)} value="{$keyword|escape:'html'}" {/if} style="width: 100%;" name="form[keyword]"></p>
+            </td>
+        </tr>*}
+        <tr>
         <td>
             <div class="pad1"></div>
-            <input class="btn150o" type="submit" name="btn_filter" value="Select" />
+            
         </td>
     </tr>
     {if isset($filter)}

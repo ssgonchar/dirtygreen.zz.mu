@@ -1313,6 +1313,7 @@ class MainController extends ApplicationController
             $rev_id         = null;
             $available      = Request::GetInteger('available', $form);
             $order_id       = Request::GetInteger('order_id', $form);
+            $status_id      = Request::GetInteger('status_id', $status_id);
             
             if (!empty($rev_date))
             {
@@ -1340,7 +1341,8 @@ class MainController extends ApplicationController
                         . (empty($weight) ? '' : 'weight:' . $weight . ';')
                         . (empty($notes) ? '' : 'notes:' . $notes . ';')
                         . (empty($available) ? '' : 'available:' . $available . ';')
-                        . (empty($order_id) ? '' : 'order:' . $order_id . ';');
+                        . (empty($order_id) ? '' : 'order:' . $order_id . ';')
+                        . (empty($status_id) ? '' : 'status:' . $status_id . ';');
             
             
             $redirect = array();
@@ -1533,7 +1535,7 @@ class MainController extends ApplicationController
                 if ($type == 'c') $is_cut = 1;
                 $this->_assign('type_' . $type, true);
             }
-
+            //debug('1682', $dimension_unit); 
             $items  = new SteelItem();
             $list   = $items->GetList($stock_id, $location_ids, $deliverytime_ids, $is_real, $is_virtual, $is_twin, $is_cut, 
                                         $steelgrade_id, $thickness, $width, $length, $weight, $notes, $plate_id, $available,
@@ -1694,10 +1696,10 @@ class MainController extends ApplicationController
         $modelSteelItem = new SteelItem();
         $this->_assign('baddatastat', $modelSteelItem->GetBadDataStat());
         
-        if ($_SESSION['user']['id'] == '1682' || $_SESSION['user']['id'] == '1705' || $_SESSION['user']['id'] == '1671') {
+        if ($_SESSION['user']['id'] == '' || $_SESSION['user']['id'] == '1705' || $_SESSION['user']['id'] == '1671') {
             $this->_display('indexmod');  
         } else {
-            $this->_display('index');  
+            $this->_display('indexmod');  
         }
     
      //   $this->_display('indexmod');

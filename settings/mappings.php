@@ -540,6 +540,21 @@
             ),
         ),
     ),  
+        '/^(analytics)(.*)$/' => array(
+        'subrules' => array(
+            '/^(analytics)\/(filter)$/' => array(
+                'module' => 'analytics',
+                'controller' => 'main',
+                'action' => 'index',
+            ),
+            '/^(analytics)\/(filter)\/(.*)$/' => array(
+                'module' => 'analytics',
+                'controller' => 'main',
+                'action' => 'index',
+                'filter' => '$3'
+            ),
+        ),
+    ),  
         '/^(emailmanager)(.*)$/' => array(
             'subrules' => array(                
                 

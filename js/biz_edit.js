@@ -20,19 +20,35 @@ var bind_products = function(team_id)
             url: '/team/getproducts',
             data : {
                 team_id : team_id,
-                full_branch : true
+                full_branch : true,
+				in_biz :	  true
             },
             success: function(json){
                 if (json.result == 'okay') 
                 {
+                    console.log(json);
+                    
+                    $('#products').empty();
+                    /*
+                    $(id).prepend($('<option value="' + first_option.value + '">' + first_option.name + '</option>'));
+
+                    start_index = 0;
+                    for (i = start_index; i < json_arr.length; i++)
+                    {
+                        el = json_arr[i];
+                        $(id).append($('<option value="' + el.id + '">' + el.name + '</option>'));
+                    }  
+                    */
+                    
+                    //fill_select("#products", json.products, {'value' : 0, 'name' : "--"});
                     fill_select("#products", json.products, {'value' : 0, 'name' : "--"});
+                    $(".chosen-select").trigger("chosen:updated");
                 }
                 else
                 {
                     error = true;
                 }                
             }
-       
         });        
     }
     
@@ -40,9 +56,8 @@ var bind_products = function(team_id)
     {
         $('#products').empty();
         $('#products').prepend($('<option value="0">--</option>'));
-        $(".chosen-select").trigger("chosen:updated"); 
-    }   
-}
+    }    
+};
 
 /**
 * Добавляет найденные компании в бизнес

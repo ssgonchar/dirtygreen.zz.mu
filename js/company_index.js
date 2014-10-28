@@ -48,16 +48,16 @@ var fill_activities = function(parent_id, list_object)
  */
 //Поиск по нажатию Enter
 $(".find-parametr").live("keyup", function()
+{
+    $(this).keypress(function(event){
+    if(event.keyCode == 13) 
     {
-        $(this).keypress(function(event){
-            if(event.keyCode == 13) 
-            {
-                $("input[value=Find]").click();
-                return false;
-                //console.log("key press");
-            }
-        });
+        $("input[value=Find]").click();
+        return false;
+        //console.log("key press");
+    }
     });
+});
 $(function(){    
     
     // фокус

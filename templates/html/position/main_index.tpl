@@ -132,7 +132,7 @@
                         <p>
                             <input class="form-control find-parametr" placeholder="free text" type="text" {if isset($keyword) && !empty($keyword)} value="{$keyword|escape:'html'}" {/if} style="width: 100%;" name="form[keyword]">
                         </p>
-                        <input type="submit" name="btn_setfilter" value="Find" class="btn100b" style='float: right;'>
+                        <!-- <input type="submit" name="btn_setfilter" value="Find" class="btn100b" style='float: right;'>-->
                     </div> 
                 </div>
                 <!--<div class="panel-footer"><input type="submit" name="btn_setfilter" value="Find" class="btn100b" style='float: right;'></div>-->

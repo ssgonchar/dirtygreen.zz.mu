@@ -208,13 +208,16 @@
 
         </td>
         <td{if $order.status != 'ca'} onclick="location.href='/order/selectitems/{$order.id}/position:{$row.position_id}';"{/if}>
-        {if isset($row.plateid) && !empty($row.plateid)}
-            {foreach name='plateid' from=$row.plateid item=plateid}
-            {$plateid}{if !$smarty.foreach.plateid.last}, {/if}
-            {/foreach} 
-        {else}
-        {''|undef}
-        {/if}
+            {if isset($row.plateid) && !empty($row.plateid)}
+                {*foreach name='plateid' from=$row.plateid item=plateid}
+                    {$plateid} ({}){if !$smarty.foreach.plateid.last}<br> {/if}
+                {/foreach*} 
+                {foreach name='steelitem' from=$row.steelitems item=subrow}
+                    <nobr>{$subrow.steelitem.guid} ({$subrow.steelitem.status_title})</nobr>{if !$smarty.foreach.plateid.last}<br> {/if}
+                {/foreach} 
+            {else}
+                {''|undef}
+            {/if}
         </td>
         {if !empty($conflicted_items)}<td>{if isset($row.is_conflicted)}<img src="/img/icons/exclamation-red.png" onclick="location.href='/order/selectitems/{$order.id}/position:{$row.position_id}';" title="Conflicted Items" alt="Conflicted Items">{else}{/if}</td>{/if}
     </tr>        

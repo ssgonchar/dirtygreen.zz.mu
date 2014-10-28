@@ -51,11 +51,11 @@
                         <label for="cb-type-v"><input type="checkbox" id="cb-type-v" name="form[type][v]" value="v"{if isset($type_v)} checked="checked"{/if}>&nbsp;Virtual&nbsp;&nbsp;&nbsp;</label>
                         <label for="cb-type-t"><input type="checkbox" id="cb-type-t" name="form[type][t]" value="t"{if isset($type_t)} checked="checked"{/if}>&nbsp;Twin&nbsp;&nbsp;&nbsp;</label>
                         <label for="cb-type-c"><input type="checkbox" id="cb-type-c" name="form[type][c]" value="c"{if isset($type_c)} checked="checked"{/if}>&nbsp;Cut&nbsp;&nbsp;&nbsp;</label>
-                        <label for="cb-type-a"><input type="checkbox" id="cb-type-a" name="form[available]" value="1"{if isset($available) && !empty($available)} checked="checked"{/if}>&nbsp;Only Available Items</label>
+                        {*<!--<label for="cb-type-a"><input type="checkbox" id="cb-type-a" name="form[available]" value="1"{if isset($available) && !empty($available)} checked="checked"{/if}>&nbsp;Only Available Items</label>-->*}
                     </td>
                 </tr>                
             </table>
-        </td>
+        </td> 
         <td width="10%" class="text-right text-middle" style="padding-right: 0;">
             <input type="submit" name="btn_select" value="Select" class="btn100b">
         </td>

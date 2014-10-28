@@ -35,13 +35,7 @@ $(document).ready(function() {
     $('#loader').hide('slow');
     $('body').css('overflow', 'auto');
     $('input').tooltip();
-    $('.timeline-badge img').addClass('img-circle');
-    $('.timeline-badge img').width($('.timeline-badge img').width() + 6);
-    $('.timeline-badge img').height($('.timeline-badge img').height() + 5);
-    $('.timeline-badge').width($('.timeline-badge img').width());
-    $('.timeline-badge').height($('.timeline-badge img').height());
-    $('.timeline-badge').css('opacity', '1');
-    $('.timeline-badge img').css('opacity', '1');
+
     } catch(e) {
         console.log(e.name);
         console.log(e);
@@ -49,18 +43,26 @@ $(document).ready(function() {
     } finally {
         console.log('app start');
     }
+    $('.timeline-badge img').addClass('img-circle').width('100%');
+//    $('.timeline-badge img').width($('.timeline-badge img').width() + 6);
+//    $('.timeline-badge img').height($('.timeline-badge img').height() + 5);
+//    $('.timeline-badge').width($('.timeline-badge img').width());
+//    $('.timeline-badge').height($('.timeline-badge img').height());
+//    $('.timeline-badge').css('opacity', '1');
+//    $('.timeline-badge img').css('opacity', '1');    
 });
 
 
 var show_user_icons = function() {
-    $('.timeline-badge:first img').addClass('img-circle');
-    $('.timeline-badge:first img').css('margin-top', '0px');
-    $('.timeline-badge:first img').width($('.timeline-badge img').width() + 6);
-    $('.timeline-badge:first img').height($('.timeline-badge img').height() + 5);
-    $('.timeline-badge:first').width($('.timeline-badge img').width());
-    $('.timeline-badge:first').height($('.timeline-badge img').height());
-    $('.timeline-badge:first').css('opacity', '1');
-    $('.timeline-badge:first img').css('opacity', '1');
+    $('.timeline-badge img').addClass('img-circle').width('100%');
+//    $('.timeline-badge:first img').addClass('img-circle');
+//    $('.timeline-badge:first img').css('margin-top', '0px');
+//    $('.timeline-badge:first img').width($('.timeline-badge img').width() + 6);
+//    $('.timeline-badge:first img').height($('.timeline-badge img').height() + 5);
+//    $('.timeline-badge:first').width($('.timeline-badge img').width());
+//    $('.timeline-badge:first').height($('.timeline-badge img').height());
+//    $('.timeline-badge:first').css('opacity', '1');
+//    $('.timeline-badge:first img').css('opacity', '1');
 };
 
 var search_chat_archive = function(event) {

@@ -12,5 +12,6 @@
 <ul class="nav navbar-nav navbar-right" style='margin-top: 7px;'>
 	<li>
 		<input type="button" class="btn btn-success " value="Add" onclick="location.href='/person/add';">
+                <input type="submit" name="btn_select" value="Find" class="btn btn-primary">
 	</li>	
 </ul>

@@ -9,7 +9,7 @@
             
         </div>
     </div>      -->
-            <div class="col-sm-2 col-md-3 sidebar column-side" style="overflow-y: auto; max-height: 600px;">
+            <div class="col-sm-2 col-md-3 sidebar column-side" >
         {if isset($rcontext)}{$rcontext}{/if}
     </div>            
     

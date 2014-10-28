@@ -2,7 +2,7 @@
     <tr>
         <td class="form-td-title">Keyword :</td>
         <td><input type="text" id="keyword" name="keyword" class="form-control find-parametr"{if isset($keyword)} value="{$keyword}"{/if}></td>
-        <td><input type="submit" name="btn_select" value="Find" class="btn btn-primary"></td>
+        
     </tr>
 </table>
 <div id="more-params" {if !isset($params)}{/if}>

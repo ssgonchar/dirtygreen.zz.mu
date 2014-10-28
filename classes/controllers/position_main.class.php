@@ -35,8 +35,13 @@ class MainController extends ApplicationController {
     }
 
     private function filter_load() {
-        $filter = $_SESSION['current_page']['position']['filter'];
-
+        //debug('1682', $_SESSION);
+        if($_SESSION['current_page']['position']['filter']){
+            $filter = $_SESSION['current_page']['position']['filter'];
+        }  else {
+            $filter = array();
+        }
+        //$filter = $_SESSION['current_page']['position']['filter'];
         return $filter;
     }
 
@@ -383,7 +388,8 @@ class MainController extends ApplicationController {
                 //debug('1671', $selected_steelgrades);
                 // stockholders
                 $stockholders = $stocks->GetItemLocations($stock_id);
-                //$stockholders   = '';
+                //объявил $stockholder_ids чтобы убрать ошибку, если не выбраны stockholder`ы
+                $stockholder_ids   = '';
                 foreach ($stockholders as $key => $row) {
                     foreach ($selected_stockholders as $s_key => $s_stockholder_id) {
                         $s_stockholder_id = Request::GetInteger($s_key, $selected_stockholders);
@@ -401,7 +407,7 @@ class MainController extends ApplicationController {
                         $stockholder_ids = $stockholder_ids . (empty($stockholder_ids) ? '' : ',') . $row['stockholder_id'];
                     }
                 }
-                //debug('1682', $stockholders);
+                //debug('1682', $stockholder_ids);
                 //debug('1671', $stockholders);
                 // delivery times
                 $deliverytimes = $stocks->GetPositionDeliveryTimes($stock_id);
@@ -576,13 +582,13 @@ class MainController extends ApplicationController {
 
                     $err = array();
 
-                    if ($thickness <= 0) {
+                    if ($thickness <= 0 || $thickness == '') {
                         $err[] = 'incorrect thickness';
                     }
-                    if ($width <= 0) {
+                    if ($width <= 0 || $width == '') {
                         $err[] = 'incorrect width';
                     }
-                    if ($length <= 0) {
+                    if ($length <= 0 || $length == '') {
                         $err[] = 'incorrect length';
                     }
                     if ($unitweight <= 0) {
@@ -591,7 +597,7 @@ class MainController extends ApplicationController {
                     if ($delivery_time == "") {
                         $err[] = 'incorrect delivery time';
                     }
-                    if ($qtty <= 0 || $qtty > 50) {
+                    if ($qtty <= 0 || $qtty > 50 || $qtty == '') {
                         $err[] = 'incorrect qtty';
                     }
                     if ($weight <= 0) {
@@ -599,10 +605,10 @@ class MainController extends ApplicationController {
                         {
                             
                         }
-                    } if ($price <= 0) {
+                    } if ($price <= 0 || $price == "") {
                         $err[] = 'incorrect price';
                     }
-                    if ($value <= 0) {
+                    if ($value <= 0 || $value == "") {
                         $err[] = 'incorrect value';
                     }
 

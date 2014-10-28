@@ -1,0 +1,156 @@
+var message_save_interval = 30000;
+
+/**
+ * onLoad
+ */
+$(function(){
+
+    var object_alias    = $('#qq_object_alias').length > 0 ? $('#qq_object_alias').val() : 'newmessage';
+    var object_id       = $('#qq_object_id').length > 0 ? $('#qq_object_id').val() : 0;
+    
+    var uploader = new qq.FileUploader({
+        element         :   $('#fileuploader')[0],
+        listElement     :   $('#attachments')[0],
+        params          :   {object_alias : object_alias, object_id : object_id, template : 'text'},
+        action          :   '/attachment/upload/',
+        debug           :   false,
+        template        :   '<div class="qq-uploader"><div class="qq-upload-button-text">Attach Files</div></div>',
+        classes         :   {
+            button      : 'qq-upload-button-text',
+            drop        : 'qq-upload-drop-area',
+            dropActive  : 'qq-upload-drop-area-active',
+            list        : 'qq-upload-list',                        
+            file        : 'qq-upload-file',
+            spinner     : 'qq-upload-spinner',
+            size        : 'qq-upload-size',
+            cancel      : 'qq-upload-cancel',
+            success     : 'qq-upload-success',
+            fail        : 'qq-upload-fail'            
+        },
+        fileTemplate    :   '<li>' +
+                                '<span class="qq-upload-file"></span>' +
+                                '<span class="qq-upload-spinner"></span>' +
+                                '<span class="qq-upload-size"></span>' +
+                                '<a class="qq-upload-cancel" href="#">Cancel</a>' +
+                                '<span class="qq-upload-failed-text">Error !</span>' +
+                            '</li>',
+    });
+    
+    $('#chat-deadline').datepicker({
+        showWeek: true
+    });
+    
+    bind_biz_autocomplete('#chat-biz');
+    
+    init_resize();
+    
+    var height = $('#message-modal-text').height() - $('#message-modal-text-params').height() - 10;
+    //alert(height);
+    tinyMCE.init({
+        elements : 'chat-description',
+        convert_urls : false,
+        relative_urls : false,
+        theme_advanced_path : false,
+        theme_advanced_statusbar_location : "",
+        paste_auto_cleanup_on_paste : true,
+        paste_strip_class_attributes : "all",
+        content_css : '/css/mce_advanced.css',
+        mode : "exact",
+        theme : "advanced",
+        height : height,
+        plugins : "paste,autolink,lists,spellchecker,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template",
+        theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,forecolor,backcolor,|,bullist,numlist,|,sub,sup,|,image,media,emotions,link,unlink,charmap,hr,|,removeformat",
+        theme_advanced_buttons2 : "",
+        theme_advanced_buttons3 : "",
+        theme_advanced_buttons4 : "",
+        theme_advanced_toolbar_location : "top",
+        theme_advanced_toolbar_align : "left",
+        content_css : '/js/tiny_mce/themes/advanced/skins/default/content_email.css',
+        template_external_list_url : "/js/template_list.js",
+        external_link_list_url : "/js/link_list.js",
+        external_image_list_url : "/js/image_list.js",
+        media_external_list_url : "/js/media_list.js",        
+        forced_root_block : ''        
+    });
+    
+});
+
+/**
+ * onResize
+ */
+$(window).resize(function(){     
+    
+    if ($(this).height() <= 600) return;
+    
+    init_resize();
+
+    var position        = $('#newmessage-form-attachments').position();
+    var height          = (position.top - 100);
+
+    $('#chat-description_tbl').css('height', height + "px");
+    $('#chat-description_ifr').css('height', height + "px");
+
+}); 
+
+var init_resize = function()
+{
+    var resize_height   = $(this).height() - $('#newmessage-form-attachments').height() - $('#newmessage-form-buttons').height();
+    var position        = $('#newmessage-form-attachments').position();
+    var height          = (position.top - 20);
+
+    $('#newmessage-form-text').css('height', height + "px");    
+}
+
+/**
+ * Save temporary message
+ * @version 20130430 Sasha 
+ */
+var savetemporarymessage = function ()
+{
+    $('.new-message-window').each(function(){
+
+        if ($(this).data('content-type') == 'message')
+        {
+            object_alias    = $(this).data('object-alias');
+            object_id       = $(this).data('object-id');
+            
+            title           = $('#chat-title').val();
+            description     = tinyMCE.get('chat-description').getContent();
+            recipient       = '';
+            cc              = '';
+
+            $('.chat-msg-relation').each(function(){
+                if ($(this).val() == 'r')
+                {
+                    recipient += $(this).attr('id').replace('user-', '').replace('-relation', '') + ',';
+                }
+                else if ($(this).val() == 'c')
+                {
+                    cc += $(this).attr('id').replace('user-', '').replace('-relation', '') + ',';
+                }
+            });   
+
+            $.ajax({
+                url: '/chat/savetemporarymessage',
+                data : {
+                    object_id       : object_id,
+                    object_alias    : object_alias,
+                    title           : title,
+                    description     : description,
+                    recipient       : recipient,
+                    cc              : cc,
+                    alert           : $('#chat-sa').val(),
+                    pending         : $('#chat-p').val(),
+                    deadline        : $('#chat-deadline').val()
+                }
+            });    
+            
+        }     
+    });
+}    
+
+/**
+ * Interval for save
+ * @version 20130430
+ */
+setInterval(function(){savetemporarymessage()}, message_save_interval);

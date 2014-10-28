@@ -12,7 +12,7 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a href="/">Dashboard</a></li>
+                {*<li><a href="/">Dashboard</a></li>*}
                 <li class="dropdown">
                     <a  class="dropdown-toggle js-activated" data-toggle="dropdown" href="#">Trade <b class="caret"></b></a>
                     <ul class="dropdown-menu">
@@ -37,15 +37,16 @@
                 <li class="dropdown">
                     <a  class="dropdown-toggle js-activated" data-toggle="dropdown" href="#">Administration <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a href="/inddt">In DDT</a></li>
-                        <li><a href="/supplierinvoices">Sup. Invoices</a></li>
-                        <li><a href="/sc">SC</a></li>
-                        <li><a href="/qc">QC</a></li>
-                        <li><a href="/oc">Orig. Cert.</a></li>
-                        <li><a href="/ra">RA</a></li>
-                        <li><a href="/ddt">DDT</a></li>
-                        <li><a href="/cmr">CMR</a></li>
+                        <li><a href="/ddt">Out DDTs</a></li>            
+                        <li><a href="/inddt">In DDTs</a></li>
+                        <li><a href="/cmr">CMRs</a></li>
+                        <li><a href="/ra">Release advices</a></li>
+                        <li><a href="/supplierinvoices">Supplier invoices</a></li>
                         <li><a href="/invoices">Invoices</a></li>
+                        <li><a href="/sc">Sale confirmations</a></li>
+                        <li><a href="/qc">Quality certificates</a></li>
+                        <li><a href="/oc">Original certificates</a></li>     
+
                     </ul>                    
                 </li> 				
 
@@ -74,7 +75,7 @@
                         <li><a href="/persons">Person search</a></li>
                             {*<li><a href="/person/add">Person add</a></li>*}
                         <li><a href="/persons/staff">Our team</a></li>
-                        {if $smarty.session.user.role_id <= $smarty.const.ROLE_MODERATOR}<li><a href="/person/regrequests">Reg. Requests</a></li>{/if}
+                        {if $smarty.session.user.role_id <= $smarty.const.ROLE_MODERATOR}<li><a href="/person/regrequests">Registration requests </a></li>{/if}
                         <li class="divider"></li>  
                         <li><a href="/markets">Markets</a></li>
                         <li><a href="/products">Product</a></li>                            
@@ -86,6 +87,7 @@
                         <li><a href="/touchline">TouchLine</a></li>
                         <li class="divider"></li> 
                         <li><a href="/emails/filter/type:0;">Emails manager</a></li>
+                        <li><a href="/emailmanager/filter/type:0;">Emails manager(NEW)</a></li>
                         <li><a href="/email/filters">Emails filters</a></li>
                     </ul>                    
                 </li>  
@@ -101,29 +103,45 @@
                         <li><a href="/nomenclature/">Navigation</a></li>                         
                     </ul>                    
                 </li>  
+
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li>
                     <div class="btn-group">    
+                        
+
+                      <a href="/touchline">  <button class="btn btn-link bg-success" onclick="location.href = '/touchline';" style='margin-top: 10px;' title="Touchline">
+                            <span class="glyphicon glyphicon-comment"></span>
+                          </button></a>
+                         <a href="">
                         <button class="btn btn-link bg-success" onclick="show_chat_modal('chat', 0);" style='margin-top: 10px;' title="Message">
                             <span class="glyphicon glyphicon-pencil"></span>
-                        </button>
-
+                        </button></a>
+                         <a href="/touchline/mustdo">
                         <button class="btn btn-link"  onclick="location.href = '/touchline/mustdo';" style='margin-top: 10px; height: 28px; vertical-align: middle;'  title="Todo list">
-                            <span class="glyphicon glyphicon-comment"></span> <small class="count-pending"></small>
-                        </button>           
-
+                            <span class="glyphicon glyphicon-list-alt"></span> <small class="count-pending"></small>
+                        </button> </a>          
+                         <a href="/email/compose">
                         <button class="btn btn-link" onclick="location.href = '/email/compose';" style='margin-top: 10px;'   title="Send email">
                             <span class="glyphicon glyphicon-envelope"></span> 
-                        </button>  
+                        </button>  </a>
+                         <a href="/positions">
+                        <button class="btn btn-link" onclick="location.href = '/positions';" style='margin-top: 10px;'   title="Positions">
+                            <span class="glyphicon glyphicon-align-justify"></span> 
+                        </button>  </a>
+                        
+                         <a href="/">
+                        <button class="btn btn-link bg-success" onclick="location.href = '/';" title="Dashboard" style='margin-top: 10px; height: 28px; vertical-align: middle;'>
+                            <span class="glyphicon glyphicon-th-large"></span>
+                        </button> </a>                       
                     </div>  
 
                     <div class="dropdown search-on-page-dropdown" style="display: inline-block;">
-                        <button title='Search on page' class=" dropdown-toggle btn btn-link btn-search-on-page" style="margin-top: 12px;" data-toggle="dropdown">
+                        <button title='Search on page' class=" dropdown-toggle btn btn-link btn-search-on-page" style="margin-top: 10px;" data-toggle="dropdown">
                             <span class="glyphicon glyphicon-search"></span>
                         </button>
 
-                        <ul class="dropdown-menu search_box" style="padding: 15px;min-width: 250px;">
+                        <ul class="dropdown-menu search_box" style="padding: 10px;min-width: 250px;">
                             <li>
                                 <div class="row">
                                     <div class="col-md-12">
@@ -156,15 +174,21 @@
 
                     <!-- Single button -->
                     <div class="btn-group">
-                        <button type="button" class="btn btn-link dropdown-toggle js-activated" data-toggle="dropdown"  style='margin-top: 12px;'><span class="glyphicon glyphicon-user"></span> <span class="caret"></span></button>
+                        <button type="button" class="btn btn-link dropdown-toggle js-activated" data-toggle="dropdown"  style='margin-top: 10px;'><span class="glyphicon glyphicon-user"></span> <span class="caret"></span></button>
                         <ul class="dropdown-menu" role="menu">
                             <li><a href="/person/{$smarty.session.user.person_id}/edit">My profile</a></li>
-                            {if $smarty.session.user.id === "1682"}
+                                {if $smarty.session.user.id === "1682"}
                                 <li><a href="/iamido" title="">I am what I do</a></li>
-                            {/if}
+                                {/if}
                             <li class="divider"></li>
                             <li><a href="http://mamtrix.steelemotion.com" target="_blank" title='Mamtrixt'>Mamtrix (old system)</a></li>
                             <li><a href="/logout">Logout</a></li>
+                            {*<li class="divider"></li>
+
+                                    {foreach from=$smarty.session['__core:request_cache'] item=row}
+                                    <li><a href="/{$row}">{$row}</a></li>
+                                    {/foreach}*}
+
                         </ul>
                     </div>
 

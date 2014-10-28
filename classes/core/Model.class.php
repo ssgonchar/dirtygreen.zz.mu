@@ -94,7 +94,7 @@ class Model
                 'dbname' => APP_DBNAME,
                 'dbuser' => APP_DBUSER,
                 'dbpass' => APP_DBPASS,
-                'charset' => 'utf8'
+                'charset' => 'utf8_general_ci'
             );
 
         $connection_settings = func_num_args() > 1 ? func_get_arg(1) : $default_connection_settings;

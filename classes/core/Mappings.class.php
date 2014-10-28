@@ -1,4 +1,4 @@
-<?
+<?php
 require_once APP_PATH . 'classes/models/page.class.php'; 
 
 class Mappings

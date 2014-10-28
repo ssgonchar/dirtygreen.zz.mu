@@ -42,6 +42,7 @@
                 <li><span class="badge">{number value=$count zero='' e0='orders' e1='order' e2='orders'}</span></li>
 				<li>
 					<span class="badge">{if isset($total_qtty)}{$total_qtty}{else}0{/if} pcs</span>
+                                        
 				</li>     
 				<li>
 					<span class="badge">
@@ -82,6 +83,7 @@
                 </li>			
 				<li>
 					<input type="submit" name="btn_create_ra" class="btn100 ra-create" style="display: none; margin-right: 10px;" value="Create RA" />
+                                        <input type="submit" name="btn_select" value="Find" class="btn btn-primary" style="margin: 7px">
 				</li>
                                 
             </ul>

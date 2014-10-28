@@ -789,7 +789,6 @@ class SteelItem extends Model
     function GetList($stock_id, $location_ids, $deliverytime_ids, $is_real, $is_virtual, $is_twin, $is_cut, $steelgrade_id, 
                         $thickness, $width, $length, $weight, $keyword, $plate_id, $available, $dimension_unit, $weight_unit, $order_id = 0)
     {
-
         $hash       = 'steelitems-' . md5('stock-' . $stock_id . '-locations-' . $location_ids . '-deliverytimes-' . $deliverytime_ids 
                     . '-is_real-' . $is_real . '-is_virtual-' . $is_virtual . '-is_twin-' . $is_twin . '-is_cut-' . $is_cut
                     . '-steelgrade-' . $steelgrade_id . '-thickness-' . $thickness . '-width-' . $width . '-length-' . $length 
@@ -826,6 +825,7 @@ class SteelItem extends Model
                                             $length['from'], $length['to'], $weight['from'], $weight['to'], 
                                             $keyword, $plate_id, $available, $order_id, $this->revision), $cache_tags);
 
+        //debug('1682', $rowset); 
         $rowset = isset($rowset[0]) ? $this->FillSteelItemInfo($rowset[0]) : array();
 
         return $rowset;        
@@ -2029,6 +2029,8 @@ class SteelItem extends Model
         Cache::ClearTag('steelitem-' . $item_id);
         Cache::ClearTag('steelitems-filter');
         Cache::ClearTag('steelitems');
-        Cache::ClearTag('reports');        
+        Cache::ClearTag('reports');
+        //для обновления таблицы steelpositions пока чистим кэш для неё полностью
+        Cache::ClearTag('steelpositions');
     }
 }

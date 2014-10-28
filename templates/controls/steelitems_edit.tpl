@@ -105,9 +105,9 @@
             {/if}
             <td>
                 {if $row.steelitem.parent_id > 0}
-                    {$row.steelitem.parent.unitweight_weighed|number_format:3:true:''|undef}
+                    {$row.steelitem.parent.unitweight_weighed|number_format:2:true:''|undef}
                 {else}
-                    {$row.steelitem.unitweight_weighed|number_format:3:true:''|undef}
+                    {$row.steelitem.unitweight_weighed|number_format:2:true:''|undef}
                 {/if}{if isset($multi_weights)}<span class="dim-title">{$row.steelitem.weight_unit|wunit}</span>{/if}
             </td>
             <td>{if !empty($row.steelitem.is_virtual)}yes{else}no{/if}</td>
@@ -212,7 +212,7 @@
                 {if $row.steelitem.parent_id > 0}
                     {$row.steelitem.parent.unitweight_weighed|undef}{if isset($multi_weights)}<span class="dim-title">{$row.steelitem.weight_unit|wunit}</span>{/if}
                 {else}
-                    <input type="text" name="item[{$smarty.foreach.i.index + 1}][unitweight_weighed]" value="{if $row.steelitem.unitweight_weighed > 0}{$row.steelitem.unitweight_weighed|number_format:3:true:''|escape:'html'}{/if}" style="width: 100%;">
+                    <input type="text" name="item[{$smarty.foreach.i.index + 1}][unitweight_weighed]" value="{if $row.steelitem.unitweight_weighed > 0}{$row.steelitem.unitweight_weighed|number_format:2:true:''|escape:'html'}{/if}" style="width: 100%;">
                 {/if}
             </td>
             <td>

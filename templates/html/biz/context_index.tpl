@@ -18,11 +18,12 @@
 </ul>
 <ul class="nav navbar-nav navbar-left">
     <li>
-        <input type="button" class="btn btn-success" value="Add BIZ" onclick="location.href = '/biz/add';" style="margin-top: 7px; margin-left: 5px;">     
+        <input type="button" class="btn btn-success" value="Add BIZ" onclick="location.href = '/biz/add';" style="margin-top: 7px; margin-left: 5px;">   
+        
     </li>
 </ul>
-<!--<ul class="nav navbar-nav navbar-right">
+<ul class="nav navbar-nav navbar-right">
     <li style='margin-top: 7px;'>
-        <input type="submit" name="btn_select" value="Find" class="btn100b">
+       <input type="submit" name="btn_select" value="Find" class="btn btn-primary btn-find" >
     </li>	
-</ul>-->
+</ul>

@@ -90,13 +90,8 @@ var fill_weighed_weight = function()
         if(total_weighed_weight !== 0 && ok_flag == true){
             if (confirm("Weighed weight is specified for each item. Do you want to fill total weighed weight automatically?")) {
                 form_weighed_weight.val(total_weighed_weight.toFixed(3));
-            } else {
-                //
             }
         }
-        console.log("general weighed weight = " + total_weighed_weight);
-    }else{
-        // weighed_weight указан
     }
 };
 

@@ -518,6 +518,7 @@ class Message extends Model
         $this->Add(MESSAGE_TYPE_LOGIN, ROLE_STAFF, $sender['id'], MAM_USER, '', $title, $text, 0, '', $alert, 0);
     }
     
+    
     /**
      * Помечает сообщение как прочитанное
      * 
@@ -826,6 +827,7 @@ class Message extends Model
      */
     private function save($type_id, $role_id, $sender_id, $title, $title_source, $description, $description_source, $parent_id, $deadline, $alert, $pending)
     {
+        //dg($description);
         $result = $this->CallStoredProcedure('sp_message_save', array($this->user_id, $type_id, $role_id, $sender_id, $title, $title_source, $description, $description_source, $parent_id, $deadline, $alert, $pending));
         $result = isset($result) && isset($result[0]) && isset($result[0][0]) ? $result[0][0] : null;
         
@@ -925,4 +927,58 @@ class Message extends Model
 	
 		Cache::ClearTag('temporary-message-' . $object_alias . '-object-' . $object_id . '-user-' . $this->user_id);
 	}
+    /*
+     * Отправляет сообщение в чат о новом заказе
+     * 
+     * @param $last_order_id_full_info type array()
+     */
+    function AlertOrder($biz_id, $biz_title, $company_id, $company_title, $person_id, $person_full_name, $qtty, $weight, $value, $order_id)
+    {
+        $sender_id        = '1';    //отправитель у нас GNOME
+        
+        $title  = 'WEBSTOCK ORDER #'.$order_id.' (MaM)';
+        $text   =   '<b>Our Ref.</b> : ' . $biz_title . '<br>' . 
+                    '<b>Company</b> : <a href="/company/' . $company_id . '">' . $company_title . '</a><br>' . 
+                    '<b>Person</b> : <a href="/person/' . $person_id . '">' . $person_full_name . '</a><br><br>' .
+                    '<b>Qtty</b> : ' . $qtty . ' pcs<br>' .
+                    '<b>Weight</b> : ' . sprintf('%.2f', $weight) . ' ton<br>' .
+                    '<b>Value</b> : ' . $value . ' &euro;<br><br>' . 
+                    '<a href="/order/' . $order_id . '">View Order # ' . $order_id . '</a><br>';
+        
+        $this->Add(MESSAGE_TYPE_ORDER, ROLE_STAFF, $sender_id, MAM_USER, '', $title, $text, 0, 0, 1, 0);
+    }
+    
+    /*
+     * Проверяет есть ли в БД сообщение с указанным title
+     */
+    function CheckNewOrderMessage($title){
+        $sender_id = '1';
+        $result = $this->CallStoredProcedure('sp_message_get_by_title',  array($sender_id, $title));
+        $result	= isset($result[0][0]) && !empty($result[0][0]) ? $result[0][0] : null;
+        return $result;
+    }
+    
+    /**
+     * Возвращает ранжированный список бизнесов,
+     * которые учавствуют в письмах за последние 30 дней<br />
+     * Примечание: для бокового меню в чате
+     * @return array
+     * 
+     * @version 20140803, DirtyGreen
+     */
+    public function GetLastBizes()
+    {
+        $hash = 'message-bizes-for-menu-userid' . $this->user_id;
+        $cache_tags = array($hash, 'message-bizes-for-menu');
+        
+        $rowset     = $this->_get_cached_data($hash, 'sp_message_get_last_bizes', array($this->user_id), $cache_tags);
+        
+        $modelBIZ   = new BIZ();
+        $rowset     = isset($rowset[0]) ? $modelBIZ->FillBizInfo($rowset[0]) : array();
+        //dg($rowset);
+        return array(
+            'data'  => $rowset,
+            'count' => count($rowset),
+        );
+    }    
 }

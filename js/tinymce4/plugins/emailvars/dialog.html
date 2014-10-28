@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <form id="myForm" name="myForm">
+        <table style="width: 600px;">
+            <tr>
+                <td style="width: 33%; vertical-align: top; border-right: 1px solid #999999; ">
+                    <h3>Recipient vars</h3>
+                    <button class="content" name="title" value="[full_name]" onclick='document.getElementById("myForm").submit();'>Full name</button><br>
+                    <button class="content" value="[first_name]">First name</button><br>
+                    <button class="content" value="[middle_name]">Middle name</button><br>
+                    <button class="content" value="[last_name]">Last name</button><br>
+                    <button class="content" value="[birth_date]">Birth date</button> <br>
+                    <button class="content" value="[birth_day]">Birth day</button><br>
+                    <button class="content" value="[birth_month]">Birth month</button><br>
+                    <button class="content" value="[birth_year]">Birth year</button><br>    
+                </td>
+
+                <td style="width: 33%; vertical-align: top; border-right: 1px solid #999999;">
+                    <h3>Companies vars</h3>    
+                    <button class="content" value="[company_title]">Company title</button><br>
+                    <button class="content" value="[company_full_address]">Company full address</button><br>
+                    <button class="content" value="[company_address]">Company address</button><br>
+                    <button class="content" value="[company_country]">Company country</button><br>
+                    <button class="content" value="[city]">Company city</button><br>
+                    <button class="content" value="[company_phones]">Company phones</button><br>
+                    <button class="content" value="[company_emails]">Company emails</button><br>
+                    <button class="content"  value="[company_site]">Company site</button><br>            
+                </td>
+
+                <td style="width: 33%; vertical-align: top;">
+                    <h3>Calculate vars</h3>    
+                    <button class="content" value="[current_date]">Curent date</button><br>
+                    <button class="content" value="[current_date_n]">Current date + N days</button><br>
+                    <button class="content" value="[current_mounth]">Current mounth</button><br>
+                    <button class="content" value="[current_year]">Current year</button><br>        
+                </td>                
+            </tr>
+        </table>
+        </form>
+    </body>
+</html>

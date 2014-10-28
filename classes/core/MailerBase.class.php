@@ -88,7 +88,6 @@ class MailerBase
      */
     public function _send($from, $to, $cc, $bcc, $template, $parameters, $attachments = array())
     {
-		
 // Подготовка/Определение параметров для шаблонов письма и заголовка
         $this->smarty->assign('mail', $parameters);
 
@@ -154,6 +153,7 @@ else
         {
             foreach ($attachments as $file)
             {
+                //debug('1682', $file);
                 if (isset($file['attachment'])) $file = $file['attachment'];
                 
                 $file_src   = $file['src'];
@@ -187,7 +187,9 @@ else
      */
     private function _attachment_compile($boundary, $file_src, $file_name = '')
     {
+        //$_SESSION['file_src'] = $file_src;
         $filecontent    = file_get_contents($file_src);
+        //$_SESSION['filecontent'] = $file_src;
         $filename       = empty($file_name) ? basename($file_src) : $file_name;
 
         $string = "";

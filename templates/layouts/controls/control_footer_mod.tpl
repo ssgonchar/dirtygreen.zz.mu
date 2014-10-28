@@ -51,7 +51,7 @@
     {if !empty($include_upload)}<script src="/js/fileuploader.js" type="text/javascript"></script>{/if}
     {if !empty($include_jsapi)}<script type="text/javascript" src="https://www.google.com/jsapi"></script>{/if}  
     <script src="/js/app.{$smarty.const.JS_VERSION}.js" type="text/javascript"></script>
-    {if !empty($controller_js)}{foreach from=$controller_js item=js}<script src="/js/{$js}.{$smarty.const.JS_VERSION}.js" type="text/javascript"></script>{/foreach}{/if}  
+    
 <script src="/js/ui/datepicker-en-GB.js"></script>
 
     {if isset($include_prettyphoto)}
@@ -65,12 +65,15 @@
         {if isset($include_mce)}<script type="text/javascript" src="/js/mce.js"></script>{/if}   
         <script type="text/javascript" src="/js/tinynav.min.js" ></script>       
         <script type="text/javascript" src="/js/bootstrap-hover-dropdown.js" ></script>
+        <script type="text/javascript" src="/js/i18n/grid.locale-en.js" ></script>
+        <script type="text/javascript" src="/js/jquery.jqGrid.min.js" ></script>
+        <script src="/js/plugins/jquery.searchFilter.js" type="text/javascript"></script>
    
     
         <script type="text/javascript" charset="utf-8">
 		var user_last_chat_message_id = {if isset($user_last_chat_message_id)}{$user_last_chat_message_id}{else}0{/if};
 	</script>
- 
+ {if !empty($controller_js)}{foreach from=$controller_js item=js}<script src="/js/{$js}.{$smarty.const.JS_VERSION}.js" type="text/javascript"></script>{/foreach}{/if}  
          
 </body>
 </html>

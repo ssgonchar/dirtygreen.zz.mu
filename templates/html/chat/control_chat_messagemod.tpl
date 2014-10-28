@@ -22,11 +22,10 @@
             </div>
             {/if}                        
                      
-            
-        
+            <span type="button" class="btn btn-info btn-xs msg-reply" data-user-id='{$message.message.sender_id}' data-msg-id='{$message.message.id}'>Reply</span>
             <!--<a href="javascript: void(0);" onclick="show_chat_message_ref(this, {$message.message.id}, '{$message.message.created_at|date_format:"d/m/Y"} {$message.message.created_at|date_format:"H:i:s"}');" class="btn btn-info"  title='Click here to get the link'><i class="glyphicon glyphicon-link"></i></a>-->
-            <button type="button" class="btn btn-info make-ref" data-container="body" data-toggle="popover" data-placement="right" data-content="Link copied to clipboard." data-ref="<ref message_id='{$message.message.id}'>Ref. {$message.message.created_at|date_format:"H:i:s"}</ref>">
-    <i class="glyphicon glyphicon-link"></i>
+            <button type="button" class="btn btn-info make-ref btn-xs" data-container="body" data-toggle="popover" data-placement="right" data-content="Link copied to clipboard." data-ref="<ref message_id={$message.message.id}>Ref. {$message.message.created_at|date_format:"d/m/Y"} {$message.message.created_at|date_format:"H:i:s"}</ref>">
+    copy REF
  </button>
             
                 {if $message.message.type_id == $smarty.const.MESSAGE_TYPE_NORMAL || $message.message.type_id == $smarty.const.MESSAGE_TYPE_PRIVATE || $message.message.type_id == $smarty.const.MESSAGE_TYPE_PERSONAL}
@@ -52,7 +51,7 @@
                 {/if}            
                     </h4>     
 
-                <p class="h5" style="color: #666666">
+                    <p class="h5" style="color: #0099cc">
                     {if $message.message.type_id == $smarty.const.MESSAGE_TYPE_PRIVATE || $message.message.type_id == $smarty.const.MESSAGE_TYPE_PERSONAL}
                         <span class="badge">p</span>&nbsp;
                     {/if}
@@ -76,9 +75,9 @@
                         {/if}
                     {/if}
                     &nbsp;
-                    <i class="glyphicon glyphicon-calendar"></i>{$message.message.created_at|date_format:'d/m/Y'}
+                    {$message.message.created_at|date_format:'d/m/Y'}
                     &nbsp;
-                    <i class="glyphicon glyphicon-time"></i>{$message.message.created_at|date_format:'H:i:s'}
+                    {$message.message.created_at|date_format:'H:i:s'}
                     
                 
                 </p>

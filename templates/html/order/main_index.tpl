@@ -138,7 +138,7 @@
                 </tr>
             </table>        
         </td>
-        <td class="text-center"><input type="submit" name="btn_select" value="Select" class="btn btn-primary"></td>
+        {*<td class="text-center"><input type="submit" name="btn_select" value="Select" class="btn btn-primary"></td>*}
     </tr>
 </table>
 <div class="pad"></div>
@@ -196,9 +196,9 @@
                     {else}{''|undef}{/if}
                 </td>
                 {if isset($row.order.alert_date) && $row.order.status == 'ip'}
-                <td onclick="location.href='/order/{$row.order.id}';" {if $row.order.status == 'ca' || $row.order.status == 'co'}class="text-center"{else}{if $row.order.quick.days_to_alert <= 1}class="text-center td-order-delivery-0"{elseif $row.order.quick.days_to_alert <= 5}class="text-center td-order-delivery-5"{else}class="text-center"{/if}{/if}>{if !empty($row.order.delivery_date)}{$row.order.delivery_date}{/if}</td>
+                <td onclick="location.href='/order/{$row.order.id}';" {if $row.order.status == 'ca' || $row.order.status == 'co'}class="text-center"{else}{if $row.order.quick.days_to_alert <= 1}class="text-center td-order-delivery-0"{elseif $row.order.quick.days_to_alert <= 5}class="text-center td-order-delivery-5"{else}class="text-center"{/if}{/if}>{if !empty($row.order.delivery_date)}{$row.order.delivery_date|date_format:"d/m/Y"}{/if}</td>
                 {else}
-                <td onclick="location.href='/order/{$row.order.id}';" class="text-center">{if !empty($row.order.delivery_date)}{$row.order.delivery_date|escape:'html'}{else}{''|undef}{/if}</td>
+                <td onclick="location.href='/order/{$row.order.id}';" class="text-center">{if !empty($row.order.delivery_date)}{$row.order.delivery_date|date_format:"d/m/Y"|escape:'html'}{else}{''|undef}{/if}</td>
                 {/if}
                 <td onclick="location.href='/order/{$row.order.id}';" class="text-center">
                     {if !empty($row.order.quick.weight)}

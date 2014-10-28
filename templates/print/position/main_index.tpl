@@ -159,7 +159,7 @@
             <th>Plate Id</th>
             <th>Location</th>
             <th width="5%">Biz</th>
-        </tr>    
+        </tr>{*debug*}
         {foreach from=$list item=row}
         <tr id="position-{$row.steelposition_id}">
             <td>{$row.steelposition_id}</td>
@@ -175,7 +175,9 @@
             <td>{if isset($row.steelposition.deliverytime)}{$row.steelposition.deliverytime.title|escape:'html'}{/if}</td>
             <td>{$row.steelposition.notes|escape:'html'}</td>
             <td>{$row.steelposition.internal_notes|escape:'html'}</td>
-            <td>{if !empty($row.steelposition.quick)}{$row.steelposition.quick.plate_ids}{/if}</td>
+            <td>{if !empty($row.steelposition.quick)}
+                    {$row.steelposition.quick.plate_ids|posplateids}
+                {/if}</td>
             <td>{if isset($row.steelposition.quick)}{$row.steelposition.quick.locations}{/if}</td>
             <td>{if isset($row.steelposition.biz)}{$row.steelposition.biz.number_output|escape:'html'}{/if}</td>
         </tr>

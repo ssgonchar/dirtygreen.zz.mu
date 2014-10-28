@@ -13,5 +13,5 @@
             {if $attachment.type == 'image' && empty($attachment.is_main)}<a class="asmain" href="javascript: void(0);" onclick="set_as_main({$attachment.id}); return false;">set as main</a>{/if}
         {/if}
     </div>
-</div>
+</div><br/>
 {/if}

@@ -12,23 +12,24 @@
                     <td><input type="text" name="form[title]" class="form-control" style="padding: 0px"{if isset($form.title) && !empty($form.title)} value="{$form.title}"{/if}>
                     </td>
                     
+                    <td class="text-top"><b>Market</b></td>
+                    <td><select name="form[market_id]" class=" normal chosen-select">
+                                <option value="0">--</option>
+                                {foreach from=$markets item=row}
+                                    <option value="{$row.market.id}"{if isset($form.market_id) && $form.market_id == $row.market.id} selected="selected"{/if}>{$row.market.title}</option>
+                                {/foreach}
+                            </select> </td> 
+                                                 
+                </tr>
+                <tr>
                     <td class="text-top"><b>Objective</b></td>
                     <td><select name="form[objective_id]" class=" normal chosen-select">
                         <option value="0">--</option>
                         {foreach from=$objectives item=row}
                             <option value="{$row.objective.id}"{if isset($form.objective_id) && $form.objective_id == $row.objective.id} selected="selected"{/if}{if isset($row.objective.expired) && false} style="color: #999; font-style: italic;"{/if}>{$row.objective.title}</option>
                         {/foreach}
-                    </select></td>
-                                                 
-                </tr>
-                <tr>
-                    <td class="text-top"><b>Team</b></td>
-                    <td><select name="form[team_id]" class=" normal chosen-select" onchange="bind_products(this.value);">
-                        <option value="0">--</option>
-                        {foreach from=$teams item=row}
-                            <option value="{$row.team.id}"{if isset($form.team_id) && $form.team_id == $row.team.id} selected="selected"{/if}>{$row.team.title}</option>
-                        {/foreach}
-                    </select></td>
+                    </select></td> 
+                    
                     <td class="text-top"><b>Driver</b></td>
                     <td><select name="form[driver_id]" class=" normal chosen-select">
                                 <option value="0">--</option>
@@ -38,13 +39,14 @@
                             </select> </td>                    
                 </tr>
                 <tr>
-                    <td class="text-top"><b>Product</b></td>
-                    <td><select name="form[product_id]" id="products" class=" normal chosen-select">
-                        <option value="0">First select team</option>
-                        {foreach from=$products item=row}
-                            <option value="{$row.product.id}"{if isset($form.product_id) && $form.product_id == $row.product.id} selected="selected"{/if}>{$row.product.title_list}</option>
+                    <td class="text-top"><b>Team</b></td>
+                    <td><select name="form[team_id]" class=" normal chosen-select" onchange="bind_products(this.value);">
+                        <option value="0">--</option>
+                        {foreach from=$teams item=row}
+                            <option value="{$row.team.id}"{if isset($form.team_id) && $form.team_id == $row.team.id} selected="selected"{/if}>{$row.team.title}</option>
                         {/foreach}
-                    </select> </td>  
+                    </select></td>
+                     
                    
                     <td class="text-top"><b>Navigator</b></td>
                     <td class="text-top">
@@ -57,13 +59,15 @@
                             </select>
                     </td>                    
                 
-                <tr>   <td class="text-top"><b>Market</b></td>
-                    <td><select name="form[market_id]" class=" normal chosen-select">
-                                <option value="0">--</option>
-                                {foreach from=$markets item=row}
-                                    <option value="{$row.market.id}"{if isset($form.market_id) && $form.market_id == $row.market.id} selected="selected"{/if}>{$row.market.title}</option>
-                                {/foreach}
-                            </select> </td>  
+                <tr>    
+                    <td class="text-top"><b>Product</b></td>
+                    <td><select name="form[product_id]" id="products" class=" normal chosen-select">
+                        <option value="0">First select team</option>
+                        {foreach from=$products item=row}
+                            <option value="{$row.product.id}"{if isset($form.product_id) && $form.product_id == $row.product.id} selected="selected"{/if}>{$row.product.title_list}</option>
+                        {/foreach}
+                    </select> </td> 
+                     
               <td class="text-top"><b>Status</b></td>
                     <td class="text-top">
                          <select name="form[status]" class=" normal chosen-select">

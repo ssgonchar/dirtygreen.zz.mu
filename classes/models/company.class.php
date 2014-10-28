@@ -207,7 +207,6 @@ class Company extends Model
                     '-page' . $page_no . '-' . $per_page);
         
         $rowset = Cache::GetData($hash);
-
         if (!isset($rowset) || !isset($rowset['data']) || isset($rowset['outdated']))
         {
             $cl = new SphinxClient();
@@ -223,7 +222,6 @@ class Company extends Model
                 'bank_data'     => 100,
                 'reg_data'      => 100, 
             ));
-
             // 201200612, zharkov: подгонка рещультатов
             $search_string = preg_replace('/M\s*-\s*a\s*-\s*M/ui', 'MaM', $search_string);
             
@@ -288,8 +286,7 @@ class Company extends Model
 			{
 				$result['data'][$key]['company']['orders'] = $this->GetOrders($row['company']['id']);
 			}	
-        } 
-        
+        }
         return $result;
     }
     

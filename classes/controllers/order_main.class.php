@@ -81,8 +81,8 @@ class MainController extends ApplicationController
             $supplier_ref       = Request::GetString('supplier_ref', $form);
             $delivery_point     = Request::GetString('delivery_point', $form);
             $delivery_town      = Request::GetString('delivery_town', $form);            
-            //$delivery_date      = Request::GetString('delivery_date', $form);
-            $delivery_date      = Request::GetDateForDB('delivery_date', $form);
+            $delivery_date      = Request::GetString('delivery_date', $form);
+            //$delivery_date      = Request::GetDateForDB('delivery_date', $form);
             $alert_date         = Request::GetDateForDB('alert_date', $form);
             $delivery_cost      = Request::GetString('delivery_cost', $form);
             $invoicingtype_id   = Request::GetInteger('invoicingtype_id', $form);
@@ -554,7 +554,7 @@ class MainController extends ApplicationController
         }
 
         $this->_assign('order',             $order['order']);
-        $this->_assign('document',             $docs);
+        //$this->_assign('document',             $docs);
         $this->_assign('positions',         $positions);
                 
         $this->_assign('conflicted_items',  $conflicted_items);
@@ -572,7 +572,6 @@ class MainController extends ApplicationController
         
         $related_docs_list = $orders->GetListOfRelatedDocs($order_id);
         $this->_assign('related_docs_list', $related_docs_list);
-        //debug('1682', $related_docs_list);
 //        $sc         = new SC();
 //        $sc_list    = $sc->GetListByOrder($order_id);
 //        $this->_assign('sc_list', $sc_list);
@@ -594,9 +593,10 @@ class MainController extends ApplicationController
         $this->_assign('attachments_list', $attachments_list['data']);
         
         $page_alias       = Request::GetString('page_alias', $_REQUEST);
-        $modelNomenclatureCategory = new NomenclatureCategory();
-        $help_text = $modelNomenclatureCategory->Search($page_alias);
-        $this->_assign('help', $help_text);
+        //debug('1682', $page_alias);
+        //$modelNomenclatureCategory = new NomenclatureCategory();
+        //$help_text = $modelNomenclatureCategory->Search($page_alias);
+        //$this->_assign('help', $help_text);
         $this->_display('view');        
     }
     
@@ -817,13 +817,12 @@ class MainController extends ApplicationController
         $this->_assign('include_ui',    true);
 
         $this->js = 'order_index';
-        //debug("1682", $steelgrades_sorted);
         
         //получаем справку для текущей страницы (параметр page_alias)
         $page_alias       = Request::GetString('page_alias', $_REQUEST);
         $modelNomenclatureCategory = new NomenclatureCategory();
-        $help_text = $modelNomenclatureCategory->Search($page_alias);
-        $this->_assign('help', $help_text);	
+        //$help_text = $modelNomenclatureCategory->Search($page_alias);
+        //$this->_assign('help', $help_text);	
 		//$this->_assign('list',          $rowset['data']);
        
         $this->_display('index');
@@ -1189,9 +1188,9 @@ class MainController extends ApplicationController
         
         $this->js = 'order_edit';
         $page_alias       = Request::GetString('page_alias', $_REQUEST);
-        $modelNomenclatureCategory = new NomenclatureCategory();
-        $help_text = $modelNomenclatureCategory->Search($page_alias);
-        $this->_assign('help', $help_text);	
+        //$modelNomenclatureCategory = new NomenclatureCategory();
+        //$help_text = $modelNomenclatureCategory->Search($page_alias);
+        //$this->_assign('help', $help_text);	
         $this->_display('edit');
     }    
 }

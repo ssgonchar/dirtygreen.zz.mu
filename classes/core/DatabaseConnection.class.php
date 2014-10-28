@@ -83,7 +83,8 @@ class DatabaseConnection
      */
     function _connect()
     {
-        //Log::AddLine(LOG_CUSTOM, "DB connection {$connection_settings['dbhost']}, {$connection_settings['dbuser']}, {$connection_settings['dbpass']}, {$connection_settings['dbname']}");
+        //$this->connection_settings['charset'] = 'utf8';
+        Log::AddLine(LOG_CUSTOM, "DB connection {$this->connection_settings['dbhost']}, {$this->connection_settings['dbuser']}, {$this->connection_settings['dbpass']}, {$this->connection_settings['dbname']}, {$this->connection_settings['charset']}");
         $this->connection = mysqli_connect($this->connection_settings['dbhost'], $this->connection_settings['dbuser'], $this->connection_settings['dbpass']/*, true*/);
 		//print_r($this->connection);
         if (!$this->connection)
@@ -103,7 +104,7 @@ class DatabaseConnection
             _503('Service unavailable');
         }
 
-        //Log::AddLine(LOG_CUSTOM, "DB connection charset {$connection_settings['charset']}");
+       // Log::AddLine(LOG_CUSTOM, "DB connection charset {$connection_settings['charset']}");
         $this->db = $this->connection_settings['dbname'];
 
         /**
@@ -115,8 +116,13 @@ class DatabaseConnection
         {
             mysqli_query($this->connection, 'SET CHARSET ' . $this->connection_settings['charset']);
             mysqli_query($this->connection, 'SET NAMES ' . $this->connection_settings['charset']);
+            
+           // mysqli_query($this->connection, 'SET CHARSET ' . 'utf8');
+            //mysqli_query($this->connection, 'SET NAMES ' . 'utf8');
         }
-        //print_r($this->connection_settings['time_zone']);
+
+          
+
         // установка часового пояса
         if (isset($this->connection_settings['time_zone']) && !empty($this->connection_settings['time_zone']))
         {
@@ -125,7 +131,14 @@ class DatabaseConnection
         }
         
         mysqli_query($this->connection, 'SET @ENABLE_TRIGGERS = TRUE');
-        mysqli_query($this->connection, 'SET @@max_sp_recursion_depth = 255');
+        mysqli_query($this->connection, 'SET @@max_sp_recursion_depth = 250');
+        
+   
+ 
+
+
+
+
 		//print_r('1111');
     }
 
@@ -134,7 +147,7 @@ class DatabaseConnection
      */
     function _disconnect()
     {
-        if ($this->connection)
+        if ($this->connection) 
         {
             mysqli_close($this->connection);
             $this->connection = false;

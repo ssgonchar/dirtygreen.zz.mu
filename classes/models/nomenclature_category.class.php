@@ -13,12 +13,12 @@ class NomenclatureCategory extends Model
      * 
      * @version 20140619, uskov
      */
-    function Search()
+    function Search($page_alias)
     {
-        $page_alias     = Request::GetString('page_alias', $_REQUEST);
-        $list = $this->GetList();
+        //$page_alias     = Request::GetString('page_alias', $_REQUEST);
+        $list = $this->GetSortedList();
         
-        //debug("1682", $list);
+        debug("1682", $list);
         foreach ($list as $key => $row)
         {
             foreach($row as $sub_key => $sub_row)
@@ -53,35 +53,35 @@ class NomenclatureCategory extends Model
      * 
      * @param 
      */
-	function GetSortedList()
-	{
-	    $rowset = $this->GetList();
-	    
-	    foreach ($rowset as $key => $row)	//��������� ������ $rowset
-	    {
-			if($rowset[$key]['category']['parent_id']==0) {
-				 $category[] = $row;
-			} elseif($rowset[$key]['category']['parent_id']>0) {
-				 $sub_category[] = $row;
-			}
-	    }
-	    //dg($category);
-	    foreach($category as $key => &$row)
-	    {
-                //print_r($category[$key]['category_id'].'<br>');
-                foreach($sub_category as $sub_key => $sub_row)
-                {
-                    //print_r($sub_category[$sub_key]['category']['parent_id'].'<br>');
-                    if($category[$key]['category_id']==$sub_category[$sub_key]['category']['parent_id']) 
-                    {
-                            $category[$key]['sub_categories'][]=$sub_category[$sub_key];
-                            //print_r($sub_category[$sub_key]['category']['parent_id']);
+    function GetSortedList()
+    {
+        $rowset = $this->GetList();
+
+        foreach ($rowset as $key => $row)	//��������� ������ $rowset
+        {
+                    if($rowset[$key]['category']['parent_id']==0) {
+                             $category[] = $row;
+                    } elseif($rowset[$key]['category']['parent_id']>0) {
+                             $sub_category[] = $row;
                     }
-                }	
-	    }
-	    
-	   return $category;
-	}
+        }
+        //dg($category);
+        foreach($category as $key => &$row)
+        {
+            //print_r($category[$key]['category_id'].'<br>');
+            foreach($sub_category as $sub_key => $sub_row)
+            {
+                //print_r($sub_category[$sub_key]['category']['parent_id'].'<br>');
+                if($category[$key]['category_id']==$sub_category[$sub_key]['category']['parent_id']) 
+                {
+                        $category[$key]['sub_categories'][]=$sub_category[$sub_key];
+                        //print_r($sub_category[$sub_key]['category']['parent_id']);
+                }
+            }	
+        }
+
+       return $category;
+    }
 	  
 	  /**
      * ���������� ��������� �� ��������������

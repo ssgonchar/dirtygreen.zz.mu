@@ -32,6 +32,7 @@
                                 <input type="button" class="btn btn-default selected-control" value="Create RA" title="Please, select an item" onclick="add_selected_to_document('ra', '0', 'yes');" style="margin-left: 10px;">
                                 <input type="button" class="btn btn-default selected-control" value="Edit" title="Please, select an item" onclick="edit_items();" style="margin-left: 10px;">
                                 <input type="button" class="btn btn-default selected-control" value="Remove" title="Please, select an item" onclick="if (confirm('Items will be deleted permanently. Are you sure?')) remove_item();" style="margin-left: 10px;">
+                                <input type="submit" name="btn_select" value="Find" class="btn btn-primary" style="margin-left: 10px;">
                         {/if}
                 {/if}
         </li>	

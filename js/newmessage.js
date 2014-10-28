@@ -44,8 +44,11 @@ var chat_modal_send_message = function(object_alias, object_id, type)
         Message('Title must be specified !', 'warning');
         return;
     }
-    
+    //получаем цвет текста для юзера
+    var font_colour = $('#font-color').val();
     var description = tinyMCE.get('chat-description').getContent();
+    //применяю цвет текста юзера для сообщения
+    description = '<span style="color: '+font_colour+'";>'+description+'</span>';
     if (description.replace(/\s+/g, '').length == 0)
     {
         Message('Text must be specified !', 'warning');
@@ -147,7 +150,9 @@ $(function(){
 	
     var object_alias    = $('#qq_object_alias').length > 0 ? $('#qq_object_alias').val() : 'newmessage';
     var object_id       = $('#qq_object_id').length > 0 ? $('#qq_object_id').val() : 0;
-	    
+    
+	 console.log(path);
+         if(path == '/newmessage') {
     var uploader = new qq.FileUploader({
         element         :   $('#fileuploader')[0],
         listElement     :   $('#attachments')[0],
@@ -191,8 +196,9 @@ $(function(){
                 chat_modal_send_message('', 0, 0);
             }    
 */
-        },
+      },
     });
+}
 	/*
     $('div').bind('click', function(){
            console.log(this.id);
@@ -204,6 +210,9 @@ $(function(){
     });
     
     bind_biz_autocomplete('#chat-biz');
+    $("#chat-biz-title").live('keydown', function(){
+        bind_biz_autocomplete('#chat-biz-title');
+    }); 
     
     init_resize();
     
@@ -212,7 +221,7 @@ $(function(){
     chat_description_text = $('#chat-description').html();
     $('#chat-description').html('');
     
-	var colortext = $('#font-color').val()
+	var colortext = $('#font-color').val();
 	
     tinyMCE.init({
         selector : '#chat-description',
@@ -372,12 +381,12 @@ var chat_modal_hide_biz = function()
 {
     if ($('#chat-message-biz-select').is(':visible') || $('#chat_message_biz_select_chosen').is(':visible'))
     {
-        //biz_title   = $('#chat-message-biz-select > option:selected').text();
-       // biz_title   = $("#chat-message-biz-select > span").text();
-		//alert(biz_title);
-		biz_title = $('.chosen-single > span').text();
-		//console.log(biz_title);
-		team_title  = $('#chat-message-team-select > option:selected').text() + '.';
+        biz_title   = $('#chat-message-biz-select > option:selected').text();
+        //было то что ниже - не выбирался biz. исправил Uskov 28.07.14
+        //biz_title = $('.chosen-single > span').text();
+        team_title  = $('#chat-message-team-select > option:selected').text() + '.';
+        //console.log(team_title);
+        //console.log(biz_title);
     }
     else
     {

@@ -16,6 +16,7 @@
 </ul>
 <ul class="nav navbar-nav navbar-right" style='margin-top: 7px;'>
 	<li>
-		<input type="button" name="btn_edit" class="btn100" value="Add" onclick="location.href='/market/add';">
+		<input type="button" name="btn_edit" class="btn btn-success" value="Add" onclick="location.href='/market/add';">
+                <input class="btn btn-primary" type="submit" name="btn_filter" value="Find" />
 	</li>	
 </ul>

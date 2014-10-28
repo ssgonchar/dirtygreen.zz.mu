@@ -3,7 +3,28 @@ var order_last_id;
 //document.ready function 
 $(function()
 {
-    /**
+    $('.select-email-trash').live('click', function()
+    {
+        console.log($('.select-email-trash').hasClass('btn-primary'));
+    });
+        
+    // (SU) обработчик нажатия кнопки Send email в меню действий на страницах
+    $('.email-compose-link').live('click', function()
+    {
+        var object_alias = $(this).data('alias');
+        var object_id = $(this).data('id');
+        delete_new_email_objects();
+        //открываю страницу в новом окне
+        window.open('/'+object_alias+'/'+object_id+'/emailmanager/compose', 'email_html_new', 'fullscreen=yes,scrollbars=yes,resizable=yes');
+    });
+        
+    $('.email-reply, .email-edit-send').live('click', function()
+    {
+        delete_new_email_objects();
+    });
+    
+    
+   /**
      * запрещает ввод веса позиции пользователем
      * стирает значения веса unitweight и weight если хоть один параметр не введен
      * @version 20140619, Uskov
@@ -47,6 +68,8 @@ $(function()
             $("#weight-" + this_id).val(""); 
         }
     });
+    
+
 });
 
 /*
@@ -54,19 +77,122 @@ $(function()
  */
 var get_orders_last_id = function()
 {
-    var json_data = $.ajax({
+    var key = 'last_order_id';
+    var new_order = false;
+    $.ajax({
         url     : '/order/getorderslastid',
-
         success: function(json){
             //если только открыли страницу - записываем id последнего заказа в глобальную переменную
-            if(typeof(order_last_id) == "undefined"){
+            if(typeof(order_last_id) == "undefined" || json.object < order_last_id){
                 order_last_id = json.object;
+                new_order = false;
             }
             else if(json.object > order_last_id){
-                //сообщаем о новом заказе
-                alert("We have a new order! (" +json.order_info.customer+ ", BIZ " +json.order_info.biz_id+ ", order for '" +json.order_info.order_for+ "', qtty = " +json.order_info.qtty+ ", value = " +json.order_info.value+ " " +json.order_info.currency+ ")");
-                //обновляем id последнего заказа
+                new_order = true;
+                //обновляем глобальную переменную с id последнего заказа
                 order_last_id = json.object;
+                //постим уведомление в TL
+                post_new_order_message(json.order_info);
+            }
+        }
+    });
+    if(new_order == false){
+        //в сессию также записываю id последнего заказа
+        $.ajax({
+            url     : '/session/savetosession',
+            data    : {
+                key   : key,
+                value : order_last_id
+            },
+            success: function(json){
+                //
+            }
+        });
+    }
+    else if(new_order == true){
+        //получаю запись с id последнего заказа из сессии
+        var returned_value;
+        $.ajax({
+            url     : '/session/returnvalue',
+            data    : {
+                key   : key
+            },
+            success: function(json){
+                //если запись есть
+                if(json.result == 'okay'){
+                    returned_value = json.value;
+                }
+            }
+        });
+        //если есть новый заказ и в сессии он не записан
+        if(order_last_id > returned_value){
+            //перезаписываю id последнего заказа в сессию и вывожу alert
+            $.ajax({
+                url     : '/session/savetosession',
+                data    : {
+                    key   : key,
+                    value : order_last_id
+                },
+                success: function(json){
+                    // 
+                }
+            });
+            //вывожу alert о том что есть новый заказ
+            alert('We have a new order');
+        }
+    }
+}
+$(".alert").delay(3500).addClass("in").fadeOut(3500);
+/*
+ * Постит сообщение о заказе в чат
+ */
+var post_new_order_message = function(order_info)
+{
+    console.log(order_info);
+    $.ajax({
+        url     : '/order/postnewordermessage',
+        data    : {
+            biz_id           : order_info['biz_id'],
+            biz_title        : order_info['biz_title'],
+            company_id       : order_info['company_id'],
+            company_title    : order_info['company_title'],
+            person_id        : order_info['person_id'],
+            person_full_name : order_info['person_full_name'],
+            qtty             : order_info['qtty'],
+            weight           : order_info['weight'],
+            value            : order_info['value'],
+            order_id         : order_info['order_id'],
+            order_for        : order_info['order_for']
+        },
+        success: function(json){
+            //
+        }
+    });
+}
+
+/*
+ * Возвращает id заданий, у которых включен автоматический счетчик времени, т.е. status_id равен 4 (модуль Iam_Ido)
+ * Задача: каждые 60 сек прибавлять минуту в used_time заданий, у которых status_id равен 4
+ */
+var get_auto_counting_tasks = function()
+{
+    var json_data = $.ajax({
+        url     : '/iamido/getautocountingtask',
+
+        success: function(json){
+            //console.log(json); 
+            if(json){
+                var current_task_id = json.updated_task['param_task_id'];
+                var current_used_time = json.updated_task['current_used_time'];
+                //трансформирую использованное время в секундах из формата Timestamp в понятное для человеческого глаза (-d -h -m)
+                var used_time   = $(this).find('.td-used-time nobr').text();
+                var days        = Math.floor(current_used_time/86400);
+                var hours       = Math.floor((current_used_time - days*86400)/3600);
+                var minutes     = Math.floor((current_used_time - days*86400 - hours*3600)/60);
+                //обновляю время в таблице
+                $("#task-"+current_task_id+"").parent().find('.td-used-time nobr').text((days > 0 ? days+'d ' : '') + (hours > 0 ? hours+'h ' : '') + (minutes > 0 ? minutes+'m ' : ''));
+                //обновляю время в строке над кнопкой
+                $('#auto-used-time').text((days > 0 ? days+'d ' : '') + (hours > 0 ? hours+'h ' : '') + (minutes > 0 ? minutes+'m ' : ''));
             }
         }
     });
@@ -248,6 +374,7 @@ var bind_biz_autocomplete = function(biz_selector, callback_function)
                                 value: item.biz.id
                             }
                         }));
+                        
                     }
                 });
                 
@@ -276,11 +403,11 @@ var bind_biz_autocomplete = function(biz_selector, callback_function)
                 
                 if ($('.ui-autocomplete > li').length > 20)
                 {
-                    $(this).autocomplete('widget').css('z-index', 1002).css('height', '200px').css('overflow-y', 'scroll');
+                    $(this).autocomplete('widget').css('z-index', 9999999).css('height', '200px').css('overflow-y', 'scroll');
                 }
                 else
                 {
-                    $(this).autocomplete('widget').css('z-index', 1002);
+                    $(this).autocomplete('widget').css('z-index', 9999999);
                 }
                 
                 return false;                
@@ -533,8 +660,8 @@ var remove_attachment = function(object_alias, object_id, attachment_id)
     $.ajax({
         url: '/attachment/remove',
         data : {
-			object_alias	: object_alias, 
-			object_id		: object_id,
+            object_alias	: object_alias, 
+            object_id		: object_id,
             attachment_id 	: attachment_id
         },
         success: function(json){
@@ -542,7 +669,8 @@ var remove_attachment = function(object_alias, object_id, attachment_id)
             {
                 $('#attachment-' + attachment_id).remove();
                 $('#attachment-' + attachment_id + '-external').remove();
-				$('#attachment-remove-' + attachment_id).remove();
+		$('#attachment-remove-' + attachment_id).remove();
+                attachments_counter();
             }
             else
             {
@@ -713,6 +841,7 @@ var pinger = function(){
                 pinger();
 		get_pending_counter();
                 get_orders_last_id();
+                get_auto_counting_tasks();
             }, pinger_refresh_time);
         }
     });
@@ -733,6 +862,17 @@ var fill_select = function(id, json_arr, first_option)
         el = json_arr[i];
         $(id).append($('<option value="' + el.id + '">' + el.name + '</option>'));
     }    
+};
+
+/**
+ * Shows system message
+ */
+function Message(message, type)
+{
+    //alert('yes');
+    $('<a class="' + type + '">' + message + '</a>').appendTo('#app_messages'); 
+    $('#app_messages').show();  
+    set_timer_for_messages();
 };
 
 /**
@@ -761,14 +901,59 @@ function set_timer_for_messages(){
     }    
 };
 
-/**
- * Shows system message
+/*
+ * Делает запрос в ajax контроллер на удаление письма, в случае успеха удаляет письмо из таблицы
+ * 
+ * @param {obj} obj кнопка удаления письма
+ * @returns {undefined}
+ * @author Sergey Uskov <archimba8578@gmail.com>
  */
-function Message(message, type)
+var delete_email = function(obj)
 {
-    $('<a class="' + type + '">' + message + '</a>').appendTo('#app_messages'); 
-    $('#app_messages').show();  
-    set_timer_for_messages();
+    var email_id = obj.data('id');
+    
+    if (confirm("Are you sure you want to delete this email?")){
+        if($('.select-email-trash').hasClass('btn-primary')){
+            // удаление из корзины
+            $.ajax({
+                url: '/emailmanager/eraseemail',
+                data: {
+                    email_id: email_id,
+                },
+                success: function(json) {
+                    if(json.result == 'okay'){
+                        Message('Email was moved from the system!', 'okay');
+                        //alert('Email was moved to the trash!');
+                        obj.parent().parent().remove();
+                    }
+                    if(json.result == 'error'){
+                        Message(json.code, 'warning');
+                        alert(json.code);
+                    }
+                },
+            });
+        }
+        else {
+            // удаление из главной таблицы emails
+            $.ajax({
+                url: '/emailmanager/deleteemailtotrash',
+                data: {
+                    email_id: email_id,
+                },
+                success: function(json) {
+                    if(json.result == 'okay'){
+                        Message('Email was moved to the trash!', 'okay');
+                        //alert('Email was moved to the trash!');
+                        obj.parent().parent().remove();
+                    }
+                    if(json.result == 'error'){
+                        Message(json.code, 'warning');
+                        alert(json.code);
+                    }
+                },
+            });
+        }
+    }
 };
 
 /**
@@ -2074,6 +2259,7 @@ $(function(){
         pinger();
 	get_pending_counter();
         get_orders_last_id();
+        get_auto_counting_tasks();
     }, pinger_start_time);
     
     
@@ -2891,7 +3077,6 @@ var bind_uploader = function(o, complete_handler)
 var show_chat_modal = function(object_alias, object_id, message_id)
 {
     var message_id = (typeof message_id == 'undefined') ? 0 : message_id;
-
     var h       = 500;  //520
     var w       = 950;
     var left    = Number((screen.width/2)-(w/2));
@@ -2968,7 +3153,7 @@ var show_chat_modal_for_user = function(object_alias, object_id, user_id)
     //console.log();
     var user_id = (typeof user_id == 'undefined') ? 0 : parseInt(user_id);
 
-    var h       = 700;  //520
+    var h       = 500;  //520
     var w       = 950;
     var left    = Number((screen.width/2)-(w/2));
     var top     = Number((screen.height/2)-(h/2));
@@ -3185,4 +3370,152 @@ var show_hide_column = function() {
         $('.column-side').addClass('column-side-hidden');
     }
     //console.log($('.column-side-hidden').length);
+};
+
+/**
+ * Подсчитывает количество аттачей в письме и выводит их
+ * @author Sergey Uskov <archimba8578@gmail.com>
+ */
+var attachments_counter = function()
+{
+    //данные, необходимые для идентификации массива в сессии
+    var uploader_object_alias = $('#uploader_object_alias').val();
+    var uploader_object_id = $('#uploader_object_id').val();
+    
+    //счетчик аттачей берется из сессии
+    $.ajax({
+        url     : '/emailmanager/getattachcount',
+        data    : {
+            uploader_object_alias : uploader_object_alias,
+            uploader_object_id    : uploader_object_id
+        },
+        success : function(json){
+            if(json.result == 'okay'){
+                var attachments_count = json.attach_count > 0 ? '('+json.attach_count+')' : '';
+                $('#attachments-count').text(attachments_count);
+            }
+        }
+    });
+    
+};
+
+/**
+ * Подсчитывает количество аттачей в письме и выводит их
+ * @author Sergey Uskov <archimba8578@gmail.com>
+ */
+var recipients_counter = function()
+{
+    //данные, необходимые для идентификации массива в сессии
+    var uploader_object_alias = $('#uploader_object_alias').val();
+    var uploader_object_id = $('#uploader_object_id').val();
+    
+    //счетчик аттачей берется из сессии
+    $.ajax({
+        url     : '/emailmanager/recipientscounter',
+        data    : {
+            uploader_object_alias : uploader_object_alias,
+            uploader_object_id    : uploader_object_id
+        },
+        success : function(json){
+            if(json.result == 'okay'){
+                //очищаю список получателей из системы, если их количество = 0
+                if(json.recipients_count < 1) $('#emails-from-system').html('');
+                //показываю счетчик
+                var recipients_count = json.recipients_count > 0 ? '('+json.recipients_count+')' : '';
+                $('#emails-count').text(recipients_count);
+            }
+        }
+    });
+    
+};
+
+/**
+ * Удаляет документ, добавленный из регистра из сессии, из БД, со страницы.
+ * 
+ * @param {string} attachment_id 
+ * @param {string} uploader_object_alias 
+ * @param {string} uploader_object_id
+ * 
+ * @author Sergey Uskov <archimba8578@gmail.com>
+ */
+var remove_shared_doc = function(attach)
+{
+    var attachment_id         = $(attach).attr('id').replace(/\D+/g,"");
+    var uploader_object_alias = $('#uploader_object_alias').val();
+    var uploader_object_id    = $('#uploader_object_id').val();
+    
+    if (confirm("Remove attachment?")){
+        $.ajax({
+            url     : '/emailmanager/removeshareddoc',
+            data    : {
+                attachment_id         : attachment_id,
+                uploader_object_alias : uploader_object_alias,
+                uploader_object_id    : uploader_object_id
+            },
+            success : function(json){
+                if(json.result == 'okay'){
+                    //удаляю аттач из списка в окне редактирования письма
+                    attach.remove();
+                    //снимаю чекбокс у данного аттача в модальном окне
+                    $('[data-id='+attachment_id+'] input').removeAttr('checked');
+                    attachments_counter();
+                }
+            }
+        });
+    }
+};
+
+/**
+ * При создании нового сообщения удаляет ключи из сессии и аттачи из БД
+ * 
+ * @author Sergey Uskov <archimba8578@gmail.com>
+ */
+var delete_new_email_objects = function()
+{
+    $.ajax({
+        type:"POST",
+        url: "/emailmanager/deletenewemailobjects",
+        data: {
+            //
+        },
+        success: function(json) {
+            //
+        }
+    });
+};
+
+/**
+ * Shows system message
+ */
+function Message(message, type)
+{
+    $('<a class="' + type + '">' + message + '</a>').appendTo('#app_messages'); 
+    $('#app_messages').show();
+    set_timer_for_messages();
+};
+
+/**
+ * Устанавливает таймер на показ сообщений и прячет блок сообщений если сообщений нет
+ */
+function set_timer_for_messages(){
+    
+    if ($('#app_messages .okay').length > 0) 
+    {
+        $('#app_messages .okay')
+        .delay(3000)
+        .queue(function(){
+            $(this).remove().dequeue();            
+            if ($("#app_messages").children().length == 0) $('#app_messages').hide();
+        });
+    }
+    
+    if ($('#app_messages .warning').length > 0) 
+    {
+        $('#app_messages .warning')
+        .delay(6000)
+        .queue(function(){
+            $(this).remove().dequeue();            
+            if ($("#app_messages").children().length == 0) $('#app_messages').hide();
+        });
+    }    
 };

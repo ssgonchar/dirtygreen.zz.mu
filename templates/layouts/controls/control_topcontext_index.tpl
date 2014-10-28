@@ -1,1 +1,1 @@
-{if isset($filter)}<a href="/{$smarty.request.arg}~print" class="print-gray" target="_blank">Print version</a>{/if}
+{if isset($filter)}<a href="/{$smarty.request.arg}~print" class="glyphicon glyphicon-print" style="text-decoration: none; margin-left: 10px;" target="_blank"></a>{/if}

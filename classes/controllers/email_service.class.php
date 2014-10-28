@@ -3,6 +3,7 @@
 require_once APP_PATH . 'classes/models/email.class.php';
 require_once APP_PATH . 'classes/models/emailfilter.class.php';
 require_once APP_PATH . 'classes/models/attachment.class.php';
+require_once APP_PATH . 'classes/models/passstore.class.php';
 
 class ServiceController extends ApplicationController
 {
@@ -65,10 +66,25 @@ class ServiceController extends ApplicationController
         $proccess_limit = 10;   // emails per iteration
 
         $mailbox        = '{imap.gmail.com:993/imap/novalidate-cert/ssl}INBOX';
-        $user_name      = 'mamvillage@steelemotion.com';
-        $password       = 'mamvillageSE13';
+        $user_name      = 'mamvillage@steelemotion.com'; //получение из массива $_REQUEST
+        $password_inprint = 'c458594341bf5fb9eee904a7fa82734a'; //получение из массива $_REQUEST
+        $password       = 'mamvillageSE13'; //получение из массива $_REQUEST
         
-        $connection_id  = imap_open($mailbox, $user_name, $password);
+        //создание MD5 хеша полученого пароля, ищем совпадение в табл. passstore, 
+        //возвращает данные об учетной записи по md5 хэшу пароля и имени, модель PassStore() метод matchPass(md5($password), $user_name)
+        //проверка
+        $modelPassStore = new PassStore();
+        
+        $return_pass = TRUE;
+                
+        $password_from_base = $modelPassStore->auth($user_name, $password_inprint, $return_pass);
+
+        /*if(!$password_from_base) {
+            Log::AddLine(LOG_ERROR, $password_from_base);
+            echo $password_from_base;
+        }*/
+        //dg($password_from_base);
+        $connection_id  = imap_open($mailbox, $user_name, $password_from_base);
 
         if (!$connection_id)
         {

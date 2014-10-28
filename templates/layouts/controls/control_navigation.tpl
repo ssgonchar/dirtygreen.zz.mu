@@ -113,15 +113,16 @@
     <li>
         <a href="#">Contract Admin</a>
         <ul class="level-one">
-            <li class="dropdown"><a href="/inddt">In DDT</a></li>
-            <li class="dropdown"><a href="/supplierinvoices">Sup. Invoices</a></li>
-            <li class="dropdown"><a href="/sc">SC</a></li>
-            <li class="dropdown"><a href="/qc">QC</a></li>
-            <li class="dropdown"><a href="/oc">Orig. Cert.</a></li>
-            <li class="dropdown"><a href="/ra">RA</a></li>
-            <li class="dropdown"><a href="/ddt">DDT</a></li>
-            <li class="dropdown"><a href="/cmr">CMR</a></li>
+            
+            <li class="dropdown"><a href="/ddt">Out DDTs</a></li>            
+            <li class="dropdown"><a href="/inddt">In DDTs</a></li>
+            <li class="dropdown"><a href="/cmr">CMRs</a></li>
+            <li class="dropdown"><a href="/ra">Release advices</a></li>
+            <li class="dropdown"><a href="/supplierinvoices">Supplier invoices</a></li>
             <li class="dropdown"><a href="/invoices">Invoices</a></li>
+            <li class="dropdown"><a href="/sc">Sale confirmations</a></li>
+            <li class="dropdown"><a href="/qc">Quality certificates</a></li>
+            <li class="dropdown"><a href="/oc">Original certificates</a></li>
         </ul>        
     </li>
     <li>

@@ -280,16 +280,22 @@ class MainAjaxController extends ApplicationAjaxController
             $last_order_id = $last_id['0'][$key]['MAX(`id`)'];
         }
         $last_order_id_full_info = $modelOrder->GetById($last_order_id);
-        $last_order_id_info = Array(
-            'biz_id'    => $last_order_id_full_info['order']['biz_id'],
-            'order_for' => $last_order_id_full_info['order']['order_for'],
-            'qtty'      => $last_order_id_full_info['order']['quick']['qtty'],
-            'weight'    => $last_order_id_full_info['order']['quick']['weight'],
-            'currency'  => $last_order_id_full_info['order']['currency'],
-            'value'     => round($last_order_id_full_info['order']['quick']['value'], 2),
-            'customer'  => $last_order_id_full_info['order']['doc_no_full']            
-        );
         //debug('1682', $last_order_id_full_info);
+        $last_order_id_info = Array(
+            'order_id'         => $last_order_id_full_info['order']['id'],
+            'biz_id'           => $last_order_id_full_info['order']['biz_id'],
+            'biz_title'        => $last_order_id_full_info['order']['biz']['title'],
+            'company_id'       => $last_order_id_full_info['order']['company_id'],
+            'company_title'    => $last_order_id_full_info['order']['company']['title'],
+            'person_id'        => $last_order_id_full_info['order']['person']['id'],
+            'person_full_name' => $last_order_id_full_info['order']['person']['full_name'],
+            'order_for'        => $last_order_id_full_info['order']['order_for'],
+            'qtty'             => $last_order_id_full_info['order']['quick']['qtty'],
+            'weight'           => $last_order_id_full_info['order']['quick']['weight'],
+            'currency'         => $last_order_id_full_info['order']['currency'],
+            'value'            => round($last_order_id_full_info['order']['quick']['value'], 2),
+            'customer'         => $last_order_id_full_info['order']['doc_no_full']            
+        );
         
         $this->_send_json(array(
             'result'        => 'okay',
@@ -329,4 +335,43 @@ class MainAjaxController extends ApplicationAjaxController
             'customers'    => $customers,
         ));          
     }
+    
+    /**
+     * Возвращает список dekivery points
+     * url: /order/getdeliverypoints
+     */    
+    function postnewordermessage()
+    {
+        //данные:
+        $biz_id           = Request::GetInteger('biz_id', $_REQUEST);
+        $biz_title        = Request::GetString('biz_title', $_REQUEST);
+        $company_id       = Request::GetInteger('company_id', $_REQUEST);
+        $company_title    = Request::GetString('company_title', $_REQUEST);
+        $person_id        = Request::GetInteger('person_id', $_REQUEST);
+        $person_full_name = Request::GetString('person_full_name', $_REQUEST);
+        $qtty             = Request::GetInteger('qtty', $_REQUEST);
+        $weight           = Request::GetInteger('weight', $_REQUEST);
+        $value            = round(Request::GetInteger('value', $_REQUEST), 2);
+        $order_id         = Request::GetInteger('order_id', $_REQUEST);
+        //debug('1682', $order_id);
+        
+        $order_for        = Request::GetString('order_for', $_REQUEST);
+        $title            = 'WEBSTOCK ORDER #'.$order_id.' (MaM)';
+                    
+        //проверяю если в базе не существует сообщения с title == WEBSTOCK NEW ORDER #'.$order_id.' (MAM), то постим сообщуху
+        $messages = new Message();
+        $result = $messages->CheckNewOrderMessage($title);
+        if(empty($result)){        
+            //сохраняю сообщение о заказе в TL
+            // только для МаМ (из PlatesAhead сообщение добавляется сразу при создании)
+            if($order_for == 'mam'){
+                $messages->AlertOrder($biz_id, $biz_title, $company_id, $company_title, $person_id, $person_full_name, $qtty, $weight, $value, $order_id);
+                //debug('1682', '$result');
+            }
+            $this->_send_json(array(
+                'result'        => 'okay',
+                'alert'    => 'We have a new order!',
+            )); 
+        }
+    }  
 }

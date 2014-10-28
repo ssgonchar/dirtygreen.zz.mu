@@ -56,6 +56,8 @@
     <link rel="stylesheet" href="/css/docs.min.css" type="text/css" media="screen, projection" />
     <link rel="stylesheet" href="/css/chosen.css" type="text/css" media="screen, projection" />
     {if isset($include_ui)}<link rel="stylesheet" href="/css/jquery-ui.css" type="text/css" media="screen, projection" />{/if}
+    <link rel="stylesheet" href="/css/ui.jqgrid.css" />
+    <link href="/js/plugins/searchFilter.css" rel="Stylesheet" type="text/css" />
     
     {*<script src="http://www.fuelcdn.com/fuelux/2.6.0/loader.min.js" type="text/javascript"></script>
     	<!--<script src="http://jqueryui.com/jquery-wp-content/themes/jquery/js/plugins.js"></script>
@@ -70,7 +72,7 @@
 
     <link rel="stylesheet" href="http://cdn.kendostatic.com/2014.1.318/styles/kendo.common-bootstrap.min.css" />
 
-    <link rel="stylesheet" href="/css/ui.jqgrid.css" />
+    
     <script src="/js/i18n/grid.locale-en.js" type="text/javascript"></script>
     <script src="/js/jquery.jqGrid.min.js" ></script>*}
   

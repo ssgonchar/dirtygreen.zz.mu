@@ -2,7 +2,7 @@
     <img src="/img/layout/gnome.jpg" style="position: absolute; top: 0; left: 0;">
 </div>
 <div class="bubble" style="margin-left: 55px; width: 650px;" id="gnome_text">
-    Items with missing OWNER & STOCKHOLDER info are not available for release . Please specify missing data first .
+    Items with missing OWNER & STOCKHOLDER info and already released items are not available for release .  Please specify missing data first .
 </div>
 <div class="separator pad"></div>
 
@@ -26,7 +26,8 @@
         {foreach $row.items as $item}
             <tr>
                 <td class="ra-td-cb">
-                    {if !empty($row.stockholder_id) && !empty($item.owner_id) && $item.status_id != $smarty.const.ITEM_STATUS_RELEASED && $item.status_id != $smarty.const.ITEM_STATUS_DELIVERED}
+                    {*if !empty($row.stockholder_id) && !empty($item.owner_id) && $item.status_id != $smarty.const.ITEM_STATUS_RELEASED && $item.status_id != $smarty.const.ITEM_STATUS_DELIVERED*}
+                    {if !empty($row.stockholder_id) && !empty($item.owner_id)}
                     <input type="checkbox" name="steelitem_ids[]" class="ra-steelitem" rel="shid_{$row.stockholder_id}" value="{$item.id}" checked="checked">
                     {/if}
                 </td>

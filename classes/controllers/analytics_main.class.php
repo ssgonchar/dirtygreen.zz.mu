@@ -31,7 +31,7 @@ class MainController extends ApplicationController {
     }
 
     /**
-     * Отображает страницу списка заказов
+     * РћС‚РѕР±СЂР°Р¶Р°РµС‚ СЃС‚СЂР°РЅРёС†Сѓ СЃРїРёСЃРєР° Р·Р°РєР°Р·РѕРІ
      * url: /stocks
      */
     function index() {
@@ -39,12 +39,14 @@ class MainController extends ApplicationController {
         $this->_assign('stocks', $modelStock->GetList());
         
 
-        
+         
         $this->_assign('include_charts', true);
         $this->_assign('include_ui', true);
-        
+       
         
         $this->js = 'analytics_index';
+        
+                
         
 
 
@@ -52,10 +54,18 @@ class MainController extends ApplicationController {
             $filter = $this->createFilter($_REQUEST['form']);
             $this->_redirect($filter);
         } elseif (isset($_REQUEST['filter'])) {
+            $this->_assign('include_jsapi', true);
+            // chart
+            $companies  = new Company();
+            $chart_data = $companies->GetDataForChart('16966');
+            $this->_assign('chart_data', $chart_data);            
+            
         if(isset($_SESSION['analytics']['delivery_town']) && $_SESSION['analytics']['delivery_town'] !== '') $this->_assign('delivery_town', $_SESSION['analytics']['delivery_town']);
             $orders = $this->search($_REQUEST['filter']);
+            
             $this->_assign('orders', $orders);
             $this->_display('index');
+            
             return;
         }
 
@@ -127,8 +137,8 @@ class MainController extends ApplicationController {
 
     /*
      * createFilterFromArray
-     * Преобразует масив в строку,
-     * при этом фильтруя данные согласно указанному типу
+     * РџСЂРµРѕР±СЂР°Р·СѓРµС‚ РјР°СЃРёРІ РІ СЃС‚СЂРѕРєСѓ,
+     * РїСЂРё СЌС‚РѕРј С„РёР»СЊС‚СЂСѓСЏ РґР°РЅРЅС‹Рµ СЃРѕРіР»Р°СЃРЅРѕ СѓРєР°Р·Р°РЅРЅРѕРјСѓ С‚РёРїСѓ
      * 
      */
 

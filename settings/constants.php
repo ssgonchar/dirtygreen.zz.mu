@@ -4,7 +4,7 @@
     setlocale(LC_ALL,       'en_US.UTF-8');
     setlocale(LC_NUMERIC,   'en_US.UTF-8');
 
-    ini_set('max_execution_time',           '120');
+    ini_set('max_execution_time',           '500');
     ini_set('zend.ze1_compatibility_mode',  0);    
     //production server
     if ($_SERVER['HTTP_HOST'] == 'home.steelemotion.com' || $_SERVER['HTTP_HOST'] == 'www.home.steelemotion.com')
@@ -38,7 +38,7 @@
     }
     else
     {
-        die('Good by!');
+        die('Good by!!!');
     }   
 
 
@@ -125,7 +125,7 @@
 
     // Other settings
     define('NULL_DATE',                 '1900-01-01 00:00:00');
-    define('ITEMS_PER_PAGE',            20);
+    define('ITEMS_PER_PAGE',            200);
     
     define('DEFAULT_LANG',              'en');
     define('DEFAULT_LANG_TITLE',        'English');

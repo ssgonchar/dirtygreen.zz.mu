@@ -1,6 +1,6 @@
 <!--<input type="button" class="btn150o" value="Write Message" onclick="show_chat_modal('chat', 0);"><div class="pad-10"></div>
 <div id="chat-icon-park" onclick="show_chat_modal('chat', 0);">-->
-<div  class="">
+<div  class="col-md-3" style="position: fixed;">
     <div class="btn-group">
         <a href="/touchline" class="btn btn-primary btn-xs">TouchLine</a>
         <a href="/touchline/mustdo" class="btn btn-primary btn-xs">MustDo!</a>

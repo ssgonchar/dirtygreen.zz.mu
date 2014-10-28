@@ -216,13 +216,13 @@ class MainController extends ApplicationController
 
         if (!empty($object_alias) && !empty($object_id))
         {
-            //$rowset = $messages->GetListForObject($object_alias, $object_id, 0, $this->page_no);
-            $rowset = $messages->GetListForObject($object_alias, $object_id, 0, 0, 999999);
+            $rowset = $messages->GetListForObject($object_alias, $object_id, 0, $this->page_no);
+            //$rowset = $messages->GetListForObject($object_alias, $object_id, 0, 0, 999999);
             $list   = $rowset['data'];
 
-            //$pager = new Pagination();
-            //$this->_assign('pager_pages',   $pager->PreparePages($this->page_no, $rowset['count']));
-            //$this->_assign('count',         $rowset['count']);            
+            $pager = new Pagination();
+            $this->_assign('pager_pages',   $pager->PreparePages($this->page_no, $rowset['count']));
+            $this->_assign('count',         $rowset['count']);            
         }
         else
         {
@@ -241,10 +241,12 @@ class MainController extends ApplicationController
         
         $this->_assign('list', $list);
         
-        //$this->context  = true;
+        $this->context  = true;
         $this->rcontext = true;
         $this->layout   = 'rcolumnmod';
         
+        
+        $this->_assign('bizes_list',    $messages->GetLastBizes());
         $this->_assign('include_ui',        true);
         $this->_assign('include_mce',       true);
         $this->_assign('include_upload',    true);        
@@ -255,6 +257,8 @@ class MainController extends ApplicationController
         // очищает список приаттаченных файлов к сообщению
         if (isset($_SESSION['attachments-message-0'])) unset($_SESSION['attachments-message-0']);
         $this->js[] = 'app';	
+        //$this->js[] = 'newmessage';	
+        $this->js[] = 'room';	
         // список команд для блока выбора бизнеса
         $teams = new Team();
         $this->_assign('teams', $teams->GetList());
